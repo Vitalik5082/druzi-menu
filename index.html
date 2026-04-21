@@ -6,183 +6,170 @@
 <title>Druzi Bar</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍔</text></svg>">
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-:root { --gold: #d4a853; --dark: #1a1a1a; --bg: #f5f4f0; --card: #fff; --text: #1a1a1a; --muted: #888; --border: rgba(0,0,0,0.08); --radius: 14px; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-
-/* HEADER */
-.header { background: #1a0f05; position: relative; overflow: hidden; height: 220px; }
-.header-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-.header-logo { position: absolute; top: 16px; left: 16px; width: 48px; height: 48px; border-radius: 50%; border: 2px solid rgba(212,168,83,0.7); background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 20px; font-weight: 700; cursor: pointer; z-index: 2; }
-.header-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 24px 16px 18px; background: linear-gradient(to top, rgba(0,0,0,0.92) 0%, transparent 100%); z-index: 2; }
-.header-name { color: #fff; font-size: 26px; font-weight: 700; }
-.header-sub { color: rgba(255,255,255,0.55); font-size: 13px; margin-top: 2px; }
-.gold { color: var(--gold); }
-
-.section-label { font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: 1.8px; text-transform: uppercase; padding: 20px 16px 10px; }
-.categories { padding: 0 12px; display: flex; flex-direction: column; gap: 8px; }
-.cat-card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 14px 16px; display: flex; align-items: center; gap: 14px; cursor: pointer; transition: transform 0.1s; }
-.cat-card:active { transform: scale(0.98); }
-.cat-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
-.cat-info { flex: 1; }
-.cat-name { font-size: 15px; font-weight: 600; }
-.cat-desc { font-size: 12px; color: var(--muted); margin-top: 1px; }
-.arrow { color: var(--muted); font-size: 18px; }
-
-.info-card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); margin: 0 12px; }
-.info-row { display: flex; align-items: flex-start; gap: 12px; padding: 13px 16px; border-bottom: 1px solid var(--border); }
-.info-row:last-child { border-bottom: none; }
-.info-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
-.info-label { font-size: 11px; color: var(--muted); margin-bottom: 2px; }
-.info-val { font-size: 13px; font-weight: 500; }
-.open-pill { display: inline-block; background: #e8f5e9; color: #2e7d32; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; margin-left: 6px; }
-.social-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 8px 12px 0; }
-.social-btn { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 12px; text-align: center; font-size: 13px; font-weight: 500; cursor: pointer; text-decoration: none; color: var(--text); display: block; }
-
-/* DETAIL */
-.detail-header { background: var(--dark); }
-.detail-top-bar { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px 0; }
-.back-btn { color: var(--gold); font-size: 14px; font-weight: 500; cursor: pointer; }
-.detail-title-area { padding: 10px 16px 14px; }
-.detail-title { color: #fff; font-size: 20px; font-weight: 600; }
-.detail-sub { color: rgba(255,255,255,0.5); font-size: 12px; margin-top: 2px; }
-
-/* SEARCH - GLOBAL */
-.global-search-wrap { padding: 10px 12px 0; }
-.global-search { width: 100%; padding: 10px 14px 10px 38px; border-radius: 12px; border: 1px solid var(--border); font-size: 14px; background: var(--card); color: var(--text); outline: none; }
-.global-search:focus { border-color: var(--gold); }
-.search-icon { position: absolute; left: 24px; top: 50%; transform: translateY(-50%); font-size: 16px; pointer-events: none; }
-.search-wrap-rel { position: relative; }
-
-/* CAT TABS */
-.cat-tabs { display: flex; overflow-x: auto; gap: 8px; padding: 10px 12px 0; scrollbar-width: none; }
-.cat-tabs::-webkit-scrollbar { display: none; }
-.cat-tab { flex-shrink: 0; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid var(--border); background: var(--card); color: var(--text); white-space: nowrap; }
-.cat-tab.active { background: var(--gold); color: #fff; border-color: var(--gold); }
-
-/* ITEMS */
-.items-list { padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
-.item-card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; }
-.item-inner { padding: 12px; display: flex; gap: 12px; align-items: flex-start; }
-.item-img { width: 80px; height: 80px; border-radius: 10px; flex-shrink: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 34px; overflow: hidden; }
-.item-img img { width: 80px; height: 80px; object-fit: cover; display: block; }
-.item-info { flex: 1; min-width: 0; }
-.item-name { font-size: 14px; font-weight: 600; line-height: 1.3; }
-.item-desc { font-size: 12px; color: var(--muted); margin-top: 3px; line-height: 1.4; }
-.item-meta { display: flex; align-items: center; gap: 6px; margin-top: 5px; flex-wrap: wrap; }
-.item-badge { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 20px; }
-.item-badge.hit { background: #fff3e0; color: #e65100; }
-.item-badge.new { background: #e8f5e9; color: #2e7d32; }
-.item-badge.post { background: #e3f2fd; color: #1565c0; }
-.item-time { font-size: 11px; color: var(--muted); }
-.item-footer { display: flex; align-items: center; justify-content: space-between; padding: 0 12px 12px; }
-.item-price { font-size: 16px; font-weight: 700; color: var(--gold); }
-.item-weight { font-size: 11px; color: var(--muted); }
-.item-actions { display: flex; align-items: center; gap: 8px; }
-.fav-btn { background: none; border: none; cursor: pointer; font-size: 22px; padding: 2px; }
-.share-btn { background: none; border: 1px solid var(--border); border-radius: 8px; padding: 5px 10px; font-size: 12px; cursor: pointer; color: var(--muted); }
-.loading-msg { text-align: center; padding: 40px 16px; color: var(--muted); font-size: 14px; }
-.footer { text-align: center; padding: 24px 16px; color: var(--muted); font-size: 12px; }
-.fav-count { background: var(--gold); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 10px; margin-left: 4px; }
-
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{--gold:#d4a853;--dark:#1a1a1a;--bg:#f5f4f0;--card:#fff;--text:#1a1a1a;--muted:#888;--border:rgba(0,0,0,0.08);--radius:14px;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.header{background:#1a0f05;position:relative;overflow:hidden;height:220px;}
+.header-svg{position:absolute;top:0;left:0;width:100%;height:100%;}
+.header-logo{position:absolute;top:16px;left:16px;width:48px;height:48px;border-radius:50%;border:2px solid rgba(212,168,83,0.7);background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:20px;font-weight:700;cursor:pointer;z-index:2;}
+.header-info{position:absolute;bottom:0;left:0;right:0;padding:24px 16px 18px;background:linear-gradient(to top,rgba(0,0,0,0.92) 0%,transparent 100%);z-index:2;}
+.header-name{color:#fff;font-size:26px;font-weight:700;}
+.header-sub{color:rgba(255,255,255,0.55);font-size:13px;margin-top:2px;}
+.gold{color:var(--gold);}
+.section-label{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:1.8px;text-transform:uppercase;padding:20px 16px 10px;}
+.categories{padding:0 12px;display:flex;flex-direction:column;gap:8px;}
+.cat-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:14px 16px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:transform 0.1s;}
+.cat-card:active{transform:scale(0.98);}
+.cat-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.cat-info{flex:1;}
+.cat-name{font-size:15px;font-weight:600;}
+.cat-desc{font-size:12px;color:var(--muted);margin-top:1px;}
+.arrow{color:var(--muted);font-size:18px;}
+.info-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);margin:0 12px;}
+.info-row{display:flex;align-items:flex-start;gap:12px;padding:13px 16px;border-bottom:1px solid var(--border);}
+.info-row:last-child{border-bottom:none;}
+.info-icon{font-size:18px;flex-shrink:0;margin-top:1px;}
+.info-label{font-size:11px;color:var(--muted);margin-bottom:2px;}
+.info-val{font-size:13px;font-weight:500;}
+.info-link{color:var(--gold);text-decoration:none;font-size:13px;font-weight:500;}
+.open-pill{display:inline-block;background:#e8f5e9;color:#2e7d32;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;margin-left:6px;}
+.social-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 12px 0;}
+.social-btn{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:12px;text-align:center;font-size:13px;font-weight:500;cursor:pointer;text-decoration:none;color:var(--text);display:block;}
+.detail-header{background:var(--dark);}
+.detail-top-bar{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 0;}
+.back-btn{color:var(--gold);font-size:14px;font-weight:500;cursor:pointer;}
+.detail-title-area{padding:10px 16px 14px;}
+.detail-title{color:#fff;font-size:20px;font-weight:600;}
+.detail-sub{color:rgba(255,255,255,0.5);font-size:12px;margin-top:2px;}
+.search-bar{padding:10px 12px;position:relative;}
+.search-bar input{width:100%;padding:10px 14px 10px 40px;border-radius:12px;border:1px solid var(--border);font-size:14px;background:var(--card);color:var(--text);outline:none;}
+.search-bar input:focus{border-color:var(--gold);}
+.search-bar .si{position:absolute;left:24px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none;}
+.cat-tabs{display:flex;overflow-x:auto;gap:8px;padding:0 12px 10px;scrollbar-width:none;}
+.cat-tabs::-webkit-scrollbar{display:none;}
+.cat-tab{flex-shrink:0;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--text);white-space:nowrap;}
+.cat-tab.active{background:var(--gold);color:#fff;border-color:var(--gold);}
+.items-list{padding:10px 12px;display:flex;flex-direction:column;gap:8px;}
+.item-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;cursor:pointer;}
+.item-inner{padding:12px;display:flex;gap:12px;align-items:flex-start;}
+.item-img{width:80px;height:80px;border-radius:10px;flex-shrink:0;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:34px;overflow:hidden;}
+.item-img img{width:80px;height:80px;object-fit:cover;display:block;}
+.item-info{flex:1;min-width:0;}
+.item-name{font-size:14px;font-weight:600;line-height:1.3;}
+.item-desc{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.4;}
+.item-meta{display:flex;align-items:center;gap:6px;margin-top:5px;flex-wrap:wrap;}
+.item-badge{font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;}
+.item-badge.hit{background:#fff3e0;color:#e65100;}
+.item-badge.new{background:#e8f5e9;color:#2e7d32;}
+.item-badge.post{background:#e3f2fd;color:#1565c0;}
+.item-time{font-size:11px;color:var(--muted);}
+.item-footer{display:flex;align-items:center;justify-content:space-between;padding:0 12px 12px;}
+.item-price{font-size:16px;font-weight:700;color:var(--gold);}
+.item-weight{font-size:11px;color:var(--muted);}
+.item-actions{display:flex;align-items:center;gap:8px;}
+.fav-btn{background:none;border:none;cursor:pointer;font-size:22px;padding:2px;}
+.share-btn{background:none;border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-size:12px;cursor:pointer;color:var(--muted);}
+.loading-msg{text-align:center;padding:40px 16px;color:var(--muted);font-size:14px;}
+.no-results{text-align:center;padding:30px 16px;color:var(--muted);font-size:14px;line-height:1.6;}
+.footer{text-align:center;padding:24px 16px;color:var(--muted);font-size:12px;}
+.fav-count{background:var(--gold);color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px;margin-left:4px;}
+/* ITEM MODAL */
+.item-modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:200;display:flex;align-items:flex-end;justify-content:center;}
+.item-modal{background:var(--card);border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:85vh;overflow-y:auto;}
+.item-modal-img{width:100%;height:220px;object-fit:cover;display:block;background:var(--bg);}
+.item-modal-img-placeholder{width:100%;height:220px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:70px;}
+.item-modal-body{padding:16px;}
+.item-modal-name{font-size:20px;font-weight:700;line-height:1.3;}
+.item-modal-desc{font-size:14px;color:var(--muted);margin-top:8px;line-height:1.5;}
+.item-modal-footer{display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding-top:16px;border-top:1px solid var(--border);}
+.item-modal-price{font-size:22px;font-weight:700;color:var(--gold);}
+.item-modal-close{position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,0.4);color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;}
 /* ADMIN */
-.admin-header { background: var(--dark); color: #fff; padding: 16px; display: flex; align-items: center; justify-content: space-between; }
-.admin-title { font-size: 17px; font-weight: 600; }
-.admin-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
-.admin-wrap { max-width: 480px; margin: 0 auto; padding: 12px; }
-.btn { display: inline-block; padding: 10px 16px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; }
-.btn-gold { background: var(--gold); color: #fff; }
-.btn-outline { background: transparent; border: 1px solid rgba(255,255,255,0.3); color: #fff; font-size: 12px; }
-.btn-danger { background: #f44336; color: #fff; font-size: 11px; padding: 5px 9px; border-radius: 8px; cursor: pointer; border: none; }
-.btn-edit { background: #2196f3; color: #fff; font-size: 11px; padding: 5px 9px; border-radius: 8px; cursor: pointer; border: none; }
-.form-card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 14px; margin-bottom: 10px; }
-.form-title { font-size: 14px; font-weight: 600; margin-bottom: 12px; }
-label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 3px; margin-top: 10px; }
-label:first-of-type { margin-top: 0; }
-input, textarea, select { width: 100%; padding: 9px 12px; border-radius: 10px; border: 1px solid var(--border); font-size: 13px; background: var(--bg); color: var(--text); font-family: inherit; outline: none; }
-input:focus, textarea:focus, select:focus { border-color: var(--gold); }
-textarea { resize: vertical; min-height: 60px; }
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.admin-cat-tabs { display: flex; overflow-x: auto; gap: 6px; margin-bottom: 10px; scrollbar-width: none; }
-.admin-cat-tabs::-webkit-scrollbar { display: none; }
-.admin-cat-tab { flex-shrink: 0; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; cursor: pointer; border: 1px solid var(--border); background: var(--card); color: var(--text); white-space: nowrap; }
-.admin-cat-tab.active { background: var(--gold); color: #fff; border-color: var(--gold); }
-.admin-item { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 10px 12px; display: flex; gap: 10px; align-items: center; margin-bottom: 6px; }
-.admin-item-img { width: 48px; height: 48px; border-radius: 8px; background: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; overflow: hidden; }
-.admin-item-img img { width: 48px; height: 48px; object-fit: cover; }
-.admin-item-info { flex: 1; min-width: 0; }
-.admin-item-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.admin-item-meta { font-size: 11px; color: var(--muted); margin-top: 1px; }
-.admin-item-price { font-size: 13px; font-weight: 700; color: var(--gold); }
-.admin-item-btns { display: flex; gap: 4px; flex-shrink: 0; align-items: center; }
-.toggle { width: 36px; height: 20px; border-radius: 10px; cursor: pointer; border: none; position: relative; flex-shrink: 0; transition: background 0.2s; }
-.toggle.on { background: #4caf50; }
-.toggle.off { background: #ccc; }
-.toggle::after { content: ''; position: absolute; width: 16px; height: 16px; border-radius: 50%; background: #fff; top: 2px; transition: left 0.2s; }
-.toggle.on::after { left: 18px; }
-.toggle.off::after { left: 2px; }
-.alert { padding: 10px 14px; border-radius: 10px; font-size: 13px; margin-bottom: 10px; }
-.alert-success { background: #e8f5e9; color: #2e7d32; }
-.alert-error { background: #ffebee; color: #c62828; }
-.upload-btn { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-radius: 10px; border: 1px dashed var(--gold); background: #fffbf0; color: var(--gold); font-size: 13px; font-weight: 500; cursor: pointer; margin-top: 6px; }
-.img-preview { width: 80px; height: 80px; border-radius: 10px; object-fit: cover; margin-top: 8px; }
-.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 100; display: flex; align-items: flex-end; justify-content: center; }
-.modal { background: var(--card); border-radius: 20px 20px 0 0; padding: 20px 16px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; }
-.modal-title { font-size: 16px; font-weight: 600; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; }
-.modal-close { font-size: 22px; cursor: pointer; color: var(--muted); background: none; border: none; }
-.login-wrap { max-width: 360px; margin: 60px auto; padding: 16px; }
-.login-card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 28px; }
-.login-logo { text-align: center; font-size: 32px; margin-bottom: 8px; }
-.login-title { text-align: center; font-size: 20px; font-weight: 700; margin-bottom: 4px; }
-.login-sub { text-align: center; font-size: 13px; color: var(--muted); margin-bottom: 20px; }
-.view { display: none; }
-.view.active { display: block; }
-.max-w { max-width: 480px; margin: 0 auto; }
-.fav-header { background: var(--dark); padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
-.fav-header-title { color: #fff; font-size: 18px; font-weight: 600; }
-.no-results { text-align: center; padding: 30px 16px; color: var(--muted); font-size: 14px; }
+.admin-header{background:var(--dark);color:#fff;padding:16px;display:flex;align-items:center;justify-content:space-between;}
+.admin-title{font-size:17px;font-weight:600;}
+.admin-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+.admin-wrap{max-width:480px;margin:0 auto;padding:12px;}
+.btn{display:inline-block;padding:10px 16px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;border:none;}
+.btn-gold{background:var(--gold);color:#fff;}
+.btn-outline{background:transparent;border:1px solid rgba(255,255,255,0.3);color:#fff;font-size:12px;}
+.btn-danger{background:#f44336;color:#fff;font-size:11px;padding:5px 9px;border-radius:8px;cursor:pointer;border:none;}
+.btn-edit{background:#2196f3;color:#fff;font-size:11px;padding:5px 9px;border-radius:8px;cursor:pointer;border:none;}
+.form-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:14px;margin-bottom:10px;}
+.form-title{font-size:14px;font-weight:600;margin-bottom:12px;}
+label{display:block;font-size:11px;color:var(--muted);margin-bottom:3px;margin-top:10px;}
+label:first-of-type{margin-top:0;}
+input,textarea,select{width:100%;padding:9px 12px;border-radius:10px;border:1px solid var(--border);font-size:13px;background:var(--bg);color:var(--text);font-family:inherit;outline:none;}
+input:focus,textarea:focus,select:focus{border-color:var(--gold);}
+textarea{resize:vertical;min-height:60px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.admin-cat-tabs{display:flex;overflow-x:auto;gap:6px;margin-bottom:10px;scrollbar-width:none;}
+.admin-cat-tabs::-webkit-scrollbar{display:none;}
+.admin-cat-tab{flex-shrink:0;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--text);white-space:nowrap;}
+.admin-cat-tab.active{background:var(--gold);color:#fff;border-color:var(--gold);}
+.admin-item{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:10px 12px;display:flex;gap:10px;align-items:center;margin-bottom:6px;}
+.admin-item-img{width:48px;height:48px;border-radius:8px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;overflow:hidden;}
+.admin-item-img img{width:48px;height:48px;object-fit:cover;}
+.admin-item-info{flex:1;min-width:0;}
+.admin-item-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.admin-item-meta{font-size:11px;color:var(--muted);margin-top:1px;}
+.admin-item-price{font-size:13px;font-weight:700;color:var(--gold);}
+.admin-item-btns{display:flex;gap:4px;flex-shrink:0;align-items:center;}
+.toggle{width:36px;height:20px;border-radius:10px;cursor:pointer;border:none;position:relative;flex-shrink:0;transition:background 0.2s;}
+.toggle.on{background:#4caf50;}
+.toggle.off{background:#ccc;}
+.toggle::after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;top:2px;transition:left 0.2s;}
+.toggle.on::after{left:18px;}
+.toggle.off::after{left:2px;}
+.alert{padding:10px 14px;border-radius:10px;font-size:13px;margin-bottom:10px;}
+.alert-success{background:#e8f5e9;color:#2e7d32;}
+.alert-error{background:#ffebee;color:#c62828;}
+.upload-btn{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:10px;border:1px dashed var(--gold);background:#fffbf0;color:var(--gold);font-size:13px;font-weight:500;cursor:pointer;margin-top:6px;width:100%;}
+.img-preview{width:80px;height:80px;border-radius:10px;object-fit:cover;margin-top:8px;}
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:100;display:flex;align-items:flex-end;justify-content:center;}
+.modal{background:var(--card);border-radius:20px 20px 0 0;padding:20px 16px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;}
+.modal-title{font-size:16px;font-weight:600;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;}
+.modal-close{font-size:22px;cursor:pointer;color:var(--muted);background:none;border:none;}
+.login-wrap{max-width:360px;margin:60px auto;padding:16px;}
+.login-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:28px;}
+.login-logo{text-align:center;font-size:32px;margin-bottom:8px;}
+.login-title{text-align:center;font-size:20px;font-weight:700;margin-bottom:4px;}
+.login-sub{text-align:center;font-size:13px;color:var(--muted);margin-bottom:20px;}
+.view{display:none;}
+.view.active{display:block;}
+.max-w{max-width:480px;margin:0 auto;}
+.fav-header{background:var(--dark);padding:14px 16px;display:flex;align-items:center;gap:12px;}
+.fav-header-title{color:#fff;font-size:18px;font-weight:600;}
+.go-menu-btn{display:block;margin:16px 12px;padding:14px;background:var(--gold);color:#fff;border-radius:var(--radius);text-align:center;font-size:14px;font-weight:600;cursor:pointer;}
 </style>
 </head>
 <body>
 
-<!-- MENU HOME -->
+<!-- HOME -->
 <div class="view active" id="viewMenu">
   <div class="max-w">
     <div class="header">
-      <!-- Beautiful burger SVG header -->
       <svg class="header-svg" viewBox="0 0 390 220" xmlns="http://www.w3.org/2000/svg">
         <rect width="390" height="220" fill="#1a0f05"/>
-        <!-- Background glow -->
         <ellipse cx="195" cy="110" rx="160" ry="90" fill="#2d1b0e" opacity="0.8"/>
-        <!-- Burger illustration -->
-        <!-- Top bun -->
         <ellipse cx="195" cy="82" rx="68" ry="28" fill="#c8853a"/>
         <ellipse cx="195" cy="72" rx="68" ry="22" fill="#e09848"/>
         <ellipse cx="195" cy="68" rx="65" ry="18" fill="#f0ac58"/>
-        <!-- Sesame seeds -->
         <ellipse cx="175" cy="64" rx="5" ry="3" fill="#d4923e" transform="rotate(-20,175,64)"/>
         <ellipse cx="200" cy="60" rx="5" ry="3" fill="#d4923e" transform="rotate(10,200,60)"/>
         <ellipse cx="220" cy="65" rx="5" ry="3" fill="#d4923e" transform="rotate(-15,220,65)"/>
-        <!-- Lettuce -->
         <path d="M122 92 Q140 85 160 90 Q175 83 195 88 Q215 82 235 88 Q255 84 268 92" stroke="#4caf50" stroke-width="7" fill="none" stroke-linecap="round"/>
-        <!-- Cheese -->
         <rect x="124" y="96" width="142" height="10" rx="2" fill="#ffd54f"/>
         <polygon points="124,96 116,106 124,106" fill="#ffd54f"/>
         <polygon points="266,96 274,106 266,106" fill="#ffd54f"/>
-        <!-- Patty -->
         <rect x="120" y="104" width="150" height="22" rx="8" fill="#6d3a1f"/>
         <rect x="120" y="104" width="150" height="10" rx="5" fill="#7d4a2f"/>
-        <!-- Tomato -->
         <rect x="122" y="128" width="146" height="8" rx="3" fill="#e53935" opacity="0.9"/>
-        <!-- Bottom bun -->
         <ellipse cx="195" cy="143" rx="72" ry="14" fill="#c8853a"/>
         <ellipse cx="195" cy="149" rx="72" ry="12" fill="#b8742a"/>
-        <!-- Steam lines -->
-        <path d="M160 48 Q163 40 160 32" stroke="rgba(255,255,255,0.2)" stroke-width="2" fill="none" stroke-linecap="round"/>
-        <path d="M195 44 Q198 36 195 28" stroke="rgba(255,255,255,0.2)" stroke-width="2" fill="none" stroke-linecap="round"/>
-        <path d="M230 48 Q233 40 230 32" stroke="rgba(255,255,255,0.2)" stroke-width="2" fill="none" stroke-linecap="round"/>
-        <!-- Bottom overlay -->
-        <rect x="0" y="160" width="390" height="60" fill="url(#hg)"/>
+        <path d="M160 48 Q163 40 160 32" stroke="rgba(255,255,255,0.15)" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M195 44 Q198 36 195 28" stroke="rgba(255,255,255,0.15)" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M230 48 Q233 40 230 32" stroke="rgba(255,255,255,0.15)" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <rect x="0" y="155" width="390" height="65" fill="url(#hg)"/>
         <defs><linearGradient id="hg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a0f05" stop-opacity="0"/><stop offset="100%" stop-color="#1a0f05" stop-opacity="1"/></linearGradient></defs>
       </svg>
       <div class="header-logo" id="logoBtn">D</div>
@@ -191,22 +178,37 @@ textarea { resize: vertical; min-height: 60px; }
         <div class="header-sub">Кальян-бар · Могилів-Подільський</div>
       </div>
     </div>
-
     <div style="padding:12px 12px 0;">
       <div onclick="showFavorites()" style="background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:12px 16px;text-align:center;font-size:13px;font-weight:500;cursor:pointer;">
         ❤️ Улюблене <span class="fav-count" id="favCountHome">0</span>
       </div>
     </div>
-
     <div class="section-label">Меню</div>
     <div class="categories" id="categoriesList"></div>
-
     <div class="section-label">Контакти</div>
     <div class="info-card">
-      <div class="info-row"><span class="info-icon">📍</span><div><div class="info-label">Адреса</div><div class="info-val">Стависька 32/24, Могилів-Подільський</div></div></div>
-      <div class="info-row"><span class="info-icon">📞</span><div><div class="info-label">Телефон</div><div class="info-val">0980808380</div></div></div>
-      <div class="info-row"><span class="info-icon">🕐</span><div><div class="info-label">Робочий час</div><div class="info-val">11:00 – 23:00 <span class="open-pill">Вт–Нд</span></div></div></div>
-      <div class="info-row"><span class="info-icon">📶</span><div><div class="info-label">WiFi</div><div class="info-val">druzi2022</div></div></div>
+      <div class="info-row">
+        <span class="info-icon">📍</span>
+        <div>
+          <div class="info-label">Адреса</div>
+          <a href="https://www.google.com/maps?q=%D0%9C%D0%BE%D0%B3%D0%B8%D0%BB%D1%96%D0%B2-%D0%9F%D0%BE%D0%B4%D1%96%D0%BB%D1%8C%D1%81%D1%8C%D0%BA%D0%B8%D0%B9+%D0%A1%D1%82%D0%B0%D0%B2%D0%B8%D1%81%D1%8C%D0%BA%D0%B0+32%5C24" target="_blank" class="info-link">Стависька 32/24, Могилів-Подільський 🗺</a>
+        </div>
+      </div>
+      <div class="info-row">
+        <span class="info-icon">📞</span>
+        <div>
+          <div class="info-label">Телефон</div>
+          <a href="tel:+380980808380" class="info-link">0980808380 📲</a>
+        </div>
+      </div>
+      <div class="info-row">
+        <span class="info-icon">🕐</span>
+        <div><div class="info-label">Робочий час</div><div class="info-val">11:00 – 23:00 <span class="open-pill">Пн–Нд</span></div></div>
+      </div>
+      <div class="info-row">
+        <span class="info-icon">📶</span>
+        <div><div class="info-label">WiFi</div><div class="info-val">druzi2022</div></div>
+      </div>
     </div>
     <div class="social-grid">
       <a href="https://www.tiktok.com/@druzi_bar" target="_blank" class="social-btn">📱 TikTok</a>
@@ -216,7 +218,7 @@ textarea { resize: vertical; min-height: 60px; }
   </div>
 </div>
 
-<!-- CATEGORY VIEW -->
+<!-- CATEGORY -->
 <div class="view" id="viewCategory">
   <div class="max-w">
     <div class="detail-header">
@@ -229,27 +231,23 @@ textarea { resize: vertical; min-height: 60px; }
         <div class="detail-sub" id="catSub"></div>
       </div>
     </div>
-    <!-- Global search -->
-    <div class="global-search-wrap">
-      <div class="search-wrap-rel">
-        <span class="search-icon">🔍</span>
-        <input class="global-search" type="text" placeholder="Пошук по всьому меню..." oninput="globalSearch(this.value)" id="searchInput">
-      </div>
+    <div class="search-bar">
+      <span class="si">🔍</span>
+      <input type="text" placeholder="Пошук по всьому меню..." oninput="globalSearch(this.value)" id="searchInput">
     </div>
-    <!-- Category tabs -->
     <div class="cat-tabs" id="catTabs"></div>
     <div class="items-list" id="itemsList"></div>
   </div>
 </div>
 
-<!-- FAVORITES VIEW -->
+<!-- FAVORITES -->
 <div class="view" id="viewFavorites">
   <div class="max-w">
     <div class="fav-header">
       <div class="back-btn" onclick="showView('viewMenu')">‹ Назад</div>
       <div class="fav-header-title">❤️ Улюблене</div>
     </div>
-    <div class="items-list" id="favList"></div>
+    <div id="favList"></div>
   </div>
 </div>
 
@@ -311,17 +309,16 @@ textarea { resize: vertical; min-height: 60px; }
         <div><label>Emoji</label><input type="text" id="fEmoji" placeholder="🍣" style="font-size:18px;text-align:center;" maxlength="4"></div>
         <div><label>Час приготування</label><input type="text" id="fTime" placeholder="15 хв"></div>
       </div>
-      <label>Фото</label>
-      <input type="text" id="fImage" placeholder="URL посилання на фото">
-      <div class="upload-btn" onclick="document.getElementById('fFile').click()">
-        📷 Або завантажити з девайса
+      <label>Фото URL</label>
+      <input type="text" id="fImage" placeholder="https://...">
+      <button class="upload-btn" onclick="document.getElementById('fFile').click()">
+        📷 Завантажити з девайса
         <input type="file" id="fFile" accept="image/*" style="display:none" onchange="uploadFile(this,'fImage','fPreview')">
-      </div>
+      </button>
       <img id="fPreview" class="img-preview" style="display:none">
       <button class="btn btn-gold" style="width:100%;margin-top:14px;" onclick="addItem()">Зберегти страву</button>
     </div>
-
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+    <div style="margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;">
       <div class="form-title" style="margin:0;">📋 Всі страви</div>
     </div>
     <div style="margin-bottom:8px;">
@@ -368,21 +365,44 @@ textarea { resize: vertical; min-height: 60px; }
       <div><label>Час приготування</label><input type="text" id="eTime"></div>
     </div>
     <label>Фото URL</label><input type="text" id="eImage">
-    <div class="upload-btn" onclick="document.getElementById('eFile').click()">
+    <button class="upload-btn" onclick="document.getElementById('eFile').click()">
       📷 Завантажити нове фото
       <input type="file" id="eFile" accept="image/*" style="display:none" onchange="uploadFile(this,'eImage','ePreview')">
-    </div>
+    </button>
     <img id="ePreview" class="img-preview" style="display:none">
     <button class="btn btn-gold" style="width:100%;margin-top:14px;" onclick="saveEdit()">Зберегти зміни</button>
   </div>
 </div>
 
+<!-- ITEM DETAIL MODAL -->
+<div id="itemModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:150;align-items:flex-end;justify-content:center;">
+  <div class="item-modal" style="position:relative;">
+    <button class="item-modal-close" onclick="closeItemModal()">×</button>
+    <div id="itemModalImg"></div>
+    <div class="item-modal-body">
+      <div class="item-modal-name" id="itemModalName"></div>
+      <div id="itemModalMeta" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;"></div>
+      <div class="item-modal-desc" id="itemModalDesc"></div>
+      <div class="item-modal-footer">
+        <div>
+          <div class="item-modal-price" id="itemModalPrice"></div>
+          <div style="font-size:12px;color:var(--muted);" id="itemModalWeight"></div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <button class="fav-btn" id="itemModalFav" style="font-size:26px;"></button>
+          <button class="share-btn" id="itemModalShare" style="font-size:13px;padding:8px 14px;">↗ Поділитись</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
-const SUPABASE_URL = 'https://kfjkujrnimqounsnltpr.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtmamt1anJuaW1xb3Vuc25sdHByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3ODA5NjMsImV4cCI6MjA5MjM1Njk2M30.PxW__VEh0JrNAz6w7o3Dd5c0sgDQOXtXdGx3cUjjtpQ';
-const ADMIN_PASSWORD = 'druzidruzi1';
-const BUCKET = 'menu-images';
-const H = {'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation'};
+const SUPABASE_URL='https://kfjkujrnimqounsnltpr.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtmamt1anJuaW1xb3Vuc25sdHByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3ODA5NjMsImV4cCI6MjA5MjM1Njk2M30.PxW__VEh0JrNAz6w7o3Dd5c0sgDQOXtXdGx3cUjjtpQ';
+const ADMIN_PASSWORD='druzidruzi1';
+const BUCKET='menu-images';
+const H={'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation'};
 
 async function dbGet(table,filters,order){
   let url=`${SUPABASE_URL}/rest/v1/${table}?select=*`;
@@ -392,11 +412,22 @@ async function dbGet(table,filters,order){
   const d=await r.json();
   return{data:Array.isArray(d)?d:[],error:r.ok?null:d};
 }
-async function dbPost(table,row){const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}`,{method:'POST',headers:H,body:JSON.stringify(row)});return{error:r.ok?null:await r.json()};}
-async function dbPatch(table,vals,col,val){const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}?${col}=eq.${encodeURIComponent(val)}`,{method:'PATCH',headers:H,body:JSON.stringify(vals)});return{error:r.ok?null:await r.json()};}
-async function dbDel(table,col,val){const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}?${col}=eq.${encodeURIComponent(val)}`,{method:'DELETE',headers:H});return{error:r.ok?null:await r.json()};}
+async function dbPost(table,row){
+  const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}`,{method:'POST',headers:H,body:JSON.stringify(row)});
+  return{error:r.ok?null:await r.json()};
+}
+async function dbPatch(table,vals,col,val){
+  const url=`${SUPABASE_URL}/rest/v1/${table}?${col}=eq.${encodeURIComponent(val)}`;
+  const r=await fetch(url,{method:'PATCH',headers:H,body:JSON.stringify(vals)});
+  return{error:r.ok?null:await r.json()};
+}
+async function dbDel(table,col,val){
+  const url=`${SUPABASE_URL}/rest/v1/${table}?${col}=eq.${encodeURIComponent(val)}`;
+  const r=await fetch(url,{method:'DELETE',headers:{...H,'Prefer':''}});
+  return{error:r.ok?null:await r.json()};
+}
 
-async function uploadFile(input, urlFieldId, previewId) {
+async function uploadFile(input,urlId,prevId){
   if(!input.files||!input.files[0])return;
   const file=input.files[0];
   const ext=file.name.split('.').pop();
@@ -408,12 +439,10 @@ async function uploadFile(input, urlFieldId, previewId) {
   });
   if(r.ok){
     const url=`${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${fname}`;
-    document.getElementById(urlFieldId).value=url;
-    const prev=document.getElementById(previewId);
-    prev.src=url; prev.style.display='block';
-  } else {
-    alert('Помилка завантаження фото');
-  }
+    document.getElementById(urlId).value=url;
+    const p=document.getElementById(prevId);
+    p.src=url;p.style.display='block';
+  }else{alert('Помилка завантаження фото');}
 }
 
 const CATS=[
@@ -449,16 +478,12 @@ async function openCategory(key,icon,desc){
   document.getElementById('itemsList').innerHTML='<div class="loading-msg">⏳ Завантаження...</div>';
   showView('viewCategory');
   updateFavCount();
-  const {data}=await dbGet('menu_items',null,'category,name');
+  const{data}=await dbGet('menu_items',null,'category,name');
   allItems=data||[];
-  buildCatTabs(key);
-  renderItems(allItems.filter(i=>i.category===key));
-}
-
-function buildCatTabs(activeKey){
   const cats=[...new Set(allItems.map(i=>i.category))];
   document.getElementById('catTabs').innerHTML=cats.map(c=>`
-    <div class="cat-tab ${c===activeKey?'active':''}" onclick="switchTab('${c}',this)">${c}</div>`).join('');
+    <div class="cat-tab ${c===key?'active':''}" onclick="switchTab('${c}',this)">${c}</div>`).join('');
+  renderItems(allItems.filter(i=>i.category===key));
 }
 
 function switchTab(cat,el){
@@ -470,47 +495,45 @@ function switchTab(cat,el){
   el.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
 }
 
-// GLOBAL SEARCH — searches across ALL categories
 function globalSearch(q){
-  if(!q.trim()){
-    renderItems(allItems.filter(i=>i.category===currentCat));
-    return;
-  }
+  if(!q.trim()){renderItems(allItems.filter(i=>i.category===currentCat));return;}
   const ql=q.toLowerCase();
-  const results=allItems.filter(i=>
-    i.name.toLowerCase().includes(ql)||
-    (i.description||'').toLowerCase().includes(ql)||
-    i.category.toLowerCase().includes(ql)
-  );
+  const results=allItems.filter(i=>i.name.toLowerCase().includes(ql)||(i.description||'').toLowerCase().includes(ql)||i.category.toLowerCase().includes(ql));
   renderItems(results,true);
+}
+
+function imgHTML(item){
+  return item.image_url
+    ?`<img src="${item.image_url}" alt="${item.name}" onerror="this.parentElement.innerHTML='${item.emoji||'🍽️'}';">`
+    :(item.emoji||'🍽️');
+}
+
+function badgesHTML(item){
+  return (item.badge==='hit'?'<span class="item-badge hit">🔥 Хіт</span>':'')
+    +(item.badge==='new'?'<span class="item-badge new">✨ New</span>':'')
+    +(item.badge==='post'?'<span class="item-badge post">🥦 Пісне</span>':'')
+    +(item.prep_time?`<span class="item-time">⏱ ${item.prep_time}</span>`:'');
 }
 
 function itemHTML(item,showDel=false){
   const isFav=favorites.includes(item.name);
-  const safe=item.name.replace(/'/g,"\\'").replace(/"/g,'&quot;');
-  return `<div class="item-card" id="icard_${CSS.escape(item.name)}">
+  const sn=item.name.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+  return `<div class="item-card" onclick="openItemModal('${sn}')">
     <div class="item-inner">
-      <div class="item-img">${item.image_url
-        ?`<img src="${item.image_url}" alt="${item.name}" onerror="this.parentElement.innerHTML='${item.emoji||'🍽️'}';">`
-        :item.emoji||'🍽️'}</div>
+      <div class="item-img">${imgHTML(item)}</div>
       <div class="item-info">
         <div class="item-name">${item.name}</div>
         ${item.description?`<div class="item-desc">${item.description}</div>`:''}
-        <div class="item-meta">
-          ${item.badge==='hit'?'<span class="item-badge hit">🔥 Хіт</span>':''}
-          ${item.badge==='new'?'<span class="item-badge new">✨ New</span>':''}
-          ${item.badge==='post'?'<span class="item-badge post">🥦 Пісне</span>':''}
-          ${item.prep_time?`<span class="item-time">⏱ ${item.prep_time}</span>`:''}
-        </div>
+        <div class="item-meta">${badgesHTML(item)}</div>
       </div>
     </div>
     <div class="item-footer">
       <div><div class="item-price">${item.price} грн</div>${item.weight?`<div class="item-weight">${item.weight}</div>`:''}</div>
-      <div class="item-actions">
+      <div class="item-actions" onclick="event.stopPropagation()">
         ${showDel
-          ?`<button class="fav-btn" title="Видалити з улюблених" onclick="removeFav('${safe}',this)">🗑️</button>`
-          :`<button class="fav-btn" onclick="toggleFav('${safe}',this)">${isFav?'❤️':'🤍'}</button>`}
-        <button class="share-btn" onclick="shareItem('${safe}',${item.price})">↗</button>
+          ?`<button class="fav-btn" onclick="removeFav('${sn}')" title="Видалити">🗑️</button>`
+          :`<button class="fav-btn" onclick="toggleFav('${sn}',this)">${isFav?'❤️':'🤍'}</button>`}
+        <button class="share-btn" onclick="shareItem('${sn}',${item.price})">↗</button>
       </div>
     </div>
   </div>`;
@@ -518,60 +541,75 @@ function itemHTML(item,showDel=false){
 
 function renderItems(items,isSearch=false){
   const el=document.getElementById('itemsList');
-  if(!items||!items.length){
-    el.innerHTML=`<div class="no-results">${isSearch?'Нічого не знайдено 🔍':'Поки тут порожньо 🍽️'}</div>`;
-    return;
-  }
-  let html='';
+  if(!items||!items.length){el.innerHTML=`<div class="no-results">${isSearch?'Нічого не знайдено 🔍':'Поки тут порожньо 🍽️'}</div>`;return;}
   if(isSearch){
-    // Group by category when global search
     const groups={};
     items.forEach(i=>{if(!groups[i.category])groups[i.category]=[];groups[i.category].push(i);});
-    Object.entries(groups).forEach(([cat,its])=>{
-      html+=`<div class="section-label" style="padding:8px 0 4px;">${cat}</div>`;
-      html+=its.map(i=>itemHTML(i)).join('');
-    });
-  } else {
-    html=items.map(i=>itemHTML(i)).join('');
+    el.innerHTML=Object.entries(groups).map(([cat,its])=>`<div class="section-label" style="padding:8px 0 4px;">${cat}</div>`+its.map(i=>itemHTML(i)).join('')).join('');
+  }else{
+    el.innerHTML=items.map(i=>itemHTML(i)).join('');
   }
-  el.innerHTML=html;
 }
 
+// ITEM MODAL
+function openItemModal(name){
+  const item=allItems.find(i=>i.name===name);
+  if(!item)return;
+  const isFav=favorites.includes(item.name);
+  document.getElementById('itemModalName').textContent=item.name;
+  document.getElementById('itemModalDesc').textContent=item.description||'';
+  document.getElementById('itemModalPrice').textContent=item.price+' грн';
+  document.getElementById('itemModalWeight').textContent=item.weight||'';
+  document.getElementById('itemModalMeta').innerHTML=badgesHTML(item);
+  document.getElementById('itemModalFav').textContent=isFav?'❤️':'🤍';
+  document.getElementById('itemModalFav').onclick=()=>{
+    toggleFav(item.name,document.getElementById('itemModalFav'));
+    document.getElementById('itemModalFav').textContent=favorites.includes(item.name)?'❤️':'🤍';
+  };
+  document.getElementById('itemModalShare').onclick=()=>shareItem(item.name,item.price);
+  if(item.image_url){
+    document.getElementById('itemModalImg').innerHTML=`<img class="item-modal-img" src="${item.image_url}" alt="${item.name}" onerror="this.parentElement.innerHTML='<div class=item-modal-img-placeholder>${item.emoji||'🍽️'}</div>'">`;
+  }else{
+    document.getElementById('itemModalImg').innerHTML=`<div class="item-modal-img-placeholder">${item.emoji||'🍽️'}</div>`;
+  }
+  document.getElementById('itemModal').style.display='flex';
+}
+function closeItemModal(){document.getElementById('itemModal').style.display='none';}
+document.getElementById('itemModal').addEventListener('click',function(e){if(e.target===this)closeItemModal();});
+
 function toggleFav(name,btn){
-  if(favorites.includes(name)){favorites=favorites.filter(f=>f!==name);btn.textContent='🤍';}
-  else{favorites.push(name);btn.textContent='❤️';}
+  if(favorites.includes(name)){favorites=favorites.filter(f=>f!==name);if(btn)btn.textContent='🤍';}
+  else{favorites.push(name);if(btn)btn.textContent='❤️';}
   localStorage.setItem('druzi_favs',JSON.stringify(favorites));
   updateFavCount();
 }
 
-function removeFav(name,btn){
+function removeFav(name){
   favorites=favorites.filter(f=>f!==name);
   localStorage.setItem('druzi_favs',JSON.stringify(favorites));
   updateFavCount();
-  btn.closest('.item-card').style.animation='fadeOut 0.2s ease forwards';
-  setTimeout(()=>{
-    btn.closest('.item-card').remove();
-    if(!document.querySelector('#favList .item-card'))
-      document.getElementById('favList').innerHTML='<div class="no-results">Поки немає улюблених ❤️<br><br><small>Натискай 🤍 поруч зі стравою</small></div>';
-  },200);
+  renderFavList();
 }
 
 function showFavorites(){
   showView('viewFavorites');
   if(!allItems.length){
-    // Load items if not loaded yet
-    dbGet('menu_items',null,'category,name').then(({data})=>{
-      allItems=data||[];
-      renderFavList();
-    });
-  } else { renderFavList(); }
+    dbGet('menu_items',null,'category,name').then(({data})=>{allItems=data||[];renderFavList();});
+  }else{renderFavList();}
 }
 
 function renderFavList(){
   const favItems=allItems.filter(i=>favorites.includes(i.name));
-  document.getElementById('favList').innerHTML=favItems.length
-    ?favItems.map(i=>itemHTML(i,true)).join('')
-    :'<div class="no-results">Поки немає улюблених ❤️<br><br><small>Натискай 🤍 поруч зі стравою</small></div>';
+  const el=document.getElementById('favList');
+  if(favItems.length){
+    el.innerHTML='<div class="items-list">'+favItems.map(i=>itemHTML(i,true)).join('')+'</div>';
+  }else{
+    el.innerHTML=`<div class="no-results" style="padding:40px 16px;">
+      Поки немає улюблених ❤️<br><br>
+      <small>Натискай 🤍 поруч зі стравою</small>
+    </div>
+    <div class="go-menu-btn" onclick="showView('viewMenu')">🍽️ Перейти до меню</div>`;
+  }
 }
 
 function shareItem(name,price){
@@ -584,10 +622,8 @@ function shareItem(name,price){
 function checkLogin(){
   if(document.getElementById('adminPass').value===ADMIN_PASSWORD){
     sessionStorage.setItem('druzi_admin','1');
-    showView('viewAdmin');
-    loadAdminItems();
-    buildAdminTabs();
-  } else document.getElementById('loginErr').textContent='Невірний пароль';
+    showView('viewAdmin');loadAdminItems();buildAdminTabs();
+  }else document.getElementById('loginErr').textContent='Невірний пароль';
 }
 function logout(){sessionStorage.removeItem('druzi_admin');showView('viewMenu');}
 
@@ -596,12 +632,7 @@ function buildAdminTabs(){
   document.getElementById('adminCatTabs').innerHTML=tabs.map(t=>`
     <div class="admin-cat-tab ${t===adminCat?'active':''}" onclick="switchAdminTab('${t}',this)">${t==='all'?'📋 Всі':t}</div>`).join('');
 }
-function switchAdminTab(cat,el){
-  adminCat=cat;
-  document.querySelectorAll('.admin-cat-tab').forEach(t=>t.classList.remove('active'));
-  el.classList.add('active');
-  renderAdmin(window._adminAll||[],_adminSearch);
-}
+function switchAdminTab(cat,el){adminCat=cat;document.querySelectorAll('.admin-cat-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');renderAdmin(window._adminAll||[],_adminSearch);}
 function filterAdmin(q){_adminSearch=q;renderAdmin(window._adminAll||[],q);}
 
 async function addItem(){
@@ -609,7 +640,7 @@ async function addItem(){
   const price=parseFloat(document.getElementById('fPrice').value);
   if(!name||!price){showAlert('Заповни назву та ціну!','error');return;}
   const row={name,description:document.getElementById('fDesc').value.trim(),price,weight:document.getElementById('fWeight').value.trim(),category:document.getElementById('fCategory').value,emoji:document.getElementById('fEmoji').value.trim(),badge:document.getElementById('fBadge').value,prep_time:document.getElementById('fTime').value.trim(),image_url:document.getElementById('fImage').value.trim(),is_active:true};
-  const {error}=await dbPost('menu_items',row);
+  const{error}=await dbPost('menu_items',row);
   if(error){showAlert('Помилка: '+(error.message||JSON.stringify(error)),'error');return;}
   showAlert('✅ Страву додано!','success');
   ['fName','fDesc','fPrice','fWeight','fEmoji','fTime','fImage'].forEach(id=>document.getElementById(id).value='');
@@ -618,7 +649,7 @@ async function addItem(){
 }
 
 async function loadAdminItems(){
-  const {data}=await dbGet('menu_items',null,'category,name');
+  const{data}=await dbGet('menu_items',null,'category,name');
   window._adminAll=data||[];
   renderAdmin(window._adminAll,_adminSearch);
 }
@@ -633,7 +664,8 @@ function renderAdmin(data,q){
   f.forEach(item=>{
     if(adminCat==='all'&&item.category!==lastCat){html+=`<div class="section-label" style="padding:10px 0 4px;">${item.category}</div>`;lastCat=item.category;}
     const active=item.is_active===true||item.is_active==='true';
-    html+=`<div class="admin-item">
+    const jItem=JSON.stringify(item).replace(/</g,'\\u003c').replace(/'/g,"\\'");
+    html+=`<div class="admin-item" id="ai_${item.id}">
       <div class="admin-item-img">${item.image_url?`<img src="${item.image_url}" onerror="this.parentElement.innerHTML='${item.emoji||'🍽️'}'">`:item.emoji||'🍽️'}</div>
       <div class="admin-item-info">
         <div class="admin-item-name">${item.name}</div>
@@ -641,17 +673,27 @@ function renderAdmin(data,q){
         <div class="admin-item-price">${item.price} грн</div>
       </div>
       <div class="admin-item-btns">
-        <button class="toggle ${active?'on':'off'}" onclick="toggleItem('${item.name}',${active})"></button>
-        <button class="btn-edit" onclick='openEdit(${JSON.stringify(item).replace(/</g,"\\u003c")})'>✏️</button>
-        <button class="btn-danger" onclick="deleteItem('${item.name.replace(/'/g,"\\'")}')">✕</button>
+        <button class="toggle ${active?'on':'off'}" onclick="toggleItem('${item.name.replace(/'/g,"\\'")}',${active})"></button>
+        <button class="btn-edit" onclick='openEdit(${jItem})'>✏️</button>
+        <button class="btn-danger" onclick="deleteItem('${item.name.replace(/'/g,"\\'").replace(/"/g,"&quot;")}')">✕</button>
       </div>
     </div>`;
   });
   wrap.innerHTML=html;
 }
 
-async function toggleItem(name,cur){await dbPatch('menu_items',{is_active:!cur},'name',name);loadAdminItems();}
-async function deleteItem(name){if(!confirm(`Видалити "${name}"?`))return;await dbDel('menu_items','name',name);loadAdminItems();}
+async function toggleItem(name,cur){
+  await dbPatch('menu_items',{is_active:!cur},'name',name);
+  loadAdminItems();
+}
+
+async function deleteItem(name){
+  if(!confirm(`Видалити "${name}"?`))return;
+  const{error}=await dbDel('menu_items','name',name);
+  if(error){showAlert('Помилка видалення: '+JSON.stringify(error),'error');return;}
+  showAlert('🗑️ Видалено!','success');
+  loadAdminItems();
+}
 
 function openEdit(item){
   document.getElementById('eOrigName').value=item.name;
@@ -664,22 +706,38 @@ function openEdit(item){
   document.getElementById('eEmoji').value=item.emoji||'';
   document.getElementById('eTime').value=item.prep_time||'';
   document.getElementById('eImage').value=item.image_url||'';
-  const prev=document.getElementById('ePreview');
-  if(item.image_url){prev.src=item.image_url;prev.style.display='block';}else{prev.style.display='none';}
+  const p=document.getElementById('ePreview');
+  if(item.image_url){p.src=item.image_url;p.style.display='block';}else p.style.display='none';
   document.getElementById('editModal').style.display='flex';
 }
 function closeEdit(){document.getElementById('editModal').style.display='none';}
+
 async function saveEdit(){
   const orig=document.getElementById('eOrigName').value;
-  const vals={name:document.getElementById('eName').value.trim(),description:document.getElementById('eDesc').value.trim(),price:parseFloat(document.getElementById('ePrice').value),weight:document.getElementById('eWeight').value.trim(),category:document.getElementById('eCategory').value,badge:document.getElementById('eBadge').value,emoji:document.getElementById('eEmoji').value.trim(),prep_time:document.getElementById('eTime').value.trim(),image_url:document.getElementById('eImage').value.trim()};
-  const {error}=await dbPatch('menu_items',vals,'name',orig);
-  if(error){showAlert('Помилка збереження','error');return;}
-  closeEdit();showAlert('✅ Збережено!','success');loadAdminItems();
+  const vals={
+    name:document.getElementById('eName').value.trim(),
+    description:document.getElementById('eDesc').value.trim(),
+    price:parseFloat(document.getElementById('ePrice').value),
+    weight:document.getElementById('eWeight').value.trim(),
+    category:document.getElementById('eCategory').value,
+    badge:document.getElementById('eBadge').value,
+    emoji:document.getElementById('eEmoji').value.trim(),
+    prep_time:document.getElementById('eTime').value.trim(),
+    image_url:document.getElementById('eImage').value.trim()
+  };
+  const{error}=await dbPatch('menu_items',vals,'name',orig);
+  if(error){showAlert('Помилка: '+JSON.stringify(error),'error');return;}
+  closeEdit();
+  showAlert('✅ Збережено!','success');
+  loadAdminItems();
 }
 
-function showAlert(msg,type){const el=document.getElementById('adminAlert');el.innerHTML=`<div class="alert alert-${type}">${msg}</div>`;setTimeout(()=>el.innerHTML='',3000);}
+function showAlert(msg,type){
+  const el=document.getElementById('adminAlert');
+  el.innerHTML=`<div class="alert alert-${type}">${msg}</div>`;
+  setTimeout(()=>el.innerHTML='',3000);
+}
 
-// INIT
 buildMenu();
 
 if(window.location.hash==='#admin'){
