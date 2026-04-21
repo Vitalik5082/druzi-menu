@@ -351,7 +351,7 @@ async function openCategory(key, icon, desc) {
   document.getElementById('itemsList').innerHTML = '<div class="loading-msg">⏳ Завантаження...</div>';
   showView('viewCategory');
 
-  const { data, error } = await dbSelect('menu_items', {'category': key, 'is_active': 'true'}, 'id');
+  const { data, error } = await dbSelect('menu_items', {'category': key}, 'id');
 
   if (error || !data || data.length === 0) {
     document.getElementById('itemsList').innerHTML = '<div class="loading-msg">Поки тут порожньо 🍽️</div>';
