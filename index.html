@@ -15,6 +15,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .header-info{position:absolute;bottom:0;left:0;right:0;padding:24px 16px 18px;background:linear-gradient(to top,rgba(0,0,0,0.92) 0%,transparent 100%);z-index:2;}
 .header-name{color:#fff;font-size:26px;font-weight:700;}
 .header-sub{color:rgba(255,255,255,0.55);font-size:13px;margin-top:2px;}
+.header-top-right{position:absolute;top:16px;right:16px;z-index:2;display:flex;align-items:center;gap:8px;}
+.lang-btn{background:rgba(0,0,0,0.4);border:1.5px solid rgba(255,255,255,0.3);color:#fff;border-radius:20px;padding:5px 12px;font-size:12px;font-weight:600;cursor:pointer;}
+.status-pill{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;display:flex;align-items:center;gap:4px;}
+.status-open{background:rgba(76,175,80,0.9);color:#fff;}
+.status-closed{background:rgba(244,67,54,0.8);color:#fff;}
 .gold{color:var(--gold);}
 .section-label{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:1.8px;text-transform:uppercase;padding:20px 16px 10px;}
 .categories{padding:0 12px;display:flex;flex-direction:column;gap:8px;}
@@ -73,10 +78,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .no-results{text-align:center;padding:30px 16px;color:var(--muted);font-size:14px;line-height:1.6;}
 .footer{text-align:center;padding:24px 16px;color:var(--muted);font-size:12px;}
 .fav-count{background:var(--gold);color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px;margin-left:4px;}
-/* ITEM MODAL */
 .item-modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:200;display:flex;align-items:flex-end;justify-content:center;}
 .item-modal{background:var(--card);border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:85vh;overflow-y:auto;position:relative;}
-.item-modal-img{width:100%;height:240px;object-fit:cover;display:block;background:var(--bg);}
+.item-modal-img{width:100%;height:240px;object-fit:cover;display:block;}
 .item-modal-img-ph{width:100%;height:180px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:70px;}
 .item-modal-body{padding:16px 16px 40px;}
 .item-modal-name{font-size:20px;font-weight:700;line-height:1.3;}
@@ -84,7 +88,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .item-modal-footer{display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding-top:16px;border-top:1px solid var(--border);}
 .item-modal-price{font-size:22px;font-weight:700;color:var(--gold);}
 .item-modal-close{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,0.45);color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;z-index:10;}
-/* ADMIN */
 .admin-header{background:var(--dark);color:#fff;padding:16px;display:flex;align-items:center;justify-content:space-between;}
 .admin-title{font-size:17px;font-weight:600;}
 .admin-sub{font-size:12px;color:var(--muted);margin-top:2px;}
@@ -123,7 +126,7 @@ textarea{resize:vertical;min-height:60px;}
 .alert{padding:10px 14px;border-radius:10px;font-size:13px;margin-bottom:10px;}
 .alert-success{background:#e8f5e9;color:#2e7d32;}
 .alert-error{background:#ffebee;color:#c62828;}
-.upload-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 12px;border-radius:10px;border:1.5px dashed var(--gold);background:#fffbf0;color:var(--gold);font-size:13px;font-weight:600;cursor:pointer;margin-top:8px;width:100%;text-align:center;}
+.upload-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 12px;border-radius:10px;border:1.5px dashed var(--gold);background:#fffbf0;color:var(--gold);font-size:13px;font-weight:600;cursor:pointer;margin-top:8px;width:100%;}
 .img-preview{width:80px;height:80px;border-radius:10px;object-fit:cover;margin-top:8px;display:block;}
 .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:100;display:flex;align-items:flex-end;justify-content:center;}
 .modal{background:var(--card);border-radius:20px 20px 0 0;padding:20px 16px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;}
@@ -141,7 +144,6 @@ textarea{resize:vertical;min-height:60px;}
 .fav-header-title{color:#fff;font-size:18px;font-weight:600;}
 .go-menu-btn{display:block;margin:16px 12px;padding:14px;background:var(--gold);color:#fff;border-radius:var(--radius);text-align:center;font-size:14px;font-weight:600;cursor:pointer;}
 .wifi-row{cursor:pointer;}
-.wifi-row:active{background:var(--bg);}
 </style>
 </head>
 <body>
@@ -175,42 +177,52 @@ textarea{resize:vertical;min-height:60px;}
         <defs><linearGradient id="hg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a0f05" stop-opacity="0"/><stop offset="100%" stop-color="#1a0f05" stop-opacity="1"/></linearGradient></defs>
       </svg>
       <div class="header-logo" id="logoBtn">D</div>
+      <div class="header-top-right">
+        <div id="statusPill"></div>
+        <button class="lang-btn" onclick="toggleLang()" id="langBtn">EN</button>
+      </div>
       <div class="header-info">
         <div class="header-name">Druzi Bar <span class="gold">✦</span></div>
-        <div class="header-sub">Кальян-бар · Могилів-Подільський</div>
+        <div class="header-sub" id="headerSub">Кальян-бар · Могилів-Подільський</div>
       </div>
     </div>
+
     <div style="padding:12px 12px 0;">
       <div onclick="showFavorites()" style="background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:12px 16px;text-align:center;font-size:13px;font-weight:500;cursor:pointer;">
-        ❤️ Улюблене <span class="fav-count" id="favCountHome">0</span>
+        ❤️ <span id="t_fav">Улюблене</span> <span class="fav-count" id="favCountHome">0</span>
       </div>
     </div>
-    <div class="section-label">Меню</div>
+
+    <div class="section-label" id="t_menu_label">Меню</div>
     <div class="categories" id="categoriesList"></div>
-    <div class="section-label">Контакти</div>
+
+    <div class="section-label" id="t_contacts_label">Контакти</div>
     <div class="info-card">
       <div class="info-row">
         <span class="info-icon">📍</span>
         <div>
-          <div class="info-label">Адреса</div>
+          <div class="info-label" id="t_address_label">Адреса</div>
           <a href="https://www.google.com/maps?q=%D0%9C%D0%BE%D0%B3%D0%B8%D0%BB%D1%96%D0%B2-%D0%9F%D0%BE%D0%B4%D1%96%D0%BB%D1%8C%D1%81%D1%8C%D0%BA%D0%B8%D0%B9+%D0%A1%D1%82%D0%B0%D0%B2%D0%B8%D1%81%D1%8C%D0%BA%D0%B0+32%5C24" target="_blank" class="info-link">Стависька 32/24 🗺</a>
         </div>
       </div>
       <div class="info-row">
         <span class="info-icon">📞</span>
         <div>
-          <div class="info-label">Телефон</div>
+          <div class="info-label" id="t_phone_label">Телефон</div>
           <a href="tel:+380980808380" class="info-link">0980808380 📲</a>
         </div>
       </div>
       <div class="info-row">
         <span class="info-icon">🕐</span>
-        <div><div class="info-label">Робочий час</div><div class="info-val">11:00 – 23:00 <span class="open-pill">Пн–Нд</span></div></div>
+        <div>
+          <div class="info-label" id="t_hours_label">Робочий час</div>
+          <div class="info-val">11:00 – 23:00 <span class="open-pill" id="t_days">Пн–Нд</span></div>
+        </div>
       </div>
       <div class="info-row wifi-row" onclick="connectWifi()">
         <span class="info-icon">📶</span>
         <div style="flex:1;">
-          <div class="info-label">WiFi · натисни щоб підключитись</div>
+          <div class="info-label" id="t_wifi_label">WiFi · натисни щоб підключитись</div>
           <div class="info-val">Druzi_Bar_5G <span style="font-size:11px;color:var(--muted);">пароль: druzi2022</span></div>
         </div>
         <span style="color:var(--gold);font-size:18px;">›</span>
@@ -229,7 +241,7 @@ textarea{resize:vertical;min-height:60px;}
   <div class="max-w">
     <div class="detail-header">
       <div class="detail-top-bar">
-        <div class="back-btn" onclick="showView('viewMenu')">‹ Назад</div>
+        <div class="back-btn" onclick="showView('viewMenu')">‹ <span id="t_back">Назад</span></div>
         <div onclick="showFavorites()" style="color:var(--gold);font-size:13px;cursor:pointer;">❤️ <span id="favCountCat">0</span></div>
       </div>
       <div class="detail-title-area">
@@ -239,7 +251,7 @@ textarea{resize:vertical;min-height:60px;}
     </div>
     <div class="search-bar">
       <span class="si">🔍</span>
-      <input type="text" placeholder="Пошук по всьому меню..." oninput="globalSearch(this.value)" id="searchInput">
+      <input type="text" id="searchInput" oninput="globalSearch(this.value)">
     </div>
     <div class="cat-tabs" id="catTabs"></div>
     <div class="items-list" id="itemsList"></div>
@@ -250,8 +262,8 @@ textarea{resize:vertical;min-height:60px;}
 <div class="view" id="viewFavorites">
   <div class="max-w">
     <div class="fav-header">
-      <div class="back-btn" onclick="showView('viewMenu')">‹ Назад</div>
-      <div class="fav-header-title">❤️ Улюблене</div>
+      <div class="back-btn" onclick="showView('viewMenu')">‹ <span id="t_back2">Назад</span></div>
+      <div class="fav-header-title">❤️ <span id="t_fav2">Улюблене</span></div>
     </div>
     <div id="favList"></div>
   </div>
@@ -264,9 +276,11 @@ textarea{resize:vertical;min-height:60px;}
       <div class="login-logo">🔐</div>
       <div class="login-title">Адмін панель</div>
       <div class="login-sub">Druzi Bar</div>
+      <label>Email</label>
+      <input type="email" id="adminEmail" placeholder="admin@druzi.bar">
       <label>Пароль</label>
-      <input type="password" id="adminPass" placeholder="Введи пароль" onkeydown="if(event.key==='Enter')checkLogin()">
-      <button class="btn btn-gold" style="width:100%;margin-top:14px;" onclick="checkLogin()">Увійти</button>
+      <input type="password" id="adminPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkLogin()">
+      <button class="btn btn-gold" style="width:100%;margin-top:14px;" onclick="checkLogin()" id="loginBtn">Увійти</button>
       <div id="loginErr" style="color:#f44336;font-size:13px;margin-top:10px;text-align:center;"></div>
     </div>
   </div>
@@ -275,7 +289,7 @@ textarea{resize:vertical;min-height:60px;}
 <!-- ADMIN -->
 <div class="view" id="viewAdmin">
   <div class="admin-header">
-    <div><div class="admin-title">⚙️ Адмін панель</div><div class="admin-sub">Druzi Bar</div></div>
+    <div><div class="admin-title">⚙️ Адмін панель</div><div class="admin-sub" id="adminUserEmail"></div></div>
     <div style="display:flex;gap:6px;">
       <button class="btn btn-outline" onclick="showView('viewMenu')">Меню ↗</button>
       <button class="btn btn-outline" onclick="logout()">Вийти</button>
@@ -315,21 +329,14 @@ textarea{resize:vertical;min-height:60px;}
         <div><label>Emoji</label><input type="text" id="fEmoji" placeholder="🍣" style="font-size:18px;text-align:center;" maxlength="4"></div>
         <div><label>Час приготування</label><input type="text" id="fTime" placeholder="15 хв"></div>
       </div>
-      <label>Фото URL</label>
-      <input type="text" id="fImage" placeholder="https://...">
-      <div class="upload-btn" id="fUploadBtn">
-        📷 Або завантажити з девайса
-      </div>
+      <label>Фото URL</label><input type="text" id="fImage" placeholder="https://...">
+      <div class="upload-btn" id="fUploadBtn">📷 Завантажити з девайса</div>
       <input type="file" id="fFile" accept="image/*" style="display:none" onchange="uploadFile(this,'fImage','fPreview')">
       <img id="fPreview" class="img-preview" style="display:none">
       <button class="btn btn-gold" style="width:100%;margin-top:14px;" onclick="addItem()">Зберегти страву</button>
     </div>
-    <div style="margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;">
-      <div class="form-title" style="margin:0;">📋 Всі страви</div>
-    </div>
-    <div style="margin-bottom:8px;">
-      <input style="background:var(--card);" type="text" placeholder="🔍 Пошук..." oninput="filterAdmin(this.value)">
-    </div>
+    <div style="margin-bottom:8px;"><div class="form-title" style="margin:0;">📋 Всі страви</div></div>
+    <div style="margin-bottom:8px;"><input style="background:var(--card);" type="text" placeholder="🔍 Пошук..." oninput="filterAdmin(this.value)"></div>
     <div class="admin-cat-tabs" id="adminCatTabs"></div>
     <div id="adminItemsList"><div class="loading-msg">Завантаження...</div></div>
   </div>
@@ -394,7 +401,7 @@ textarea{resize:vertical;min-height:60px;}
         </div>
         <div style="display:flex;gap:10px;align-items:center;">
           <button class="fav-btn" id="itemModalFav" style="font-size:26px;"></button>
-          <button class="share-btn" id="itemModalShare" style="font-size:13px;padding:8px 14px;">↗ Поділитись</button>
+          <button class="share-btn" id="itemModalShare" style="font-size:13px;padding:8px 14px;">↗</button>
         </div>
       </div>
     </div>
@@ -404,112 +411,221 @@ textarea{resize:vertical;min-height:60px;}
 <script>
 const SUPABASE_URL='https://kfjkujrnimqounsnltpr.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtmamt1anJuaW1xb3Vuc25sdHByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3ODA5NjMsImV4cCI6MjA5MjM1Njk2M30.PxW__VEh0JrNAz6w7o3Dd5c0sgDQOXtXdGx3cUjjtpQ';
-const ADMIN_PASSWORD='druzidruzi1';
 const BUCKET='menu-images';
-const H={'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation'};
+const CACHE_KEY='druzi_menu_cache';
+const CACHE_TTL=5*60*1000; // 5 хвилин
 
-// Wire up upload buttons after DOM ready
-document.getElementById('fUploadBtn').addEventListener('click',()=>document.getElementById('fFile').click());
-document.getElementById('eUploadBtn').addEventListener('click',()=>document.getElementById('eFile').click());
+let authToken=null;
+let currentLang='uk';
+let allItems=[],currentCat='',adminCat='all',_adminSearch='';
+let favorites=JSON.parse(localStorage.getItem('druzi_favs')||'[]');
+let _debounceTimer=null;
 
-async function dbGet(t,f,o){
-  let url=`${SUPABASE_URL}/rest/v1/${t}?select=*`;
-  if(f)Object.entries(f).forEach(([k,v])=>url+=`&${k}=eq.${encodeURIComponent(v)}`);
-  if(o)url+=`&order=${o}`;
-  const r=await fetch(url,{headers:H});
+// ===== TRANSLATIONS =====
+const T={
+  uk:{
+    fav:'Улюблене',back:'Назад',menu:'МЕНЮ',contacts:'КОНТАКТИ',
+    address:'Адреса',phone:'Телефон',hours:'Робочий час',
+    wifi:'WiFi · натисни щоб підключитись',days:'Пн–Нд',
+    search:'Пошук по всьому меню...',open:'Зараз відкрито',closed:'Зачинено',
+    empty:'Поки тут порожньо 🍽️',nofound:'Нічого не знайдено 🔍',
+    goMenu:'🍽️ Перейти до меню',noFav:'Поки немає улюблених ❤️',
+    sub:'Кальян-бар · Могилів-Подільський',share:'↗ Поділитись',
+    cats:{
+      'Суші та роли':'Суші та роли','Піца':'Піца','Їжа':'Їжа',
+      'Алкоголь':'Алкоголь','Безалкогольні напої':'Безалкогольні напої','Кальян':'Кальян'
+    },
+    catDescs:{
+      'Суші та роли':'Класичні та авторські роли','Піца':'Тонке тісто, авторські рецепти',
+      'Їжа':'Основні страви та закуски','Алкоголь':'Вино, пиво, коктейлі',
+      'Безалкогольні напої':'Лимонади, смузі, кава','Кальян':'Преміум тютюн та міксти'
+    }
+  },
+  en:{
+    fav:'Favorites',back:'Back',menu:'MENU',contacts:'CONTACTS',
+    address:'Address',phone:'Phone',hours:'Working hours',
+    wifi:'WiFi · tap to connect',days:'Mon–Sun',
+    search:'Search all menu...',open:'Open now',closed:'Closed',
+    empty:'Nothing here yet 🍽️',nofound:'Nothing found 🔍',
+    goMenu:'🍽️ Go to menu',noFav:'No favorites yet ❤️',
+    sub:'Hookah bar · Mohyliv-Podilskyi',share:'↗ Share',
+    cats:{
+      'Суші та роли':'Sushi & Rolls','Піца':'Pizza','Їжа':'Food',
+      'Алкоголь':'Alcohol','Безалкогольні напої':'Non-alcoholic','Кальян':'Hookah'
+    },
+    catDescs:{
+      'Суші та роли':'Classic and original rolls','Піца':'Thin crust, original recipes',
+      'Їжа':'Main dishes & snacks','Алкоголь':'Wine, beer, cocktails',
+      'Безалкогольні напої':'Lemonades, smoothies, coffee','Кальян':'Premium tobacco & mixes'
+    }
+  }
+};
+
+function t(key){return T[currentLang][key]||T['uk'][key]||key;}
+function tc(cat){return T[currentLang].cats[cat]||cat;}
+function tcd(cat){return T[currentLang].catDescs[cat]||'';}
+
+function applyLang(){
+  document.getElementById('t_fav').textContent=t('fav');
+  document.getElementById('t_fav2').textContent=t('fav');
+  document.getElementById('t_back').textContent=t('back');
+  document.getElementById('t_back2').textContent=t('back');
+  document.getElementById('t_menu_label').textContent=t('menu');
+  document.getElementById('t_contacts_label').textContent=t('contacts');
+  document.getElementById('t_address_label').textContent=t('address');
+  document.getElementById('t_phone_label').textContent=t('phone');
+  document.getElementById('t_hours_label').textContent=t('hours');
+  document.getElementById('t_wifi_label').textContent=t('wifi');
+  document.getElementById('t_days').textContent=t('days');
+  document.getElementById('headerSub').textContent=t('sub');
+  document.getElementById('searchInput').placeholder=t('search');
+  document.getElementById('langBtn').textContent=currentLang==='uk'?'EN':'УК';
+  buildMenu();
+}
+
+function toggleLang(){
+  currentLang=currentLang==='uk'?'en':'uk';
+  localStorage.setItem('druzi_lang',currentLang);
+  applyLang();
+  updateStatus();
+}
+
+// ===== STATUS =====
+function updateStatus(){
+  const now=new Date();
+  const h=now.getHours(),m=now.getMinutes();
+  const mins=h*60+m;
+  const open=mins>=11*60&&mins<23*60;
+  const pill=document.getElementById('statusPill');
+  if(open){
+    pill.className='status-pill status-open';
+    pill.textContent='● '+t('open');
+  }else{
+    pill.className='status-pill status-closed';
+    pill.textContent='● '+t('closed');
+  }
+}
+
+// ===== API =====
+function getHeaders(withAuth=false){
+  const h={'apikey':SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation'};
+  if(withAuth&&authToken)h['Authorization']='Bearer '+authToken;
+  else h['Authorization']='Bearer '+SUPABASE_KEY;
+  return h;
+}
+
+async function dbGet(table,filters,order){
+  let url=`${SUPABASE_URL}/rest/v1/${table}?select=*`;
+  if(filters)Object.entries(filters).forEach(([k,v])=>url+=`&${k}=eq.${encodeURIComponent(v)}`);
+  if(order)url+=`&order=${order}`;
+  const r=await fetch(url,{headers:getHeaders()});
   const d=await r.json();
   return{data:Array.isArray(d)?d:[],error:r.ok?null:d};
 }
-async function dbPost(t,row){
-  const r=await fetch(`${SUPABASE_URL}/rest/v1/${t}`,{method:'POST',headers:H,body:JSON.stringify(row)});
+async function dbPost(table,row){
+  const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}`,{method:'POST',headers:getHeaders(true),body:JSON.stringify(row)});
   return{error:r.ok?null:await r.json()};
 }
-async function dbPatch(t,vals,col,val){
-  const r=await fetch(`${SUPABASE_URL}/rest/v1/${t}?${col}=eq.${encodeURIComponent(val)}`,{method:'PATCH',headers:H,body:JSON.stringify(vals)});
+async function dbPatch(table,vals,col,val){
+  const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}?${col}=eq.${encodeURIComponent(val)}`,{method:'PATCH',headers:getHeaders(true),body:JSON.stringify(vals)});
   return{error:r.ok?null:await r.json()};
 }
-async function dbDel(t,col,val){
-  const r=await fetch(`${SUPABASE_URL}/rest/v1/${t}?${col}=eq.${encodeURIComponent(val)}`,{method:'DELETE',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});
+async function dbDel(table,col,val){
+  const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}?${col}=eq.${encodeURIComponent(val)}`,{method:'DELETE',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+(authToken||SUPABASE_KEY)}});
   return{error:r.ok?null:await r.json()};
 }
 
+// ===== CACHE =====
+function getCached(){
+  try{
+    const c=JSON.parse(localStorage.getItem(CACHE_KEY)||'null');
+    if(c&&Date.now()-c.ts<CACHE_TTL)return c.data;
+  }catch(e){}
+  return null;
+}
+function setCache(data){
+  try{localStorage.setItem(CACHE_KEY,JSON.stringify({ts:Date.now(),data}));}catch(e){}
+}
+function clearCache(){localStorage.removeItem(CACHE_KEY);}
+
+// ===== UPLOAD =====
 async function uploadFile(input,urlId,prevId){
   if(!input.files||!input.files[0])return;
   const file=input.files[0];
   const fname=`${Date.now()}.${file.name.split('.').pop()}`;
-  showAlert('⏳ Завантаження фото...','success');
+  showAlert('⏳ Завантаження...','success');
   const r=await fetch(`${SUPABASE_URL}/storage/v1/object/${BUCKET}/${fname}`,{
     method:'POST',
-    headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':file.type,'x-upsert':'true'},
+    headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+(authToken||SUPABASE_KEY),'Content-Type':file.type,'x-upsert':'true'},
     body:file
   });
   if(r.ok){
     const url=`${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${fname}`;
     document.getElementById(urlId).value=url;
-    const p=document.getElementById(prevId);
-    p.src=url;p.style.display='block';
+    const p=document.getElementById(prevId);p.src=url;p.style.display='block';
     showAlert('✅ Фото завантажено!','success');
-  }else{
-    const err=await r.json();
-    showAlert('❌ Помилка: '+JSON.stringify(err),'error');
-  }
+  }else{showAlert('❌ Помилка завантаження','error');}
 }
 
-// WiFi connect
+// ===== WIFI =====
 function connectWifi(){
-  const ssid='Druzi_Bar_5G';
-  const pass='druzi2022';
-  // Try Android WiFi URI
-  const wifiUri=`wifi:${ssid}`;
-  const a=document.createElement('a');
-  a.href=wifiUri;
-  // Copy password and show instructions
-  navigator.clipboard.writeText(pass).then(()=>{
-    alert(`📶 Пароль "${pass}" скопійовано!\n\nВідкрий Налаштування → WiFi → ${ssid}`);
-  }).catch(()=>{
-    alert(`📶 WiFi: ${ssid}\nПароль: ${pass}`);
-  });
+  navigator.clipboard.writeText('druzi2022').then(()=>{
+    alert('📶 Пароль "druzi2022" скопійовано!\n\nВідкрий Налаштування → WiFi → Druzi_Bar_5G');
+  }).catch(()=>{alert('📶 WiFi: Druzi_Bar_5G\nПароль: druzi2022');});
 }
 
+// ===== MENU =====
 const CATS=[
-  {key:'Суші та роли',icon:'🍣',bg:'#fff8ed',desc:'Класичні та авторські роли'},
-  {key:'Піца',icon:'🍕',bg:'#fff0f0',desc:'Тонке тісто, авторські рецепти'},
-  {key:'Їжа',icon:'🍽️',bg:'#f0fff4',desc:'Основні страви та закуски'},
-  {key:'Алкоголь',icon:'🍷',bg:'#f5f0ff',desc:'Вино, пиво, коктейлі'},
-  {key:'Безалкогольні напої',icon:'🧃',bg:'#f0f9ff',desc:'Лимонади, смузі, кава'},
-  {key:'Кальян',icon:'💨',bg:'#fdf0ff',desc:'Преміум тютюн та міксти'},
+  {key:'Суші та роли',icon:'🍣',bg:'#fff8ed'},
+  {key:'Піца',icon:'🍕',bg:'#fff0f0'},
+  {key:'Їжа',icon:'🍽️',bg:'#f0fff4'},
+  {key:'Алкоголь',icon:'🍷',bg:'#f5f0ff'},
+  {key:'Безалкогольні напої',icon:'🧃',bg:'#f0f9ff'},
+  {key:'Кальян',icon:'💨',bg:'#fdf0ff'},
 ];
 
-let allItems=[],currentCat='',adminCat='all',_adminSearch='';
-let favorites=JSON.parse(localStorage.getItem('druzi_favs')||'[]');
-
-function updateFavCount(){const c=favorites.length;document.querySelectorAll('#favCountHome,#favCountCat').forEach(el=>el.textContent=c);}
 function showView(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+function updateFavCount(){const c=favorites.length;document.querySelectorAll('#favCountHome,#favCountCat').forEach(el=>el.textContent=c);}
 
 function buildMenu(){
   document.getElementById('categoriesList').innerHTML=CATS.map(c=>`
-    <div class="cat-card" onclick="openCategory('${c.key}','${c.icon}','${c.desc}')">
+    <div class="cat-card" onclick="openCategory('${c.key}','${c.icon}')">
       <div class="cat-icon" style="background:${c.bg}">${c.icon}</div>
-      <div class="cat-info"><div class="cat-name">${c.key}</div><div class="cat-desc">${c.desc}</div></div>
+      <div class="cat-info"><div class="cat-name">${tc(c.key)}</div><div class="cat-desc">${tcd(c.key)}</div></div>
       <span class="arrow">›</span>
     </div>`).join('');
   updateFavCount();
 }
 
-async function openCategory(key,icon,desc){
+async function openCategory(key,icon){
   currentCat=key;
-  document.getElementById('catTitle').textContent=key;
-  document.getElementById('catSub').textContent=desc;
+  document.getElementById('catTitle').textContent=tc(key);
+  document.getElementById('catSub').textContent=tcd(key);
   document.getElementById('searchInput').value='';
-  document.getElementById('itemsList').innerHTML='<div class="loading-msg">⏳ Завантаження...</div>';
+  document.getElementById('itemsList').innerHTML='<div class="loading-msg">⏳...</div>';
   showView('viewCategory');
   updateFavCount();
+
+  // Try cache first
+  const cached=getCached();
+  if(cached){
+    allItems=cached;
+    buildCatTabs(key);
+    renderItems(allItems.filter(i=>i.category===key));
+    return;
+  }
+
   const{data}=await dbGet('menu_items',null,'category,name');
   allItems=data||[];
+  setCache(allItems);
+  buildCatTabs(key);
+  renderItems(allItems.filter(i=>i.category===key));
+}
+
+function buildCatTabs(activeKey){
   const cats=[...new Set(allItems.map(i=>i.category))];
   document.getElementById('catTabs').innerHTML=cats.map(c=>`
-    <div class="cat-tab ${c===key?'active':''}" onclick="switchTab('${c}',this)">${c}</div>`).join('');
-  renderItems(allItems.filter(i=>i.category===key));
+    <div class="cat-tab ${c===activeKey?'active':''}" onclick="switchTab('${c}',this)">${tc(c)}</div>`).join('');
 }
 
 function switchTab(cat,el){
@@ -522,45 +638,48 @@ function switchTab(cat,el){
 }
 
 function globalSearch(q){
-  if(!q.trim()){renderItems(allItems.filter(i=>i.category===currentCat));return;}
-  const ql=q.toLowerCase();
-  const res=allItems.filter(i=>i.name.toLowerCase().includes(ql)||(i.description||'').toLowerCase().includes(ql)||i.category.toLowerCase().includes(ql));
-  renderItems(res,true);
+  clearTimeout(_debounceTimer);
+  _debounceTimer=setTimeout(()=>{
+    if(!q.trim()){renderItems(allItems.filter(i=>i.category===currentCat));return;}
+    const ql=q.toLowerCase();
+    const res=allItems.filter(i=>i.name.toLowerCase().includes(ql)||(i.description||'').toLowerCase().includes(ql)||i.category.toLowerCase().includes(ql));
+    renderItems(res,true);
+  },200);
 }
 
-function imgTag(item,w=80,h=80,r=10){
-  const e=item.emoji||'🍽️';
-  return item.image_url
-    ?`<img src="${item.image_url}" width="${w}" height="${h}" style="object-fit:cover;border-radius:${r}px;display:block;" onerror="this.parentElement.innerHTML='${e}'">`
-    :e;
+function sanitize(str){
+  const d=document.createElement('div');d.textContent=str||'';return d.innerHTML;
 }
 
 function badgesHTML(item){
   return (item.badge==='hit'?'<span class="item-badge hit">🔥 Хіт</span>':'')
     +(item.badge==='new'?'<span class="item-badge new">✨ New</span>':'')
     +(item.badge==='post'?'<span class="item-badge post">🥦 Пісне</span>':'')
-    +(item.prep_time?`<span class="item-time">⏱ ${item.prep_time}</span>`:'');
+    +(item.prep_time?`<span class="item-time">⏱ ${sanitize(item.prep_time)}</span>`:'');
 }
 
 function itemHTML(item,showDel=false){
   const isFav=favorites.includes(item.name);
   const sn=item.name.replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;');
+  const imgPart=item.image_url
+    ?`<img src="${item.image_url}" width="80" height="80" style="object-fit:cover;border-radius:10px;display:block;" onerror="this.parentElement.innerHTML='${item.emoji||'🍽️'}';">`
+    :(item.emoji||'🍽️');
   return `<div class="item-card" onclick="openItemModal('${sn}')">
     <div class="item-inner">
-      <div class="item-img">${imgTag(item)}</div>
+      <div class="item-img">${imgPart}</div>
       <div class="item-info">
-        <div class="item-name">${item.name}</div>
-        ${item.description?`<div class="item-desc">${item.description}</div>`:''}
+        <div class="item-name">${sanitize(item.name)}</div>
+        ${item.description?`<div class="item-desc">${sanitize(item.description)}</div>`:''}
         <div class="item-meta">${badgesHTML(item)}</div>
       </div>
     </div>
     <div class="item-footer">
-      <div><div class="item-price">${item.price} грн</div>${item.weight?`<div class="item-weight">${item.weight}</div>`:''}</div>
+      <div><div class="item-price">${item.price} грн</div>${item.weight?`<div class="item-weight">${sanitize(item.weight)}</div>`:''}</div>
       <div class="item-actions" onclick="event.stopPropagation()">
         ${showDel
           ?`<button class="fav-btn" onclick="removeFav('${sn}')">🗑️</button>`
           :`<button class="fav-btn" onclick="toggleFav('${sn}',this)">${isFav?'❤️':'🤍'}</button>`}
-        <button class="share-btn" onclick="shareItem('${sn}',${item.price})">↗</button>
+        <button class="share-btn" onclick="shareItem('${sn}',${item.price})">${t('share')}</button>
       </div>
     </div>
   </div>`;
@@ -568,17 +687,16 @@ function itemHTML(item,showDel=false){
 
 function renderItems(items,isSearch=false){
   const el=document.getElementById('itemsList');
-  if(!items||!items.length){el.innerHTML=`<div class="no-results">${isSearch?'Нічого не знайдено 🔍':'Поки тут порожньо 🍽️'}</div>`;return;}
+  if(!items||!items.length){el.innerHTML=`<div class="no-results">${isSearch?t('nofound'):t('empty')}</div>`;return;}
   if(isSearch){
     const groups={};
     items.forEach(i=>{if(!groups[i.category])groups[i.category]=[];groups[i.category].push(i);});
-    el.innerHTML=Object.entries(groups).map(([cat,its])=>`<div class="section-label" style="padding:8px 0 4px;">${cat}</div>`+its.map(i=>itemHTML(i)).join('')).join('');
+    el.innerHTML=Object.entries(groups).map(([cat,its])=>`<div class="section-label" style="padding:8px 0 4px;">${tc(cat)}</div>`+its.map(i=>itemHTML(i)).join('')).join('');
   }else{
     el.innerHTML=items.map(i=>itemHTML(i)).join('');
   }
 }
 
-// Item modal
 function openItemModal(name){
   const item=allItems.find(i=>i.name===name);
   if(!item)return;
@@ -590,13 +708,10 @@ function openItemModal(name){
   document.getElementById('itemModalMeta').innerHTML=badgesHTML(item);
   const favBtn=document.getElementById('itemModalFav');
   favBtn.textContent=isFav?'❤️':'🤍';
-  favBtn.onclick=()=>{
-    toggleFav(item.name,favBtn);
-    favBtn.textContent=favorites.includes(item.name)?'❤️':'🤍';
-  };
+  favBtn.onclick=()=>{toggleFav(item.name,favBtn);favBtn.textContent=favorites.includes(item.name)?'❤️':'🤍';};
   document.getElementById('itemModalShare').onclick=()=>shareItem(item.name,item.price);
   document.getElementById('itemModalImg').innerHTML=item.image_url
-    ?`<img class="item-modal-img" src="${item.image_url}" alt="${item.name}" onerror="this.outerHTML='<div class=item-modal-img-ph>${item.emoji||'🍽️'}</div>'">`
+    ?`<img class="item-modal-img" src="${item.image_url}" alt="${sanitize(item.name)}" onerror="this.outerHTML='<div class=item-modal-img-ph>${item.emoji||'🍽️'}</div>'">`
     :`<div class="item-modal-img-ph">${item.emoji||'🍽️'}</div>`;
   document.getElementById('itemModal').style.display='flex';
 }
@@ -609,53 +724,83 @@ function toggleFav(name,btn){
   localStorage.setItem('druzi_favs',JSON.stringify(favorites));
   updateFavCount();
 }
-
 function removeFav(name){
   favorites=favorites.filter(f=>f!==name);
   localStorage.setItem('druzi_favs',JSON.stringify(favorites));
-  updateFavCount();
-  renderFavList();
+  updateFavCount();renderFavList();
 }
-
 function showFavorites(){
   showView('viewFavorites');
   if(!allItems.length){
     dbGet('menu_items',null,'category,name').then(({data})=>{allItems=data||[];renderFavList();});
   }else renderFavList();
 }
-
 function renderFavList(){
   const favItems=allItems.filter(i=>favorites.includes(i.name));
   document.getElementById('favList').innerHTML=favItems.length
     ?'<div class="items-list">'+favItems.map(i=>itemHTML(i,true)).join('')+'</div>'
-    :`<div class="no-results" style="padding:40px 16px;">Поки немає улюблених ❤️<br><br><small>Натискай 🤍 поруч зі стравою</small></div>
-      <div class="go-menu-btn" onclick="showView('viewMenu')">🍽️ Перейти до меню</div>`;
+    :`<div class="no-results" style="padding:40px 16px;">${t('noFav')}<br><br><small>Натискай 🤍 поруч зі стравою</small></div>
+      <div class="go-menu-btn" onclick="showView('viewMenu')">${t('goMenu')}</div>`;
 }
-
 function shareItem(name,price){
   const text=`${name} — ${price} грн\n🍽️ Druzi Bar · druzi-menu.vercel.app`;
   if(navigator.share)navigator.share({title:name,text});
   else navigator.clipboard.writeText(text).then(()=>alert('Скопійовано!'));
 }
 
-// ADMIN
-function checkLogin(){
-  if(document.getElementById('adminPass').value===ADMIN_PASSWORD){
-    sessionStorage.setItem('druzi_admin','1');
-    showView('viewAdmin');loadAdminItems();buildAdminTabs();
-  }else document.getElementById('loginErr').textContent='Невірний пароль';
+// ===== AUTH (Supabase Auth) =====
+async function checkLogin(){
+  const email=document.getElementById('adminEmail').value.trim();
+  const pass=document.getElementById('adminPass').value;
+  if(!email||!pass){document.getElementById('loginErr').textContent='Введи email та пароль';return;}
+  const btn=document.getElementById('loginBtn');
+  btn.textContent='⏳ Входжу...';btn.disabled=true;
+  try{
+    const r=await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`,{
+      method:'POST',
+      headers:{'apikey':SUPABASE_KEY,'Content-Type':'application/json'},
+      body:JSON.stringify({email,password:pass})
+    });
+    const d=await r.json();
+    if(d.access_token){
+      authToken=d.access_token;
+      sessionStorage.setItem('druzi_token',authToken);
+      sessionStorage.setItem('druzi_email',email);
+      document.getElementById('adminUserEmail').textContent=email;
+      showView('viewAdmin');loadAdminItems();buildAdminTabs();
+    }else{
+      document.getElementById('loginErr').textContent='Невірний email або пароль';
+    }
+  }catch(e){
+    document.getElementById('loginErr').textContent='Помилка з\'єднання';
+  }
+  btn.textContent='Увійти';btn.disabled=false;
 }
-function logout(){sessionStorage.removeItem('druzi_admin');showView('viewMenu');}
 
+async function logout(){
+  if(authToken){
+    await fetch(`${SUPABASE_URL}/auth/v1/logout`,{
+      method:'POST',
+      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+authToken}
+    });
+  }
+  authToken=null;
+  sessionStorage.removeItem('druzi_token');
+  sessionStorage.removeItem('druzi_email');
+  showView('viewMenu');
+}
+
+// ===== ADMIN =====
 function buildAdminTabs(){
   const tabs=['all',...CATS.map(c=>c.key)];
-  document.getElementById('adminCatTabs').innerHTML=tabs.map(t=>`
-    <div class="admin-cat-tab ${t===adminCat?'active':''}" onclick="switchAdminTab('${t}',this)">${t==='all'?'📋 Всі':t}</div>`).join('');
+  document.getElementById('adminCatTabs').innerHTML=tabs.map(t=>
+    `<div class="admin-cat-tab ${t===adminCat?'active':''}" onclick="switchAdminTab('${t}',this)">${t==='all'?'📋 Всі':tc(t)}</div>`).join('');
 }
 function switchAdminTab(cat,el){adminCat=cat;document.querySelectorAll('.admin-cat-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');renderAdmin(window._adminAll||[],_adminSearch);}
 function filterAdmin(q){_adminSearch=q;renderAdmin(window._adminAll||[],q);}
 
 async function addItem(){
+  if(!authToken){showAlert('Не авторизовано','error');return;}
   const name=document.getElementById('fName').value.trim();
   const price=parseFloat(document.getElementById('fPrice').value);
   if(!name||!price){showAlert('Заповни назву та ціну!','error');return;}
@@ -665,7 +810,7 @@ async function addItem(){
   showAlert('✅ Страву додано!','success');
   ['fName','fDesc','fPrice','fWeight','fEmoji','fTime','fImage'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('fPreview').style.display='none';
-  loadAdminItems();
+  clearCache();loadAdminItems();
 }
 
 async function loadAdminItems(){
@@ -684,11 +829,10 @@ function renderAdmin(data,q){
   f.forEach(item=>{
     if(adminCat==='all'&&item.category!==lastCat){html+=`<div class="section-label" style="padding:10px 0 4px;">${item.category}</div>`;lastCat=item.category;}
     const active=item.is_active===true||item.is_active==='true';
-    const jItem=JSON.stringify(item).replace(/</g,'\\u003c').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
     html+=`<div class="admin-item">
       <div class="admin-item-img">${item.image_url?`<img src="${item.image_url}" onerror="this.parentElement.innerHTML='${item.emoji||'🍽️'}'">`:item.emoji||'🍽️'}</div>
       <div class="admin-item-info">
-        <div class="admin-item-name">${item.name}</div>
+        <div class="admin-item-name">${sanitize(item.name)}</div>
         <div class="admin-item-meta">${item.category}${item.weight?' · '+item.weight:''}${item.badge?' · '+item.badge:''}</div>
         <div class="admin-item-price">${item.price} грн</div>
       </div>
@@ -702,14 +846,12 @@ function renderAdmin(data,q){
   wrap.innerHTML=html;
 }
 
-async function toggleItem(name,cur){await dbPatch('menu_items',{is_active:!cur},'name',name);loadAdminItems();}
-
+async function toggleItem(name,cur){await dbPatch('menu_items',{is_active:!cur},'name',name);clearCache();loadAdminItems();}
 async function deleteItem(name){
   if(!confirm(`Видалити "${name}"?`))return;
   const{error}=await dbDel('menu_items','name',name);
   if(error){showAlert('Помилка: '+JSON.stringify(error),'error');return;}
-  showAlert('🗑️ Видалено!','success');
-  loadAdminItems();
+  showAlert('🗑️ Видалено!','success');clearCache();loadAdminItems();
 }
 
 function openEdit(item){
@@ -728,23 +870,13 @@ function openEdit(item){
   document.getElementById('editModal').style.display='flex';
 }
 function closeEdit(){document.getElementById('editModal').style.display='none';}
-
 async function saveEdit(){
+  if(!authToken){showAlert('Не авторизовано','error');return;}
   const orig=document.getElementById('eOrigName').value;
-  const vals={
-    name:document.getElementById('eName').value.trim(),
-    description:document.getElementById('eDesc').value.trim(),
-    price:parseFloat(document.getElementById('ePrice').value),
-    weight:document.getElementById('eWeight').value.trim(),
-    category:document.getElementById('eCategory').value,
-    badge:document.getElementById('eBadge').value,
-    emoji:document.getElementById('eEmoji').value.trim(),
-    prep_time:document.getElementById('eTime').value.trim(),
-    image_url:document.getElementById('eImage').value.trim()
-  };
+  const vals={name:document.getElementById('eName').value.trim(),description:document.getElementById('eDesc').value.trim(),price:parseFloat(document.getElementById('ePrice').value),weight:document.getElementById('eWeight').value.trim(),category:document.getElementById('eCategory').value,badge:document.getElementById('eBadge').value,emoji:document.getElementById('eEmoji').value.trim(),prep_time:document.getElementById('eTime').value.trim(),image_url:document.getElementById('eImage').value.trim()};
   const{error}=await dbPatch('menu_items',vals,'name',orig);
   if(error){showAlert('Помилка: '+JSON.stringify(error),'error');return;}
-  closeEdit();showAlert('✅ Збережено!','success');loadAdminItems();
+  closeEdit();showAlert('✅ Збережено!','success');clearCache();loadAdminItems();
 }
 
 function showAlert(msg,type){
@@ -753,17 +885,37 @@ function showAlert(msg,type){
   setTimeout(()=>el.innerHTML='',3000);
 }
 
-buildMenu();
+// ===== INIT =====
+// Restore language
+currentLang=localStorage.getItem('druzi_lang')||'uk';
 
+// Restore auth session
+const savedToken=sessionStorage.getItem('druzi_token');
+const savedEmail=sessionStorage.getItem('druzi_email');
+if(savedToken){authToken=savedToken;}
+
+buildMenu();
+applyLang();
+updateStatus();
+setInterval(updateStatus,60000);
+
+// Wire upload buttons
+document.getElementById('fUploadBtn').addEventListener('click',()=>document.getElementById('fFile').click());
+document.getElementById('eUploadBtn').addEventListener('click',()=>document.getElementById('eFile').click());
+
+// Admin route
 if(window.location.hash==='#admin'){
-  if(sessionStorage.getItem('druzi_admin')){showView('viewAdmin');loadAdminItems();buildAdminTabs();}
-  else showView('viewLogin');
+  if(authToken){
+    document.getElementById('adminUserEmail').textContent=savedEmail||'';
+    showView('viewAdmin');loadAdminItems();buildAdminTabs();
+  }else showView('viewLogin');
 }
 
+// Logo tap 5x
 let tapCount=0;
 document.getElementById('logoBtn').addEventListener('click',()=>{
   tapCount++;
-  if(tapCount>=5){tapCount=0;window.location.hash='#admin';showView('viewLogin');}
+  if(tapCount>=5){tapCount=0;window.location.hash='#admin';showView(authToken?'viewAdmin':'viewLogin');if(authToken){loadAdminItems();buildAdminTabs();}}
   setTimeout(()=>tapCount=0,3000);
 });
 </script>
