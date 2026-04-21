@@ -42,7 +42,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .detail-title{color:#fff;font-size:20px;font-weight:600;}
 .detail-sub{color:rgba(255,255,255,0.5);font-size:12px;margin-top:2px;}
 .search-bar{padding:10px 12px;position:relative;}
-.search-bar input{width:100%;padding:10px 14px 10px 40px;border-radius:12px;border:1px solid var(--border);font-size:14px;background:var(--card);color:var(--text);outline:none;}
+.search-bar input{width:100%;padding:10px 14px 10px 42px;border-radius:12px;border:1px solid var(--border);font-size:14px;background:var(--card);color:var(--text);outline:none;}
 .search-bar input:focus{border-color:var(--gold);}
 .search-bar .si{position:absolute;left:24px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none;}
 .cat-tabs{display:flex;overflow-x:auto;gap:8px;padding:0 12px 10px;scrollbar-width:none;}
@@ -75,15 +75,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .fav-count{background:var(--gold);color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px;margin-left:4px;}
 /* ITEM MODAL */
 .item-modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:200;display:flex;align-items:flex-end;justify-content:center;}
-.item-modal{background:var(--card);border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:85vh;overflow-y:auto;}
-.item-modal-img{width:100%;height:220px;object-fit:cover;display:block;background:var(--bg);}
-.item-modal-img-placeholder{width:100%;height:220px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:70px;}
-.item-modal-body{padding:16px;}
+.item-modal{background:var(--card);border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:85vh;overflow-y:auto;position:relative;}
+.item-modal-img{width:100%;height:240px;object-fit:cover;display:block;background:var(--bg);}
+.item-modal-img-ph{width:100%;height:180px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:70px;}
+.item-modal-body{padding:16px 16px 40px;}
 .item-modal-name{font-size:20px;font-weight:700;line-height:1.3;}
 .item-modal-desc{font-size:14px;color:var(--muted);margin-top:8px;line-height:1.5;}
 .item-modal-footer{display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding-top:16px;border-top:1px solid var(--border);}
 .item-modal-price{font-size:22px;font-weight:700;color:var(--gold);}
-.item-modal-close{position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,0.4);color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;}
+.item-modal-close{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,0.45);color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;z-index:10;}
 /* ADMIN */
 .admin-header{background:var(--dark);color:#fff;padding:16px;display:flex;align-items:center;justify-content:space-between;}
 .admin-title{font-size:17px;font-weight:600;}
@@ -123,8 +123,8 @@ textarea{resize:vertical;min-height:60px;}
 .alert{padding:10px 14px;border-radius:10px;font-size:13px;margin-bottom:10px;}
 .alert-success{background:#e8f5e9;color:#2e7d32;}
 .alert-error{background:#ffebee;color:#c62828;}
-.upload-btn{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:10px;border:1px dashed var(--gold);background:#fffbf0;color:var(--gold);font-size:13px;font-weight:500;cursor:pointer;margin-top:6px;width:100%;}
-.img-preview{width:80px;height:80px;border-radius:10px;object-fit:cover;margin-top:8px;}
+.upload-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 12px;border-radius:10px;border:1.5px dashed var(--gold);background:#fffbf0;color:var(--gold);font-size:13px;font-weight:600;cursor:pointer;margin-top:8px;width:100%;text-align:center;}
+.img-preview{width:80px;height:80px;border-radius:10px;object-fit:cover;margin-top:8px;display:block;}
 .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:100;display:flex;align-items:flex-end;justify-content:center;}
 .modal{background:var(--card);border-radius:20px 20px 0 0;padding:20px 16px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;}
 .modal-title{font-size:16px;font-weight:600;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;}
@@ -140,6 +140,8 @@ textarea{resize:vertical;min-height:60px;}
 .fav-header{background:var(--dark);padding:14px 16px;display:flex;align-items:center;gap:12px;}
 .fav-header-title{color:#fff;font-size:18px;font-weight:600;}
 .go-menu-btn{display:block;margin:16px 12px;padding:14px;background:var(--gold);color:#fff;border-radius:var(--radius);text-align:center;font-size:14px;font-weight:600;cursor:pointer;}
+.wifi-row{cursor:pointer;}
+.wifi-row:active{background:var(--bg);}
 </style>
 </head>
 <body>
@@ -191,7 +193,7 @@ textarea{resize:vertical;min-height:60px;}
         <span class="info-icon">📍</span>
         <div>
           <div class="info-label">Адреса</div>
-          <a href="https://www.google.com/maps?q=%D0%9C%D0%BE%D0%B3%D0%B8%D0%BB%D1%96%D0%B2-%D0%9F%D0%BE%D0%B4%D1%96%D0%BB%D1%8C%D1%81%D1%8C%D0%BA%D0%B8%D0%B9+%D0%A1%D1%82%D0%B0%D0%B2%D0%B8%D1%81%D1%8C%D0%BA%D0%B0+32%5C24" target="_blank" class="info-link">Стависька 32/24, Могилів-Подільський 🗺</a>
+          <a href="https://www.google.com/maps?q=%D0%9C%D0%BE%D0%B3%D0%B8%D0%BB%D1%96%D0%B2-%D0%9F%D0%BE%D0%B4%D1%96%D0%BB%D1%8C%D1%81%D1%8C%D0%BA%D0%B8%D0%B9+%D0%A1%D1%82%D0%B0%D0%B2%D0%B8%D1%81%D1%8C%D0%BA%D0%B0+32%5C24" target="_blank" class="info-link">Стависька 32/24 🗺</a>
         </div>
       </div>
       <div class="info-row">
@@ -205,9 +207,13 @@ textarea{resize:vertical;min-height:60px;}
         <span class="info-icon">🕐</span>
         <div><div class="info-label">Робочий час</div><div class="info-val">11:00 – 23:00 <span class="open-pill">Пн–Нд</span></div></div>
       </div>
-      <div class="info-row">
+      <div class="info-row wifi-row" onclick="connectWifi()">
         <span class="info-icon">📶</span>
-        <div><div class="info-label">WiFi</div><div class="info-val">druzi2022</div></div>
+        <div style="flex:1;">
+          <div class="info-label">WiFi · натисни щоб підключитись</div>
+          <div class="info-val">Druzi_Bar_5G <span style="font-size:11px;color:var(--muted);">пароль: druzi2022</span></div>
+        </div>
+        <span style="color:var(--gold);font-size:18px;">›</span>
       </div>
     </div>
     <div class="social-grid">
@@ -311,10 +317,10 @@ textarea{resize:vertical;min-height:60px;}
       </div>
       <label>Фото URL</label>
       <input type="text" id="fImage" placeholder="https://...">
-      <button class="upload-btn" onclick="document.getElementById('fFile').click()">
-        📷 Завантажити з девайса
-        <input type="file" id="fFile" accept="image/*" style="display:none" onchange="uploadFile(this,'fImage','fPreview')">
-      </button>
+      <div class="upload-btn" id="fUploadBtn">
+        📷 Або завантажити з девайса
+      </div>
+      <input type="file" id="fFile" accept="image/*" style="display:none" onchange="uploadFile(this,'fImage','fPreview')">
       <img id="fPreview" class="img-preview" style="display:none">
       <button class="btn btn-gold" style="width:100%;margin-top:14px;" onclick="addItem()">Зберегти страву</button>
     </div>
@@ -365,10 +371,8 @@ textarea{resize:vertical;min-height:60px;}
       <div><label>Час приготування</label><input type="text" id="eTime"></div>
     </div>
     <label>Фото URL</label><input type="text" id="eImage">
-    <button class="upload-btn" onclick="document.getElementById('eFile').click()">
-      📷 Завантажити нове фото
-      <input type="file" id="eFile" accept="image/*" style="display:none" onchange="uploadFile(this,'eImage','ePreview')">
-    </button>
+    <div class="upload-btn" id="eUploadBtn">📷 Завантажити нове фото</div>
+    <input type="file" id="eFile" accept="image/*" style="display:none" onchange="uploadFile(this,'eImage','ePreview')">
     <img id="ePreview" class="img-preview" style="display:none">
     <button class="btn btn-gold" style="width:100%;margin-top:14px;" onclick="saveEdit()">Зберегти зміни</button>
   </div>
@@ -376,12 +380,12 @@ textarea{resize:vertical;min-height:60px;}
 
 <!-- ITEM DETAIL MODAL -->
 <div id="itemModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:150;align-items:flex-end;justify-content:center;">
-  <div class="item-modal" style="position:relative;">
+  <div class="item-modal">
     <button class="item-modal-close" onclick="closeItemModal()">×</button>
     <div id="itemModalImg"></div>
     <div class="item-modal-body">
+      <div id="itemModalMeta" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px;"></div>
       <div class="item-modal-name" id="itemModalName"></div>
-      <div id="itemModalMeta" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;"></div>
       <div class="item-modal-desc" id="itemModalDesc"></div>
       <div class="item-modal-footer">
         <div>
@@ -404,37 +408,39 @@ const ADMIN_PASSWORD='druzidruzi1';
 const BUCKET='menu-images';
 const H={'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation'};
 
-async function dbGet(table,filters,order){
-  let url=`${SUPABASE_URL}/rest/v1/${table}?select=*`;
-  if(filters)Object.entries(filters).forEach(([k,v])=>url+=`&${k}=eq.${encodeURIComponent(v)}`);
-  if(order)url+=`&order=${order}`;
+// Wire up upload buttons after DOM ready
+document.getElementById('fUploadBtn').addEventListener('click',()=>document.getElementById('fFile').click());
+document.getElementById('eUploadBtn').addEventListener('click',()=>document.getElementById('eFile').click());
+
+async function dbGet(t,f,o){
+  let url=`${SUPABASE_URL}/rest/v1/${t}?select=*`;
+  if(f)Object.entries(f).forEach(([k,v])=>url+=`&${k}=eq.${encodeURIComponent(v)}`);
+  if(o)url+=`&order=${o}`;
   const r=await fetch(url,{headers:H});
   const d=await r.json();
   return{data:Array.isArray(d)?d:[],error:r.ok?null:d};
 }
-async function dbPost(table,row){
-  const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}`,{method:'POST',headers:H,body:JSON.stringify(row)});
+async function dbPost(t,row){
+  const r=await fetch(`${SUPABASE_URL}/rest/v1/${t}`,{method:'POST',headers:H,body:JSON.stringify(row)});
   return{error:r.ok?null:await r.json()};
 }
-async function dbPatch(table,vals,col,val){
-  const url=`${SUPABASE_URL}/rest/v1/${table}?${col}=eq.${encodeURIComponent(val)}`;
-  const r=await fetch(url,{method:'PATCH',headers:H,body:JSON.stringify(vals)});
+async function dbPatch(t,vals,col,val){
+  const r=await fetch(`${SUPABASE_URL}/rest/v1/${t}?${col}=eq.${encodeURIComponent(val)}`,{method:'PATCH',headers:H,body:JSON.stringify(vals)});
   return{error:r.ok?null:await r.json()};
 }
-async function dbDel(table,col,val){
-  const url=`${SUPABASE_URL}/rest/v1/${table}?${col}=eq.${encodeURIComponent(val)}`;
-  const r=await fetch(url,{method:'DELETE',headers:{...H,'Prefer':''}});
+async function dbDel(t,col,val){
+  const r=await fetch(`${SUPABASE_URL}/rest/v1/${t}?${col}=eq.${encodeURIComponent(val)}`,{method:'DELETE',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});
   return{error:r.ok?null:await r.json()};
 }
 
 async function uploadFile(input,urlId,prevId){
   if(!input.files||!input.files[0])return;
   const file=input.files[0];
-  const ext=file.name.split('.').pop();
-  const fname=`${Date.now()}.${ext}`;
+  const fname=`${Date.now()}.${file.name.split('.').pop()}`;
+  showAlert('⏳ Завантаження фото...','success');
   const r=await fetch(`${SUPABASE_URL}/storage/v1/object/${BUCKET}/${fname}`,{
     method:'POST',
-    headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':file.type},
+    headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':file.type,'x-upsert':'true'},
     body:file
   });
   if(r.ok){
@@ -442,7 +448,27 @@ async function uploadFile(input,urlId,prevId){
     document.getElementById(urlId).value=url;
     const p=document.getElementById(prevId);
     p.src=url;p.style.display='block';
-  }else{alert('Помилка завантаження фото');}
+    showAlert('✅ Фото завантажено!','success');
+  }else{
+    const err=await r.json();
+    showAlert('❌ Помилка: '+JSON.stringify(err),'error');
+  }
+}
+
+// WiFi connect
+function connectWifi(){
+  const ssid='Druzi_Bar_5G';
+  const pass='druzi2022';
+  // Try Android WiFi URI
+  const wifiUri=`wifi:${ssid}`;
+  const a=document.createElement('a');
+  a.href=wifiUri;
+  // Copy password and show instructions
+  navigator.clipboard.writeText(pass).then(()=>{
+    alert(`📶 Пароль "${pass}" скопійовано!\n\nВідкрий Налаштування → WiFi → ${ssid}`);
+  }).catch(()=>{
+    alert(`📶 WiFi: ${ssid}\nПароль: ${pass}`);
+  });
 }
 
 const CATS=[
@@ -498,14 +524,15 @@ function switchTab(cat,el){
 function globalSearch(q){
   if(!q.trim()){renderItems(allItems.filter(i=>i.category===currentCat));return;}
   const ql=q.toLowerCase();
-  const results=allItems.filter(i=>i.name.toLowerCase().includes(ql)||(i.description||'').toLowerCase().includes(ql)||i.category.toLowerCase().includes(ql));
-  renderItems(results,true);
+  const res=allItems.filter(i=>i.name.toLowerCase().includes(ql)||(i.description||'').toLowerCase().includes(ql)||i.category.toLowerCase().includes(ql));
+  renderItems(res,true);
 }
 
-function imgHTML(item){
+function imgTag(item,w=80,h=80,r=10){
+  const e=item.emoji||'🍽️';
   return item.image_url
-    ?`<img src="${item.image_url}" alt="${item.name}" onerror="this.parentElement.innerHTML='${item.emoji||'🍽️'}';">`
-    :(item.emoji||'🍽️');
+    ?`<img src="${item.image_url}" width="${w}" height="${h}" style="object-fit:cover;border-radius:${r}px;display:block;" onerror="this.parentElement.innerHTML='${e}'">`
+    :e;
 }
 
 function badgesHTML(item){
@@ -517,10 +544,10 @@ function badgesHTML(item){
 
 function itemHTML(item,showDel=false){
   const isFav=favorites.includes(item.name);
-  const sn=item.name.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+  const sn=item.name.replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;');
   return `<div class="item-card" onclick="openItemModal('${sn}')">
     <div class="item-inner">
-      <div class="item-img">${imgHTML(item)}</div>
+      <div class="item-img">${imgTag(item)}</div>
       <div class="item-info">
         <div class="item-name">${item.name}</div>
         ${item.description?`<div class="item-desc">${item.description}</div>`:''}
@@ -531,7 +558,7 @@ function itemHTML(item,showDel=false){
       <div><div class="item-price">${item.price} грн</div>${item.weight?`<div class="item-weight">${item.weight}</div>`:''}</div>
       <div class="item-actions" onclick="event.stopPropagation()">
         ${showDel
-          ?`<button class="fav-btn" onclick="removeFav('${sn}')" title="Видалити">🗑️</button>`
+          ?`<button class="fav-btn" onclick="removeFav('${sn}')">🗑️</button>`
           :`<button class="fav-btn" onclick="toggleFav('${sn}',this)">${isFav?'❤️':'🤍'}</button>`}
         <button class="share-btn" onclick="shareItem('${sn}',${item.price})">↗</button>
       </div>
@@ -551,7 +578,7 @@ function renderItems(items,isSearch=false){
   }
 }
 
-// ITEM MODAL
+// Item modal
 function openItemModal(name){
   const item=allItems.find(i=>i.name===name);
   if(!item)return;
@@ -561,17 +588,16 @@ function openItemModal(name){
   document.getElementById('itemModalPrice').textContent=item.price+' грн';
   document.getElementById('itemModalWeight').textContent=item.weight||'';
   document.getElementById('itemModalMeta').innerHTML=badgesHTML(item);
-  document.getElementById('itemModalFav').textContent=isFav?'❤️':'🤍';
-  document.getElementById('itemModalFav').onclick=()=>{
-    toggleFav(item.name,document.getElementById('itemModalFav'));
-    document.getElementById('itemModalFav').textContent=favorites.includes(item.name)?'❤️':'🤍';
+  const favBtn=document.getElementById('itemModalFav');
+  favBtn.textContent=isFav?'❤️':'🤍';
+  favBtn.onclick=()=>{
+    toggleFav(item.name,favBtn);
+    favBtn.textContent=favorites.includes(item.name)?'❤️':'🤍';
   };
   document.getElementById('itemModalShare').onclick=()=>shareItem(item.name,item.price);
-  if(item.image_url){
-    document.getElementById('itemModalImg').innerHTML=`<img class="item-modal-img" src="${item.image_url}" alt="${item.name}" onerror="this.parentElement.innerHTML='<div class=item-modal-img-placeholder>${item.emoji||'🍽️'}</div>'">`;
-  }else{
-    document.getElementById('itemModalImg').innerHTML=`<div class="item-modal-img-placeholder">${item.emoji||'🍽️'}</div>`;
-  }
+  document.getElementById('itemModalImg').innerHTML=item.image_url
+    ?`<img class="item-modal-img" src="${item.image_url}" alt="${item.name}" onerror="this.outerHTML='<div class=item-modal-img-ph>${item.emoji||'🍽️'}</div>'">`
+    :`<div class="item-modal-img-ph">${item.emoji||'🍽️'}</div>`;
   document.getElementById('itemModal').style.display='flex';
 }
 function closeItemModal(){document.getElementById('itemModal').style.display='none';}
@@ -595,27 +621,21 @@ function showFavorites(){
   showView('viewFavorites');
   if(!allItems.length){
     dbGet('menu_items',null,'category,name').then(({data})=>{allItems=data||[];renderFavList();});
-  }else{renderFavList();}
+  }else renderFavList();
 }
 
 function renderFavList(){
   const favItems=allItems.filter(i=>favorites.includes(i.name));
-  const el=document.getElementById('favList');
-  if(favItems.length){
-    el.innerHTML='<div class="items-list">'+favItems.map(i=>itemHTML(i,true)).join('')+'</div>';
-  }else{
-    el.innerHTML=`<div class="no-results" style="padding:40px 16px;">
-      Поки немає улюблених ❤️<br><br>
-      <small>Натискай 🤍 поруч зі стравою</small>
-    </div>
-    <div class="go-menu-btn" onclick="showView('viewMenu')">🍽️ Перейти до меню</div>`;
-  }
+  document.getElementById('favList').innerHTML=favItems.length
+    ?'<div class="items-list">'+favItems.map(i=>itemHTML(i,true)).join('')+'</div>'
+    :`<div class="no-results" style="padding:40px 16px;">Поки немає улюблених ❤️<br><br><small>Натискай 🤍 поруч зі стравою</small></div>
+      <div class="go-menu-btn" onclick="showView('viewMenu')">🍽️ Перейти до меню</div>`;
 }
 
 function shareItem(name,price){
   const text=`${name} — ${price} грн\n🍽️ Druzi Bar · druzi-menu.vercel.app`;
   if(navigator.share)navigator.share({title:name,text});
-  else{navigator.clipboard.writeText(text).then(()=>alert('Скопійовано!'));}
+  else navigator.clipboard.writeText(text).then(()=>alert('Скопійовано!'));
 }
 
 // ADMIN
@@ -664,8 +684,8 @@ function renderAdmin(data,q){
   f.forEach(item=>{
     if(adminCat==='all'&&item.category!==lastCat){html+=`<div class="section-label" style="padding:10px 0 4px;">${item.category}</div>`;lastCat=item.category;}
     const active=item.is_active===true||item.is_active==='true';
-    const jItem=JSON.stringify(item).replace(/</g,'\\u003c').replace(/'/g,"\\'");
-    html+=`<div class="admin-item" id="ai_${item.id}">
+    const jItem=JSON.stringify(item).replace(/</g,'\\u003c').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    html+=`<div class="admin-item">
       <div class="admin-item-img">${item.image_url?`<img src="${item.image_url}" onerror="this.parentElement.innerHTML='${item.emoji||'🍽️'}'">`:item.emoji||'🍽️'}</div>
       <div class="admin-item-info">
         <div class="admin-item-name">${item.name}</div>
@@ -674,7 +694,7 @@ function renderAdmin(data,q){
       </div>
       <div class="admin-item-btns">
         <button class="toggle ${active?'on':'off'}" onclick="toggleItem('${item.name.replace(/'/g,"\\'")}',${active})"></button>
-        <button class="btn-edit" onclick='openEdit(${jItem})'>✏️</button>
+        <button class="btn-edit" onclick='openEdit(${JSON.stringify(item)})'>✏️</button>
         <button class="btn-danger" onclick="deleteItem('${item.name.replace(/'/g,"\\'").replace(/"/g,"&quot;")}')">✕</button>
       </div>
     </div>`;
@@ -682,15 +702,12 @@ function renderAdmin(data,q){
   wrap.innerHTML=html;
 }
 
-async function toggleItem(name,cur){
-  await dbPatch('menu_items',{is_active:!cur},'name',name);
-  loadAdminItems();
-}
+async function toggleItem(name,cur){await dbPatch('menu_items',{is_active:!cur},'name',name);loadAdminItems();}
 
 async function deleteItem(name){
   if(!confirm(`Видалити "${name}"?`))return;
   const{error}=await dbDel('menu_items','name',name);
-  if(error){showAlert('Помилка видалення: '+JSON.stringify(error),'error');return;}
+  if(error){showAlert('Помилка: '+JSON.stringify(error),'error');return;}
   showAlert('🗑️ Видалено!','success');
   loadAdminItems();
 }
@@ -727,9 +744,7 @@ async function saveEdit(){
   };
   const{error}=await dbPatch('menu_items',vals,'name',orig);
   if(error){showAlert('Помилка: '+JSON.stringify(error),'error');return;}
-  closeEdit();
-  showAlert('✅ Збережено!','success');
-  loadAdminItems();
+  closeEdit();showAlert('✅ Збережено!','success');loadAdminItems();
 }
 
 function showAlert(msg,type){
