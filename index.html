@@ -7,15 +7,18 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍔</text></svg>">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-:root { --gold: #d4a853; --dark: #1a1a1a; --bg: #f5f4f0; --card: #ffffff; --text: #1a1a1a; --muted: #888; --border: rgba(0,0,0,0.08); --radius: 14px; }
+:root { --gold: #d4a853; --dark: #1a1a1a; --bg: #f5f4f0; --card: #fff; --text: #1a1a1a; --muted: #888; --border: rgba(0,0,0,0.08); --radius: 14px; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-.header { background: var(--dark); position: relative; overflow: hidden; }
-.header-bg { width: 100%; height: 200px; display: block; object-fit: cover; }
-.header-logo { position: absolute; top: 16px; left: 16px; width: 48px; height: 48px; border-radius: 50%; border: 2px solid rgba(212,168,83,0.6); background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 20px; font-weight: 600; cursor: pointer; }
-.header-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 24px 16px 18px; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%); }
-.header-name { color: #fff; font-size: 24px; font-weight: 600; }
+
+/* HEADER */
+.header { background: #1a0f05; position: relative; overflow: hidden; height: 220px; }
+.header-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+.header-logo { position: absolute; top: 16px; left: 16px; width: 48px; height: 48px; border-radius: 50%; border: 2px solid rgba(212,168,83,0.7); background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 20px; font-weight: 700; cursor: pointer; z-index: 2; }
+.header-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 24px 16px 18px; background: linear-gradient(to top, rgba(0,0,0,0.92) 0%, transparent 100%); z-index: 2; }
+.header-name { color: #fff; font-size: 26px; font-weight: 700; }
 .header-sub { color: rgba(255,255,255,0.55); font-size: 13px; margin-top: 2px; }
 .gold { color: var(--gold); }
+
 .section-label { font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: 1.8px; text-transform: uppercase; padding: 20px 16px 10px; }
 .categories { padding: 0 12px; display: flex; flex-direction: column; gap: 8px; }
 .cat-card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 14px 16px; display: flex; align-items: center; gap: 14px; cursor: pointer; transition: transform 0.1s; }
@@ -25,6 +28,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .cat-name { font-size: 15px; font-weight: 600; }
 .cat-desc { font-size: 12px; color: var(--muted); margin-top: 1px; }
 .arrow { color: var(--muted); font-size: 18px; }
+
 .info-card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); margin: 0 12px; }
 .info-row { display: flex; align-items: flex-start; gap: 12px; padding: 13px 16px; border-bottom: 1px solid var(--border); }
 .info-row:last-child { border-bottom: none; }
@@ -34,25 +38,35 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .open-pill { display: inline-block; background: #e8f5e9; color: #2e7d32; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; margin-left: 6px; }
 .social-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 8px 12px 0; }
 .social-btn { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 12px; text-align: center; font-size: 13px; font-weight: 500; cursor: pointer; text-decoration: none; color: var(--text); display: block; }
-.detail-header { background: var(--dark); padding: 0; }
+
+/* DETAIL */
+.detail-header { background: var(--dark); }
 .detail-top-bar { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px 0; }
 .back-btn { color: var(--gold); font-size: 14px; font-weight: 500; cursor: pointer; }
-.detail-title-area { padding: 12px 16px 16px; }
-.detail-title { color: #fff; font-size: 22px; font-weight: 600; }
-.detail-sub { color: rgba(255,255,255,0.5); font-size: 13px; margin-top: 3px; }
-.cat-tabs { display: flex; overflow-x: auto; gap: 8px; padding: 12px 12px 0; scrollbar-width: none; }
+.detail-title-area { padding: 10px 16px 14px; }
+.detail-title { color: #fff; font-size: 20px; font-weight: 600; }
+.detail-sub { color: rgba(255,255,255,0.5); font-size: 12px; margin-top: 2px; }
+
+/* SEARCH - GLOBAL */
+.global-search-wrap { padding: 10px 12px 0; }
+.global-search { width: 100%; padding: 10px 14px 10px 38px; border-radius: 12px; border: 1px solid var(--border); font-size: 14px; background: var(--card); color: var(--text); outline: none; }
+.global-search:focus { border-color: var(--gold); }
+.search-icon { position: absolute; left: 24px; top: 50%; transform: translateY(-50%); font-size: 16px; pointer-events: none; }
+.search-wrap-rel { position: relative; }
+
+/* CAT TABS */
+.cat-tabs { display: flex; overflow-x: auto; gap: 8px; padding: 10px 12px 0; scrollbar-width: none; }
 .cat-tabs::-webkit-scrollbar { display: none; }
-.cat-tab { flex-shrink: 0; padding: 7px 14px; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid var(--border); background: var(--card); color: var(--text); }
+.cat-tab { flex-shrink: 0; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid var(--border); background: var(--card); color: var(--text); white-space: nowrap; }
 .cat-tab.active { background: var(--gold); color: #fff; border-color: var(--gold); }
-.search-wrap { padding: 10px 12px; }
-.search-input { width: 100%; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border); font-size: 14px; background: var(--card); color: var(--text); outline: none; }
-.search-input:focus { border-color: var(--gold); }
-.items-list { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+
+/* ITEMS */
+.items-list { padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
 .item-card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; }
 .item-inner { padding: 12px; display: flex; gap: 12px; align-items: flex-start; }
-.item-img { width: 80px; height: 80px; border-radius: 10px; flex-shrink: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 36px; overflow: hidden; }
-.item-img img { width: 80px; height: 80px; object-fit: cover; }
-.item-info { flex: 1; }
+.item-img { width: 80px; height: 80px; border-radius: 10px; flex-shrink: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 34px; overflow: hidden; }
+.item-img img { width: 80px; height: 80px; object-fit: cover; display: block; }
+.item-info { flex: 1; min-width: 0; }
 .item-name { font-size: 14px; font-weight: 600; line-height: 1.3; }
 .item-desc { font-size: 12px; color: var(--muted); margin-top: 3px; line-height: 1.4; }
 .item-meta { display: flex; align-items: center; gap: 6px; margin-top: 5px; flex-wrap: wrap; }
@@ -70,6 +84,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .loading-msg { text-align: center; padding: 40px 16px; color: var(--muted); font-size: 14px; }
 .footer { text-align: center; padding: 24px 16px; color: var(--muted); font-size: 12px; }
 .fav-count { background: var(--gold); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 10px; margin-left: 4px; }
+
+/* ADMIN */
 .admin-header { background: var(--dark); color: #fff; padding: 16px; display: flex; align-items: center; justify-content: space-between; }
 .admin-title { font-size: 17px; font-weight: 600; }
 .admin-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
@@ -89,7 +105,7 @@ textarea { resize: vertical; min-height: 60px; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .admin-cat-tabs { display: flex; overflow-x: auto; gap: 6px; margin-bottom: 10px; scrollbar-width: none; }
 .admin-cat-tabs::-webkit-scrollbar { display: none; }
-.admin-cat-tab { flex-shrink: 0; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; cursor: pointer; border: 1px solid var(--border); background: var(--card); color: var(--text); }
+.admin-cat-tab { flex-shrink: 0; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; cursor: pointer; border: 1px solid var(--border); background: var(--card); color: var(--text); white-space: nowrap; }
 .admin-cat-tab.active { background: var(--gold); color: #fff; border-color: var(--gold); }
 .admin-item { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 10px 12px; display: flex; gap: 10px; align-items: center; margin-bottom: 6px; }
 .admin-item-img { width: 48px; height: 48px; border-radius: 8px; background: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; overflow: hidden; }
@@ -108,6 +124,8 @@ textarea { resize: vertical; min-height: 60px; }
 .alert { padding: 10px 14px; border-radius: 10px; font-size: 13px; margin-bottom: 10px; }
 .alert-success { background: #e8f5e9; color: #2e7d32; }
 .alert-error { background: #ffebee; color: #c62828; }
+.upload-btn { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-radius: 10px; border: 1px dashed var(--gold); background: #fffbf0; color: var(--gold); font-size: 13px; font-weight: 500; cursor: pointer; margin-top: 6px; }
+.img-preview { width: 80px; height: 80px; border-radius: 10px; object-fit: cover; margin-top: 8px; }
 .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 100; display: flex; align-items: flex-end; justify-content: center; }
 .modal { background: var(--card); border-radius: 20px 20px 0 0; padding: 20px 16px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; }
 .modal-title { font-size: 16px; font-weight: 600; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; }
@@ -122,27 +140,67 @@ textarea { resize: vertical; min-height: 60px; }
 .max-w { max-width: 480px; margin: 0 auto; }
 .fav-header { background: var(--dark); padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
 .fav-header-title { color: #fff; font-size: 18px; font-weight: 600; }
+.no-results { text-align: center; padding: 30px 16px; color: var(--muted); font-size: 14px; }
 </style>
 </head>
 <body>
 
+<!-- MENU HOME -->
 <div class="view active" id="viewMenu">
   <div class="max-w">
     <div class="header">
-      <img class="header-bg" src="https://cdn-media.choiceqr.com/prod-eat-druzi-bar/menu/GyBrADz-kyXeydh-uUmVGKE_prepare.jpeg" onerror="this.style.background='#2d1b0e'" alt="">
+      <!-- Beautiful burger SVG header -->
+      <svg class="header-svg" viewBox="0 0 390 220" xmlns="http://www.w3.org/2000/svg">
+        <rect width="390" height="220" fill="#1a0f05"/>
+        <!-- Background glow -->
+        <ellipse cx="195" cy="110" rx="160" ry="90" fill="#2d1b0e" opacity="0.8"/>
+        <!-- Burger illustration -->
+        <!-- Top bun -->
+        <ellipse cx="195" cy="82" rx="68" ry="28" fill="#c8853a"/>
+        <ellipse cx="195" cy="72" rx="68" ry="22" fill="#e09848"/>
+        <ellipse cx="195" cy="68" rx="65" ry="18" fill="#f0ac58"/>
+        <!-- Sesame seeds -->
+        <ellipse cx="175" cy="64" rx="5" ry="3" fill="#d4923e" transform="rotate(-20,175,64)"/>
+        <ellipse cx="200" cy="60" rx="5" ry="3" fill="#d4923e" transform="rotate(10,200,60)"/>
+        <ellipse cx="220" cy="65" rx="5" ry="3" fill="#d4923e" transform="rotate(-15,220,65)"/>
+        <!-- Lettuce -->
+        <path d="M122 92 Q140 85 160 90 Q175 83 195 88 Q215 82 235 88 Q255 84 268 92" stroke="#4caf50" stroke-width="7" fill="none" stroke-linecap="round"/>
+        <!-- Cheese -->
+        <rect x="124" y="96" width="142" height="10" rx="2" fill="#ffd54f"/>
+        <polygon points="124,96 116,106 124,106" fill="#ffd54f"/>
+        <polygon points="266,96 274,106 266,106" fill="#ffd54f"/>
+        <!-- Patty -->
+        <rect x="120" y="104" width="150" height="22" rx="8" fill="#6d3a1f"/>
+        <rect x="120" y="104" width="150" height="10" rx="5" fill="#7d4a2f"/>
+        <!-- Tomato -->
+        <rect x="122" y="128" width="146" height="8" rx="3" fill="#e53935" opacity="0.9"/>
+        <!-- Bottom bun -->
+        <ellipse cx="195" cy="143" rx="72" ry="14" fill="#c8853a"/>
+        <ellipse cx="195" cy="149" rx="72" ry="12" fill="#b8742a"/>
+        <!-- Steam lines -->
+        <path d="M160 48 Q163 40 160 32" stroke="rgba(255,255,255,0.2)" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M195 44 Q198 36 195 28" stroke="rgba(255,255,255,0.2)" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M230 48 Q233 40 230 32" stroke="rgba(255,255,255,0.2)" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <!-- Bottom overlay -->
+        <rect x="0" y="160" width="390" height="60" fill="url(#hg)"/>
+        <defs><linearGradient id="hg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a0f05" stop-opacity="0"/><stop offset="100%" stop-color="#1a0f05" stop-opacity="1"/></linearGradient></defs>
+      </svg>
       <div class="header-logo" id="logoBtn">D</div>
       <div class="header-info">
         <div class="header-name">Druzi Bar <span class="gold">✦</span></div>
         <div class="header-sub">Кальян-бар · Могилів-Подільський</div>
       </div>
     </div>
+
     <div style="padding:12px 12px 0;">
       <div onclick="showFavorites()" style="background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:12px 16px;text-align:center;font-size:13px;font-weight:500;cursor:pointer;">
         ❤️ Улюблене <span class="fav-count" id="favCountHome">0</span>
       </div>
     </div>
+
     <div class="section-label">Меню</div>
     <div class="categories" id="categoriesList"></div>
+
     <div class="section-label">Контакти</div>
     <div class="info-card">
       <div class="info-row"><span class="info-icon">📍</span><div><div class="info-label">Адреса</div><div class="info-val">Стависька 32/24, Могилів-Подільський</div></div></div>
@@ -158,6 +216,7 @@ textarea { resize: vertical; min-height: 60px; }
   </div>
 </div>
 
+<!-- CATEGORY VIEW -->
 <div class="view" id="viewCategory">
   <div class="max-w">
     <div class="detail-header">
@@ -170,12 +229,20 @@ textarea { resize: vertical; min-height: 60px; }
         <div class="detail-sub" id="catSub"></div>
       </div>
     </div>
+    <!-- Global search -->
+    <div class="global-search-wrap">
+      <div class="search-wrap-rel">
+        <span class="search-icon">🔍</span>
+        <input class="global-search" type="text" placeholder="Пошук по всьому меню..." oninput="globalSearch(this.value)" id="searchInput">
+      </div>
+    </div>
+    <!-- Category tabs -->
     <div class="cat-tabs" id="catTabs"></div>
-    <div class="search-wrap"><input class="search-input" type="text" placeholder="🔍 Пошук страви..." oninput="filterItems(this.value)" id="searchInput"></div>
     <div class="items-list" id="itemsList"></div>
   </div>
 </div>
 
+<!-- FAVORITES VIEW -->
 <div class="view" id="viewFavorites">
   <div class="max-w">
     <div class="fav-header">
@@ -186,6 +253,7 @@ textarea { resize: vertical; min-height: 60px; }
   </div>
 </div>
 
+<!-- LOGIN -->
 <div class="view" id="viewLogin">
   <div class="login-wrap">
     <div class="login-card">
@@ -200,6 +268,7 @@ textarea { resize: vertical; min-height: 60px; }
   </div>
 </div>
 
+<!-- ADMIN -->
 <div class="view" id="viewAdmin">
   <div class="admin-header">
     <div><div class="admin-title">⚙️ Адмін панель</div><div class="admin-sub">Druzi Bar</div></div>
@@ -242,26 +311,32 @@ textarea { resize: vertical; min-height: 60px; }
         <div><label>Emoji</label><input type="text" id="fEmoji" placeholder="🍣" style="font-size:18px;text-align:center;" maxlength="4"></div>
         <div><label>Час приготування</label><input type="text" id="fTime" placeholder="15 хв"></div>
       </div>
-      <label>Фото (URL посилання)</label>
-      <input type="text" id="fImage" placeholder="https://...">
-      <div id="imagePreview" style="margin-top:8px;"></div>
+      <label>Фото</label>
+      <input type="text" id="fImage" placeholder="URL посилання на фото">
+      <div class="upload-btn" onclick="document.getElementById('fFile').click()">
+        📷 Або завантажити з девайса
+        <input type="file" id="fFile" accept="image/*" style="display:none" onchange="uploadFile(this,'fImage','fPreview')">
+      </div>
+      <img id="fPreview" class="img-preview" style="display:none">
       <button class="btn btn-gold" style="width:100%;margin-top:14px;" onclick="addItem()">Зберегти страву</button>
     </div>
 
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
       <div class="form-title" style="margin:0;">📋 Всі страви</div>
     </div>
-    <div class="search-wrap" style="padding:0 0 8px;">
-      <input class="search-input" type="text" placeholder="🔍 Пошук..." oninput="filterAdminItems(this.value)">
+    <div style="margin-bottom:8px;">
+      <input style="background:var(--card);" type="text" placeholder="🔍 Пошук..." oninput="filterAdmin(this.value)">
     </div>
     <div class="admin-cat-tabs" id="adminCatTabs"></div>
     <div id="adminItemsList"><div class="loading-msg">Завантаження...</div></div>
   </div>
 </div>
 
+<!-- EDIT MODAL -->
 <div id="editModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:100;align-items:flex-end;justify-content:center;">
   <div class="modal">
     <div class="modal-title">✏️ Редагувати <button class="modal-close" onclick="closeEdit()">×</button></div>
+    <input type="hidden" id="eOrigName">
     <label>Назва</label><input type="text" id="eName">
     <label>Опис</label><textarea id="eDesc"></textarea>
     <div class="form-row">
@@ -293,7 +368,11 @@ textarea { resize: vertical; min-height: 60px; }
       <div><label>Час приготування</label><input type="text" id="eTime"></div>
     </div>
     <label>Фото URL</label><input type="text" id="eImage">
-    <input type="hidden" id="eOrigName">
+    <div class="upload-btn" onclick="document.getElementById('eFile').click()">
+      📷 Завантажити нове фото
+      <input type="file" id="eFile" accept="image/*" style="display:none" onchange="uploadFile(this,'eImage','ePreview')">
+    </div>
+    <img id="ePreview" class="img-preview" style="display:none">
     <button class="btn btn-gold" style="width:100%;margin-top:14px;" onclick="saveEdit()">Зберегти зміни</button>
   </div>
 </div>
@@ -302,21 +381,42 @@ textarea { resize: vertical; min-height: 60px; }
 const SUPABASE_URL = 'https://kfjkujrnimqounsnltpr.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtmamt1anJuaW1xb3Vuc25sdHByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3ODA5NjMsImV4cCI6MjA5MjM1Njk2M30.PxW__VEh0JrNAz6w7o3Dd5c0sgDQOXtXdGx3cUjjtpQ';
 const ADMIN_PASSWORD = 'druzidruzi1';
+const BUCKET = 'menu-images';
 const H = {'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation'};
 
-async function dbGet(table, filters, order) {
-  let url = `${SUPABASE_URL}/rest/v1/${table}?select=*`;
-  if (filters) Object.entries(filters).forEach(([k,v])=>url+=`&${k}=eq.${encodeURIComponent(v)}`);
-  if (order) url+=`&order=${order}`;
-  const r = await fetch(url,{headers:H});
-  const d = await r.json();
-  return {data:Array.isArray(d)?d:[],error:r.ok?null:d};
+async function dbGet(table,filters,order){
+  let url=`${SUPABASE_URL}/rest/v1/${table}?select=*`;
+  if(filters)Object.entries(filters).forEach(([k,v])=>url+=`&${k}=eq.${encodeURIComponent(v)}`);
+  if(order)url+=`&order=${order}`;
+  const r=await fetch(url,{headers:H});
+  const d=await r.json();
+  return{data:Array.isArray(d)?d:[],error:r.ok?null:d};
 }
 async function dbPost(table,row){const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}`,{method:'POST',headers:H,body:JSON.stringify(row)});return{error:r.ok?null:await r.json()};}
 async function dbPatch(table,vals,col,val){const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}?${col}=eq.${encodeURIComponent(val)}`,{method:'PATCH',headers:H,body:JSON.stringify(vals)});return{error:r.ok?null:await r.json()};}
 async function dbDel(table,col,val){const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}?${col}=eq.${encodeURIComponent(val)}`,{method:'DELETE',headers:H});return{error:r.ok?null:await r.json()};}
 
-const CATS = [
+async function uploadFile(input, urlFieldId, previewId) {
+  if(!input.files||!input.files[0])return;
+  const file=input.files[0];
+  const ext=file.name.split('.').pop();
+  const fname=`${Date.now()}.${ext}`;
+  const r=await fetch(`${SUPABASE_URL}/storage/v1/object/${BUCKET}/${fname}`,{
+    method:'POST',
+    headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':file.type},
+    body:file
+  });
+  if(r.ok){
+    const url=`${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${fname}`;
+    document.getElementById(urlFieldId).value=url;
+    const prev=document.getElementById(previewId);
+    prev.src=url; prev.style.display='block';
+  } else {
+    alert('Помилка завантаження фото');
+  }
+}
+
+const CATS=[
   {key:'Суші та роли',icon:'🍣',bg:'#fff8ed',desc:'Класичні та авторські роли'},
   {key:'Піца',icon:'🍕',bg:'#fff0f0',desc:'Тонке тісто, авторські рецепти'},
   {key:'Їжа',icon:'🍽️',bg:'#f0fff4',desc:'Основні страви та закуски'},
@@ -325,11 +425,10 @@ const CATS = [
   {key:'Кальян',icon:'💨',bg:'#fdf0ff',desc:'Преміум тютюн та міксти'},
 ];
 
-let allItems=[], currentCat='', adminCat='all', _adminSearch='';
+let allItems=[],currentCat='',adminCat='all',_adminSearch='';
 let favorites=JSON.parse(localStorage.getItem('druzi_favs')||'[]');
 
 function updateFavCount(){const c=favorites.length;document.querySelectorAll('#favCountHome,#favCountCat').forEach(el=>el.textContent=c);}
-
 function showView(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
 
 function buildMenu(){
@@ -352,10 +451,14 @@ async function openCategory(key,icon,desc){
   updateFavCount();
   const {data}=await dbGet('menu_items',null,'category,name');
   allItems=data||[];
+  buildCatTabs(key);
+  renderItems(allItems.filter(i=>i.category===key));
+}
+
+function buildCatTabs(activeKey){
   const cats=[...new Set(allItems.map(i=>i.category))];
   document.getElementById('catTabs').innerHTML=cats.map(c=>`
-    <div class="cat-tab ${c===key?'active':''}" onclick="switchTab('${c}',this)">${c}</div>`).join('');
-  renderItems(allItems.filter(i=>i.category===key));
+    <div class="cat-tab ${c===activeKey?'active':''}" onclick="switchTab('${c}',this)">${c}</div>`).join('');
 }
 
 function switchTab(cat,el){
@@ -367,13 +470,29 @@ function switchTab(cat,el){
   el.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
 }
 
-function filterItems(q){renderItems(allItems.filter(i=>i.category===currentCat&&(i.name.toLowerCase().includes(q.toLowerCase())||(i.description||'').toLowerCase().includes(q.toLowerCase()))));}
+// GLOBAL SEARCH — searches across ALL categories
+function globalSearch(q){
+  if(!q.trim()){
+    renderItems(allItems.filter(i=>i.category===currentCat));
+    return;
+  }
+  const ql=q.toLowerCase();
+  const results=allItems.filter(i=>
+    i.name.toLowerCase().includes(ql)||
+    (i.description||'').toLowerCase().includes(ql)||
+    i.category.toLowerCase().includes(ql)
+  );
+  renderItems(results,true);
+}
 
-function itemHTML(item,favable=true){
+function itemHTML(item,showDel=false){
   const isFav=favorites.includes(item.name);
-  return `<div class="item-card">
+  const safe=item.name.replace(/'/g,"\\'").replace(/"/g,'&quot;');
+  return `<div class="item-card" id="icard_${CSS.escape(item.name)}">
     <div class="item-inner">
-      <div class="item-img">${item.image_url?`<img src="${item.image_url}" alt="${item.name}" onerror="this.parentElement.innerHTML='${item.emoji||'🍽️'}'">`:item.emoji||'🍽️'}</div>
+      <div class="item-img">${item.image_url
+        ?`<img src="${item.image_url}" alt="${item.name}" onerror="this.parentElement.innerHTML='${item.emoji||'🍽️'}';">`
+        :item.emoji||'🍽️'}</div>
       <div class="item-info">
         <div class="item-name">${item.name}</div>
         ${item.description?`<div class="item-desc">${item.description}</div>`:''}
@@ -388,15 +507,34 @@ function itemHTML(item,favable=true){
     <div class="item-footer">
       <div><div class="item-price">${item.price} грн</div>${item.weight?`<div class="item-weight">${item.weight}</div>`:''}</div>
       <div class="item-actions">
-        ${favable?`<button class="fav-btn" onclick="toggleFav('${item.name}',this)">${isFav?'❤️':'🤍'}</button>`:''}
-        <button class="share-btn" onclick="shareItem('${item.name}',${item.price})">↗</button>
+        ${showDel
+          ?`<button class="fav-btn" title="Видалити з улюблених" onclick="removeFav('${safe}',this)">🗑️</button>`
+          :`<button class="fav-btn" onclick="toggleFav('${safe}',this)">${isFav?'❤️':'🤍'}</button>`}
+        <button class="share-btn" onclick="shareItem('${safe}',${item.price})">↗</button>
       </div>
     </div>
   </div>`;
 }
 
-function renderItems(items){
-  document.getElementById('itemsList').innerHTML=!items||!items.length?'<div class="loading-msg">Поки тут порожньо 🍽️</div>':items.map(i=>itemHTML(i)).join('');
+function renderItems(items,isSearch=false){
+  const el=document.getElementById('itemsList');
+  if(!items||!items.length){
+    el.innerHTML=`<div class="no-results">${isSearch?'Нічого не знайдено 🔍':'Поки тут порожньо 🍽️'}</div>`;
+    return;
+  }
+  let html='';
+  if(isSearch){
+    // Group by category when global search
+    const groups={};
+    items.forEach(i=>{if(!groups[i.category])groups[i.category]=[];groups[i.category].push(i);});
+    Object.entries(groups).forEach(([cat,its])=>{
+      html+=`<div class="section-label" style="padding:8px 0 4px;">${cat}</div>`;
+      html+=its.map(i=>itemHTML(i)).join('');
+    });
+  } else {
+    html=items.map(i=>itemHTML(i)).join('');
+  }
+  el.innerHTML=html;
 }
 
 function toggleFav(name,btn){
@@ -406,21 +544,50 @@ function toggleFav(name,btn){
   updateFavCount();
 }
 
+function removeFav(name,btn){
+  favorites=favorites.filter(f=>f!==name);
+  localStorage.setItem('druzi_favs',JSON.stringify(favorites));
+  updateFavCount();
+  btn.closest('.item-card').style.animation='fadeOut 0.2s ease forwards';
+  setTimeout(()=>{
+    btn.closest('.item-card').remove();
+    if(!document.querySelector('#favList .item-card'))
+      document.getElementById('favList').innerHTML='<div class="no-results">Поки немає улюблених ❤️<br><br><small>Натискай 🤍 поруч зі стравою</small></div>';
+  },200);
+}
+
 function showFavorites(){
   showView('viewFavorites');
+  if(!allItems.length){
+    // Load items if not loaded yet
+    dbGet('menu_items',null,'category,name').then(({data})=>{
+      allItems=data||[];
+      renderFavList();
+    });
+  } else { renderFavList(); }
+}
+
+function renderFavList(){
   const favItems=allItems.filter(i=>favorites.includes(i.name));
-  document.getElementById('favList').innerHTML=favItems.length?favItems.map(i=>itemHTML(i,false)).join(''):'<div class="loading-msg">Поки немає улюблених ❤️<br><br><small>Натискай 🤍 поруч зі стравою</small></div>';
+  document.getElementById('favList').innerHTML=favItems.length
+    ?favItems.map(i=>itemHTML(i,true)).join('')
+    :'<div class="no-results">Поки немає улюблених ❤️<br><br><small>Натискай 🤍 поруч зі стравою</small></div>';
 }
 
 function shareItem(name,price){
   const text=`${name} — ${price} грн\n🍽️ Druzi Bar · druzi-menu.vercel.app`;
   if(navigator.share)navigator.share({title:name,text});
-  else{navigator.clipboard.writeText(text);alert('Скопійовано!');}
+  else{navigator.clipboard.writeText(text).then(()=>alert('Скопійовано!'));}
 }
 
+// ADMIN
 function checkLogin(){
-  if(document.getElementById('adminPass').value===ADMIN_PASSWORD){sessionStorage.setItem('druzi_admin','1');showView('viewAdmin');loadAdminItems();buildAdminTabs();}
-  else document.getElementById('loginErr').textContent='Невірний пароль';
+  if(document.getElementById('adminPass').value===ADMIN_PASSWORD){
+    sessionStorage.setItem('druzi_admin','1');
+    showView('viewAdmin');
+    loadAdminItems();
+    buildAdminTabs();
+  } else document.getElementById('loginErr').textContent='Невірний пароль';
 }
 function logout(){sessionStorage.removeItem('druzi_admin');showView('viewMenu');}
 
@@ -429,8 +596,13 @@ function buildAdminTabs(){
   document.getElementById('adminCatTabs').innerHTML=tabs.map(t=>`
     <div class="admin-cat-tab ${t===adminCat?'active':''}" onclick="switchAdminTab('${t}',this)">${t==='all'?'📋 Всі':t}</div>`).join('');
 }
-function switchAdminTab(cat,el){adminCat=cat;document.querySelectorAll('.admin-cat-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');renderAdminItems(window._adminAll||[],_adminSearch);}
-function filterAdminItems(q){_adminSearch=q;renderAdminItems(window._adminAll||[],q);}
+function switchAdminTab(cat,el){
+  adminCat=cat;
+  document.querySelectorAll('.admin-cat-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderAdmin(window._adminAll||[],_adminSearch);
+}
+function filterAdmin(q){_adminSearch=q;renderAdmin(window._adminAll||[],q);}
 
 async function addItem(){
   const name=document.getElementById('fName').value.trim();
@@ -441,16 +613,17 @@ async function addItem(){
   if(error){showAlert('Помилка: '+(error.message||JSON.stringify(error)),'error');return;}
   showAlert('✅ Страву додано!','success');
   ['fName','fDesc','fPrice','fWeight','fEmoji','fTime','fImage'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('fPreview').style.display='none';
   loadAdminItems();
 }
 
 async function loadAdminItems(){
   const {data}=await dbGet('menu_items',null,'category,name');
   window._adminAll=data||[];
-  renderAdminItems(window._adminAll,_adminSearch);
+  renderAdmin(window._adminAll,_adminSearch);
 }
 
-function renderAdminItems(data,q){
+function renderAdmin(data,q){
   const wrap=document.getElementById('adminItemsList');
   let f=data;
   if(adminCat!=='all')f=f.filter(i=>i.category===adminCat);
@@ -460,18 +633,17 @@ function renderAdminItems(data,q){
   f.forEach(item=>{
     if(adminCat==='all'&&item.category!==lastCat){html+=`<div class="section-label" style="padding:10px 0 4px;">${item.category}</div>`;lastCat=item.category;}
     const active=item.is_active===true||item.is_active==='true';
-    const itemJson=JSON.stringify(item).replace(/'/g,"\\'").replace(/"/g,'&quot;');
     html+=`<div class="admin-item">
       <div class="admin-item-img">${item.image_url?`<img src="${item.image_url}" onerror="this.parentElement.innerHTML='${item.emoji||'🍽️'}'">`:item.emoji||'🍽️'}</div>
       <div class="admin-item-info">
         <div class="admin-item-name">${item.name}</div>
-        <div class="admin-item-meta">${item.category}${item.weight?' · '+item.weight:''}${item.badge?' · 🔥':''}</div>
+        <div class="admin-item-meta">${item.category}${item.weight?' · '+item.weight:''}${item.badge?' · '+item.badge:''}</div>
         <div class="admin-item-price">${item.price} грн</div>
       </div>
       <div class="admin-item-btns">
         <button class="toggle ${active?'on':'off'}" onclick="toggleItem('${item.name}',${active})"></button>
-        <button class="btn-edit" onclick='openEdit(${JSON.stringify(item).replace(/'/g,"\\'")} )'>✏️</button>
-        <button class="btn-danger" onclick="deleteItem('${item.name}')">✕</button>
+        <button class="btn-edit" onclick='openEdit(${JSON.stringify(item).replace(/</g,"\\u003c")})'>✏️</button>
+        <button class="btn-danger" onclick="deleteItem('${item.name.replace(/'/g,"\\'")}')">✕</button>
       </div>
     </div>`;
   });
@@ -492,6 +664,8 @@ function openEdit(item){
   document.getElementById('eEmoji').value=item.emoji||'';
   document.getElementById('eTime').value=item.prep_time||'';
   document.getElementById('eImage').value=item.image_url||'';
+  const prev=document.getElementById('ePreview');
+  if(item.image_url){prev.src=item.image_url;prev.style.display='block';}else{prev.style.display='none';}
   document.getElementById('editModal').style.display='flex';
 }
 function closeEdit(){document.getElementById('editModal').style.display='none';}
@@ -505,6 +679,7 @@ async function saveEdit(){
 
 function showAlert(msg,type){const el=document.getElementById('adminAlert');el.innerHTML=`<div class="alert alert-${type}">${msg}</div>`;setTimeout(()=>el.innerHTML='',3000);}
 
+// INIT
 buildMenu();
 
 if(window.location.hash==='#admin'){
