@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Druzi Bar — Меню</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --gold: #d4a853;
+    --dark: #1a1a1a;
+    --bg: #f5f4f0;
+    --card: #ffffff;
+    --text: #1a1a1a;
+    --muted: #888;
+    --border: rgba(0,0,0,0.08);
+    --radius: 14px;
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* ===== HEADER ===== */
+  .header { background: var(--dark); position: relative; overflow: hidden; }
+  .header-bg { width: 100%; height: 200px; object-fit: cover; opacity: 0.5; display: block;
+    background: linear-gradient(135deg, #2d1b0e 0%, #1a0f05 60%, #0d0d0d 100%); }
+  .header-logo { position: absolute; top: 16px; left: 16px; width: 48px; height: 48px;
+    border-radius: 50%; border: 2px solid rgba(212,168,83,0.6); background: rgba(0,0,0,0.4);
+    display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 20px; font-weight: 600; }
+  .header-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 24px 16px 18px;
+    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%); }
+  .header-name { color: #fff; font-size: 24px; font-weight: 600; }
+  .header-sub { color: rgba(255,255,255,0.55); font-size: 13px; margin-top: 2px; }
+  .gold { color: var(--gold); }
+
+  /* ===== SECTION LABEL ===== */
+  .section-label { font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: 1.8px;
+    text-transform: uppercase; padding: 20px 16px 10px; }
+
+  /* ===== CATEGORY CARDS ===== */
+  .categories { padding: 0 12px; display: flex; flex-direction: column; gap: 8px; }
+  .cat-card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border);
+    padding: 14px 16px; display: flex; align-items: center; gap: 14px; cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s; }
+  .cat-card:active { transform: scale(0.98); }
+  .cat-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center;
+    justify-content: center; font-size: 22px; flex-shrink: 0; }
+  .cat-info { flex: 1; }
+  .cat-name { font-size: 15px; font-weight: 600; }
+  .cat-desc { font-size: 12px; color: var(--muted); margin-top: 1px; }
+  .badge { background: var(--gold); color: #fff; font-size: 10px; font-weight: 600;
+    padding: 3px 8px; border-radius: 20px; }
+  .badge-new { background: #4caf50; }
+  .arrow { color: var(--muted); font-size: 18px; font-weight: 300; }
+
+  /* ===== INFO BLOCK ===== */
+  .info-card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border);
+    margin: 0 12px; }
+  .info-row { display: flex; align-items: flex-start; gap: 12px; padding: 13px 16px;
+    border-bottom: 1px solid var(--border); }
+  .info-row:last-child { border-bottom: none; }
+  .info-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .info-label { font-size: 11px; color: var(--muted); margin-bottom: 2px; }
+  .info-val { font-size: 13px; font-weight: 500; }
+  .open-pill { display: inline-block; background: #e8f5e9; color: #2e7d32; font-size: 11px;
+    font-weight: 600; padding: 2px 8px; border-radius: 20px; margin-left: 6px; }
+  .social-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 8px 12px 0; }
+  .social-btn { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border);
+    padding: 12px; text-align: center; font-size: 13px; font-weight: 500; cursor: pointer; }
+
+  /* ===== DETAIL VIEW ===== */
+  .detail-header { background: var(--dark); padding: 16px; }
+  .back-btn { color: var(--gold); font-size: 14px; font-weight: 500; cursor: pointer;
+    display: flex; align-items: center; gap: 4px; margin-bottom: 12px; }
+  .detail-title { color: #fff; font-size: 22px; font-weight: 600; }
+  .detail-sub { color: rgba(255,255,255,0.5); font-size: 13px; margin-top: 3px; }
+
+  .items-list { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+  .item-card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border);
+    padding: 12px; display: flex; gap: 12px; align-items: center; }
+  .item-emoji { width: 64px; height: 64px; border-radius: 12px; background: var(--bg);
+    display: flex; align-items: center; justify-content: center; font-size: 30px; flex-shrink: 0; }
+  .item-info { flex: 1; }
+  .item-name { font-size: 14px; font-weight: 600; line-height: 1.3; }
+  .item-desc { font-size: 12px; color: var(--muted); margin-top: 3px; line-height: 1.4; }
+  .item-footer { display: flex; align-items: baseline; gap: 8px; margin-top: 7px; }
+  .item-price { font-size: 16px; font-weight: 700; color: var(--gold); }
+  .item-weight { font-size: 11px; color: var(--muted); }
+  .loading-msg { text-align: center; padding: 40px 16px; color: var(--muted); font-size: 14px; }
+
+  /* ===== FOOTER ===== */
+  .footer { text-align: center; padding: 24px 16px; color: var(--muted); font-size: 12px; }
+
+  /* ===== ADMIN ===== */
+  .admin-wrap { max-width: 480px; margin: 0 auto; padding: 16px; }
+  .admin-header { background: var(--dark); color: #fff; padding: 20px 16px; display: flex;
+    align-items: center; justify-content: space-between; }
+  .admin-title { font-size: 18px; font-weight: 600; }
+  .admin-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .btn { display: inline-block; padding: 10px 18px; border-radius: 10px; font-size: 14px;
+    font-weight: 600; cursor: pointer; border: none; transition: opacity 0.15s; }
+  .btn:active { opacity: 0.8; }
+  .btn-gold { background: var(--gold); color: #fff; }
+  .btn-outline { background: transparent; border: 1.5px solid var(--border); color: var(--text); }
+  .btn-danger { background: #f44336; color: #fff; font-size: 12px; padding: 6px 12px; }
+  .btn-sm { padding: 6px 12px; font-size: 12px; }
+  .form-card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border);
+    padding: 16px; margin-bottom: 12px; }
+  .form-title { font-size: 15px; font-weight: 600; margin-bottom: 14px; }
+  label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; margin-top: 10px; }
+  label:first-of-type { margin-top: 0; }
+  input, textarea, select { width: 100%; padding: 10px 12px; border-radius: 10px;
+    border: 1px solid var(--border); font-size: 14px; background: var(--bg);
+    color: var(--text); font-family: inherit; outline: none; }
+  input:focus, textarea:focus, select:focus { border-color: var(--gold); }
+  textarea { resize: vertical; min-height: 70px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .admin-item { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border);
+    padding: 12px; display: flex; gap: 12px; align-items: center; margin-bottom: 8px; }
+  .admin-item-info { flex: 1; }
+  .admin-item-name { font-size: 14px; font-weight: 600; }
+  .admin-item-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .admin-item-price { font-size: 14px; font-weight: 700; color: var(--gold); }
+  .toggle { width: 36px; height: 20px; border-radius: 10px; cursor: pointer; border: none;
+    position: relative; flex-shrink: 0; transition: background 0.2s; }
+  .toggle.on { background: #4caf50; }
+  .toggle.off { background: #ccc; }
+  .toggle::after { content: ''; position: absolute; width: 16px; height: 16px; border-radius: 50%;
+    background: #fff; top: 2px; transition: left 0.2s; }
+  .toggle.on::after { left: 18px; }
+  .toggle.off::after { left: 2px; }
+  .alert { padding: 12px 16px; border-radius: 10px; font-size: 13px; margin-bottom: 12px; }
+  .alert-success { background: #e8f5e9; color: #2e7d32; }
+  .alert-error { background: #ffebee; color: #c62828; }
+
+  /* ===== LOGIN ===== */
+  .login-wrap { max-width: 360px; margin: 60px auto; padding: 16px; }
+  .login-card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 28px; }
+  .login-logo { text-align: center; font-size: 32px; margin-bottom: 8px; }
+  .login-title { text-align: center; font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+  .login-sub { text-align: center; font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+
+  /* ===== VIEWS ===== */
+  .view { display: none; }
+  .view.active { display: block; }
+  .max-w { max-width: 480px; margin: 0 auto; }
+</style>
+</head>
+<body>
+
+<!-- ===== MENU VIEW ===== -->
+<div class="view active" id="viewMenu">
+  <div class="max-w">
+    <div class="header">
+      <div style="width:100%;height:200px;background:linear-gradient(135deg,#2d1b0e 0%,#1a0f05 60%,#0d0d0d 100%);position:relative;">
+        <svg viewBox="0 0 390 200" style="position:absolute;top:0;left:0;width:100%;height:100%">
+          <ellipse cx="195" cy="100" rx="130" ry="70" fill="#3d2510" opacity="0.5"/>
+          <text x="195" y="112" text-anchor="middle" font-size="50" opacity="0.3" fill="#d4a853">🍣</text>
+        </svg>
+      </div>
+      <div class="header-logo">D</div>
+      <div class="header-info">
+        <div class="header-name">Druzi Bar <span class="gold">✦</span></div>
+        <div class="header-sub">Ресторан · Могилів-Подільський</div>
+      </div>
+    </div>
+
+    <div class="section-label">Меню</div>
+    <div class="categories" id="categoriesList"></div>
+
+    <div class="section-label">Контакти</div>
+    <div class="info-card">
+      <div class="info-row">
+        <span class="info-icon">📍</span>
+        <div><div class="info-label">Адреса</div><div class="info-val">Стависька 32/24, Могилів-Подільський</div></div>
+      </div>
+      <div class="info-row">
+        <span class="info-icon">📞</span>
+        <div><div class="info-label">Телефон</div><div class="info-val">0980808380</div></div>
+      </div>
+      <div class="info-row">
+        <span class="info-icon">🕐</span>
+        <div><div class="info-label">Робочий час</div><div class="info-val">11:00 – 23:00 <span class="open-pill">Вт–Нд</span></div></div>
+      </div>
+      <div class="info-row">
+        <span class="info-icon">📶</span>
+        <div><div class="info-label">WiFi пароль</div><div class="info-val">druzi2022</div></div>
+      </div>
+    </div>
+    <div class="social-grid">
+      <div class="social-btn">📱 TikTok</div>
+      <div class="social-btn">📷 Instagram</div>
+      <div class="social-btn">🗺 Google</div>
+      <div class="social-btn">✈️ Telegram</div>
+    </div>
+    <div class="footer">© Druzi Bar 2025</div>
+  </div>
+</div>
+
+<!-- ===== CATEGORY DETAIL VIEW ===== -->
+<div class="view" id="viewCategory">
+  <div class="max-w">
+    <div class="detail-header">
+      <div class="back-btn" onclick="goBack()">‹ Назад до меню</div>
+      <div class="detail-title" id="catTitle"></div>
+      <div class="detail-sub" id="catSub"></div>
+    </div>
+    <div class="items-list" id="itemsList"></div>
+  </div>
+</div>
+
+<!-- ===== LOGIN VIEW ===== -->
+<div class="view" id="viewLogin">
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="login-logo">🔐</div>
+      <div class="login-title">Адмін панель</div>
+      <div class="login-sub">Druzi Bar</div>
+      <label>Пароль</label>
+      <input type="password" id="adminPass" placeholder="Введи пароль" onkeydown="if(event.key==='Enter')checkLogin()">
+      <button class="btn btn-gold" style="width:100%;margin-top:14px;" onclick="checkLogin()">Увійти</button>
+      <div id="loginErr" style="color:#f44336;font-size:13px;margin-top:10px;text-align:center;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ADMIN VIEW ===== -->
+<div class="view" id="viewAdmin">
+  <div class="admin-header">
+    <div>
+      <div class="admin-title">⚙️ Адмін панель</div>
+      <div class="admin-sub">Druzi Bar</div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-outline" style="color:#fff;border-color:rgba(255,255,255,0.3);font-size:13px;" onclick="showView('viewMenu')">Меню ↗</button>
+      <button class="btn btn-outline" style="color:#fff;border-color:rgba(255,255,255,0.3);font-size:13px;" onclick="logout()">Вийти</button>
+    </div>
+  </div>
+  <div class="admin-wrap">
+    <div id="adminAlert"></div>
+
+    <!-- ADD FORM -->
+    <div class="form-card">
+      <div class="form-title">➕ Додати страву</div>
+      <label>Назва</label>
+      <input type="text" id="fName" placeholder="Наприклад: Філадельфія">
+      <label>Опис</label>
+      <textarea id="fDesc" placeholder="Інгредієнти або короткий опис"></textarea>
+      <div class="form-row">
+        <div>
+          <label>Ціна (грн)</label>
+          <input type="number" id="fPrice" placeholder="185">
+        </div>
+        <div>
+          <label>Вага / об'єм</label>
+          <input type="text" id="fWeight" placeholder="260г">
+        </div>
+      </div>
+      <label>Категорія</label>
+      <select id="fCategory">
+        <option value="Суші та роли">🍣 Суші та роли</option>
+        <option value="Піца">🍕 Піца</option>
+        <option value="Їжа">🍽️ Їжа</option>
+        <option value="Алкоголь">🍷 Алкоголь</option>
+        <option value="Новинки">✨ Новинки</option>
+        <option value="Безалкогольні напої">🧃 Безалкогольні напої</option>
+        <option value="Кальян">💨 Кальян</option>
+      </select>
+      <label>Emoji (іконка)</label>
+      <input type="text" id="fEmoji" placeholder="🍣" style="font-size:20px;text-align:center;" maxlength="4">
+      <button class="btn btn-gold" style="width:100%;margin-top:16px;" onclick="addItem()">Зберегти страву</button>
+    </div>
+
+    <!-- ITEMS LIST -->
+    <div class="form-title" style="margin-bottom:10px;">📋 Всі страви</div>
+    <div id="adminItemsList"><div class="loading-msg">Завантаження...</div></div>
+  </div>
+</div>
+
+<script>
+// ===== CONFIG =====
+const SUPABASE_URL = 'https://kfjkujrnimqounsnltpr.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtmamt1anJuaW1xb3Vuc25sdHByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3ODA5NjMsImV4cCI6MjA5MjM1Njk2M30.PxW__VEh0JrNAz6w7o3Dd5c0sgDQOXtXdGx3cUjjtpQ';
+const ADMIN_PASSWORD = 'druzi2024'; // ← змінити на свій пароль!
+
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const CATEGORIES = [
+  { key: 'Суші та роли', icon: '🍣', bg: '#fff8ed', desc: 'Класичні та авторські роли', badge: 'Хіт' },
+  { key: 'Піца', icon: '🍕', bg: '#fff0f0', desc: 'Тонке тісто, авторські рецепти' },
+  { key: 'Їжа', icon: '🍽️', bg: '#f0fff4', desc: 'Основні страви та закуски' },
+  { key: 'Алкоголь', icon: '🍷', bg: '#f5f0ff', desc: 'Вино, пиво, коктейлі' },
+  { key: 'Новинки', icon: '✨', bg: '#e6f7ff', desc: 'Щойно у меню', badge: 'New', badgeClass: 'badge-new' },
+  { key: 'Безалкогольні напої', icon: '🧃', bg: '#f0f9ff', desc: 'Лимонади, смузі, кава' },
+  { key: 'Кальян', icon: '💨', bg: '#fdf0ff', desc: 'Преміум тютюн та міксти' },
+];
+
+// ===== VIEWS =====
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ===== BUILD MENU =====
+function buildMenu() {
+  const list = document.getElementById('categoriesList');
+  list.innerHTML = CATEGORIES.map(c => `
+    <div class="cat-card" onclick="openCategory('${c.key}','${c.icon}','${c.desc}')">
+      <div class="cat-icon" style="background:${c.bg}">${c.icon}</div>
+      <div class="cat-info">
+        <div class="cat-name">${c.key}</div>
+        <div class="cat-desc">${c.desc}</div>
+      </div>
+      ${c.badge ? `<span class="badge ${c.badgeClass||''}">${c.badge}</span>` : ''}
+      <span class="arrow">›</span>
+    </div>
+  `).join('');
+}
+
+// ===== OPEN CATEGORY =====
+async function openCategory(key, icon, desc) {
+  document.getElementById('catTitle').textContent = key;
+  document.getElementById('catSub').textContent = desc;
+  document.getElementById('itemsList').innerHTML = '<div class="loading-msg">⏳ Завантаження...</div>';
+  showView('viewCategory');
+
+  const { data, error } = await db.from('menu_items')
+    .select('*').eq('category', key).eq('is_active', true).order('id');
+
+  if (error || !data || data.length === 0) {
+    document.getElementById('itemsList').innerHTML = '<div class="loading-msg">Поки тут порожньо 🍽️</div>';
+    return;
+  }
+
+  document.getElementById('itemsList').innerHTML = data.map(item => `
+    <div class="item-card">
+      <div class="item-emoji">${item.emoji || icon}</div>
+      <div class="item-info">
+        <div class="item-name">${item.name}</div>
+        ${item.description ? `<div class="item-desc">${item.description}</div>` : ''}
+        <div class="item-footer">
+          <span class="item-price">${item.price} грн</span>
+          ${item.weight ? `<span class="item-weight">${item.weight}</span>` : ''}
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function goBack() { showView('viewMenu'); }
+
+// ===== ADMIN LOGIN =====
+function checkLogin() {
+  const pass = document.getElementById('adminPass').value;
+  if (pass === ADMIN_PASSWORD) {
+    sessionStorage.setItem('druzi_admin', '1');
+    showView('viewAdmin');
+    loadAdminItems();
+  } else {
+    document.getElementById('loginErr').textContent = 'Невірний пароль';
+  }
+}
+function logout() {
+  sessionStorage.removeItem('druzi_admin');
+  showView('viewMenu');
+}
+
+// ===== ADD ITEM =====
+async function addItem() {
+  const name = document.getElementById('fName').value.trim();
+  const desc = document.getElementById('fDesc').value.trim();
+  const price = parseFloat(document.getElementById('fPrice').value);
+  const weight = document.getElementById('fWeight').value.trim();
+  const category = document.getElementById('fCategory').value;
+  const emoji = document.getElementById('fEmoji').value.trim();
+
+  if (!name || !price) { showAlert('Заповни назву та ціну!', 'error'); return; }
+
+  const { error } = await db.from('menu_items').insert([{ name, description: desc, price, weight, category, emoji, is_active: true }]);
+  if (error) { showAlert('Помилка: ' + error.message, 'error'); return; }
+
+  showAlert('✅ Страву додано!', 'success');
+  document.getElementById('fName').value = '';
+  document.getElementById('fDesc').value = '';
+  document.getElementById('fPrice').value = '';
+  document.getElementById('fWeight').value = '';
+  document.getElementById('fEmoji').value = '';
+  loadAdminItems();
+}
+
+// ===== LOAD ADMIN ITEMS =====
+async function loadAdminItems() {
+  const { data, error } = await db.from('menu_items').select('*').order('category').order('id');
+  const wrap = document.getElementById('adminItemsList');
+  if (error || !data) { wrap.innerHTML = '<div class="loading-msg">Помилка завантаження</div>'; return; }
+  if (data.length === 0) { wrap.innerHTML = '<div class="loading-msg">Поки немає страв. Додай першу! ☝️</div>'; return; }
+
+  let html = '';
+  let lastCat = '';
+  data.forEach(item => {
+    if (item.category !== lastCat) {
+      html += `<div class="section-label" style="padding:14px 0 6px;">${item.category}</div>`;
+      lastCat = item.category;
+    }
+    html += `
+      <div class="admin-item" id="ai_${item.id}">
+        <div style="font-size:28px;width:44px;text-align:center;">${item.emoji || '🍽️'}</div>
+        <div class="admin-item-info">
+          <div class="admin-item-name">${item.name}</div>
+          <div class="admin-item-meta">${item.weight || ''} ${item.description ? '· ' + item.description.substring(0,40) + (item.description.length>40?'...':'') : ''}</div>
+          <div class="admin-item-price">${item.price} грн</div>
+        </div>
+        <button class="toggle ${item.is_active ? 'on' : 'off'}" onclick="toggleItem(${item.id}, ${item.is_active})" title="${item.is_active ? 'Вимкнути' : 'Увімкнути'}"></button>
+        <button class="btn btn-danger btn-sm" onclick="deleteItem(${item.id})">✕</button>
+      </div>`;
+  });
+  wrap.innerHTML = html;
+}
+
+// ===== TOGGLE =====
+async function toggleItem(id, current) {
+  await db.from('menu_items').update({ is_active: !current }).eq('id', id);
+  loadAdminItems();
+}
+
+// ===== DELETE =====
+async function deleteItem(id) {
+  if (!confirm('Видалити цю страву?')) return;
+  await db.from('menu_items').delete().eq('id', id);
+  loadAdminItems();
+}
+
+// ===== ALERT =====
+function showAlert(msg, type) {
+  const el = document.getElementById('adminAlert');
+  el.innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
+  setTimeout(() => el.innerHTML = '', 3000);
+}
+
+// ===== INIT =====
+buildMenu();
+
+// Handle admin route
+if (window.location.hash === '#admin') {
+  if (sessionStorage.getItem('druzi_admin')) { showView('viewAdmin'); loadAdminItems(); }
+  else showView('viewLogin');
+}
+
+// Admin shortcut: tap logo 5 times
+let tapCount = 0;
+document.querySelector('.header-logo')?.addEventListener('click', () => {
+  tapCount++;
+  if (tapCount >= 5) { tapCount = 0; window.location.hash = '#admin'; showView('viewLogin'); }
+});
+</script>
+</body>
+</html>
