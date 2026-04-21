@@ -351,7 +351,7 @@ async function openCategory(key, icon, desc) {
   document.getElementById('itemsList').innerHTML = '<div class="loading-msg">⏳ Завантаження...</div>';
   showView('viewCategory');
 
-  const { data, error } = await dbSelect('menu_items', {'category': key}, 'id');
+  const { data, error } = await dbSelect('menu_items', {'category': key}, 'name');
 
   if (error || !data || data.length === 0) {
     document.getElementById('itemsList').innerHTML = '<div class="loading-msg">Поки тут порожньо 🍽️</div>';
@@ -416,7 +416,7 @@ async function addItem() {
 
 // ===== LOAD ADMIN ITEMS =====
 async function loadAdminItems() {
-  const { data, error } = await dbSelect('menu_items', null, 'category,id');
+  const { data, error } = await dbSelect('menu_items', null, 'category,name');
   const wrap = document.getElementById('adminItemsList');
   if (error || !data) { wrap.innerHTML = '<div class="loading-msg">Помилка завантаження</div>'; return; }
   if (data.length === 0) { wrap.innerHTML = '<div class="loading-msg">Поки немає страв. Додай першу! ☝️</div>'; return; }
@@ -436,8 +436,8 @@ async function loadAdminItems() {
           <div class="admin-item-meta">${item.weight || ''} ${item.description ? '· ' + item.description.substring(0,40) + (item.description.length>40?'...':'') : ''}</div>
           <div class="admin-item-price">${item.price} грн</div>
         </div>
-        <button class="toggle ${item.is_active ? 'on' : 'off'}" onclick="toggleItem(${item.id}, ${item.is_active})" title="${item.is_active ? 'Вимкнути' : 'Увімкнути'}"></button>
-        <button class="btn btn-danger btn-sm" onclick="deleteItem(${item.id})">✕</button>
+        <button class="toggle ${item.is_active ? 'on' : 'off'}" onclick="toggleItem('${item.name}', ${item.is_active})" title="${item.is_active ? 'Вимкнути' : 'Увімкнути'}"></button>
+        <button class="btn btn-danger btn-sm" onclick="deleteItem('${item.name}')">✕</button>
       </div>`;
   });
   wrap.innerHTML = html;
@@ -445,14 +445,14 @@ async function loadAdminItems() {
 
 // ===== TOGGLE =====
 async function toggleItem(id, current) {
-  await dbUpdate('menu_items', { is_active: !current }, 'id', id);
+  await dbUpdate('menu_items', { is_active: !current }, 'name', id);
   loadAdminItems();
 }
 
 // ===== DELETE =====
 async function deleteItem(id) {
   if (!confirm('Видалити цю страву?')) return;
-  await dbDelete('menu_items', 'id', id);
+  await dbDelete('menu_items', 'name', id);
   loadAdminItems();
 }
 
