@@ -263,7 +263,7 @@ textarea{resize:vertical;min-height:60px;}
       <label>Опис</label><textarea id="fDesc" placeholder="Інгредієнти або короткий опис"></textarea>
       <div class="form-row">
         <div><label>Ціна (грн)</label><input type="number" id="fPrice" placeholder="185"></div>
-        <div><label>Вага / об'єм</label><input type="text" id="fWeight" placeholder="260г"></div>
+        <div><label>Вага / обєм</label><input type="text" id="fWeight" placeholder="260г"></div>
       </div>
       <div class="form-row">
         <div><label>Категорія</label>
@@ -631,7 +631,7 @@ async function checkLogin(){
     const d=await r.json();
     if(d.access_token){authToken=d.access_token;sessionStorage.setItem('druzi_token',authToken);sessionStorage.setItem('druzi_email',email);document.getElementById('adminUserEmail').textContent=email;showView('viewAdmin');loadAdminItems();buildAdminTabs();}
     else document.getElementById('loginErr').textContent='Невірний email або пароль';
-  }catch(e){document.getElementById('loginErr').textContent='Помилка з'єднання';}
+  }catch(e){document.getElementById('loginErr').textContent='Помилка зєднання';}
   btn.textContent='Увійти';btn.disabled=false;
 }
 async function logout(){if(authToken)await fetch(`${SUPABASE_URL}/auth/v1/logout`,{method:'POST',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+authToken}});authToken=null;sessionStorage.removeItem('druzi_token');sessionStorage.removeItem('druzi_email');showView('viewMenu');}
