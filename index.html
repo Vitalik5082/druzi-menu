@@ -422,6 +422,7 @@ function applyLang(){
   document.getElementById('searchInput').placeholder=t('search');
   document.getElementById('langBtn').textContent=currentLang==='uk'?'EN':'УК';
   buildMenu();
+  updateFavCount();
 }
 function toggleLang(){currentLang=currentLang==='uk'?'en':'uk';localStorage.setItem('druzi_lang',currentLang);applyLang();updateStatus();}
 
@@ -729,7 +730,7 @@ const savedToken=sessionStorage.getItem('druzi_token');
 const savedEmail=sessionStorage.getItem('druzi_email');
 if(savedToken)authToken=savedToken;
 
-buildMenu();applyLang();updateStatus();setInterval(updateStatus,60000);
+applyLang();updateStatus();setInterval(updateStatus,60000);
 
 // Init subcategory selects
 updateSubcategoryOptions('fCategory','fSubcategory');
