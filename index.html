@@ -270,6 +270,7 @@ textarea{resize:vertical;min-height:60px;}
           <select id="fCategory" onchange="updateSubcategoryOptions('fCategory','fSubcategory')">
             <option value="Суші та роли">🍣 Суші та роли</option>
             <option value="Піца">🍕 Піца</option>
+            <option value="Бургери">🍔 Бургери</option>
             <option value="Їжа">🍽️ Їжа</option>
             <option value="Алкоголь">🍷 Алкоголь</option>
             <option value="Безалкогольні напої">🧃 Безалкогольні напої</option>
@@ -377,14 +378,14 @@ textarea{resize:vertical;min-height:60px;}
 const SUPABASE_URL='https://kfjkujrnimqounsnltpr.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtmamt1anJuaW1xb3Vuc25sdHByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3ODA5NjMsImV4cCI6MjA5MjM1Njk2M30.PxW__VEh0JrNAz6w7o3Dd5c0sgDQOXtXdGx3cUjjtpQ';
 const BUCKET='menu-images';
-const CACHE_KEY='druzi_menu_v2';
+const CACHE_KEY='druzi_menu_v3';
 const CACHE_TTL=5*60*1000;
 
 // Subcategory map
 const SUBCATS={
   'Суші та роли':['Роли','Темпура','Запечені'],
   'Піца':['30 см','35 см','40 см'],
-  'Їжа':['Салати','Бургер','Круасан','Паста','Стейк','Пательня','Снеки','Млинці','Десерти'],
+  'Їжа':['Салати','Круасан','Паста','Стейк','Пательня','Снеки','Млинці','Десерти'],
   'Алкоголь':['Пиво','Коктейлі','Short Drinks','Міцний алкоголь'],
   'Безалкогольні напої':['Гарячі напої','Холодні напої'],
   'Кальян':['Кальян']
@@ -392,11 +393,11 @@ const SUBCATS={
 
 const T={
   uk:{fav:'Улюблене',back:'Назад',menu:'МЕНЮ',contacts:'КОНТАКТИ',address:'Адреса',phone:'Телефон',hours:'Робочий час',wifi:'WiFi · натисни щоб підключитись',days:'Пн–Нд',search:'Пошук по всьому меню...',open:'Зараз відкрито',closed:'Зачинено',empty:'Поки тут порожньо 🍽️',nofound:'Нічого не знайдено 🔍',goMenu:'🍽️ Перейти до меню',noFav:'Поки немає улюблених ❤️',sub:'Кальян-бар · Могилів-Подільський',
-    cats:{'Суші та роли':'Суші та роли','Піца':'Піца','Їжа':'Їжа','Алкоголь':'Алкоголь','Безалкогольні напої':'Безалкогольні напої','Кальян':'Кальян'},
-    catDescs:{'Суші та роли':'Класичні та авторські роли','Піца':'Тонке тісто, авторські рецепти','Їжа':'Основні страви та закуски','Алкоголь':'Вино, пиво, коктейлі','Безалкогольні напої':'Лимонади, смузі, кава','Кальян':'Преміум тютюн та міксти'}},
+    cats:{'Суші та роли':'Суші та роли','Піца':'Піца','Бургери':'Бургери','Їжа':'Їжа','Алкоголь':'Алкоголь','Безалкогольні напої':'Безалкогольні напої','Кальян':'Кальян'},
+    catDescs:{'Суші та роли':'Класичні та авторські роли','Піца':'Тонке тісто, авторські рецепти','Бургери':'Авторські бургери','Їжа':'Основні страви та закуски','Алкоголь':'Вино, пиво, коктейлі','Безалкогольні напої':'Лимонади, смузі, кава','Кальян':'Преміум тютюн та міксти'}},
   en:{fav:'Favorites',back:'Back',menu:'MENU',contacts:'CONTACTS',address:'Address',phone:'Phone',hours:'Working hours',wifi:'WiFi · tap to connect',days:'Mon–Sun',search:'Search all menu...',open:'Open now',closed:'Closed',empty:'Nothing here yet 🍽️',nofound:'Nothing found 🔍',goMenu:'🍽️ Go to menu',noFav:'No favorites yet ❤️',sub:'Hookah bar · Mohyliv-Podilskyi',
-    cats:{'Суші та роли':'Sushi & Rolls','Піца':'Pizza','Їжа':'Food','Алкоголь':'Alcohol','Безалкогольні напої':'Non-alcoholic','Кальян':'Hookah'},
-    catDescs:{'Суші та роли':'Classic and original rolls','Піца':'Thin crust, original recipes','Їжа':'Main dishes & snacks','Алкоголь':'Wine, beer, cocktails','Безалкогольні напої':'Lemonades, smoothies, coffee','Кальян':'Premium tobacco & mixes'}}
+    cats:{'Суші та роли':'Sushi & Rolls','Піца':'Pizza','Бургери':'Burgers','Їжа':'Food','Алкоголь':'Alcohol','Безалкогольні напої':'Non-alcoholic','Кальян':'Hookah'},
+    catDescs:{'Суші та роли':'Classic and original rolls','Піца':'Thin crust, original recipes','Бургери':'Handcrafted burgers','Їжа':'Main dishes & snacks','Алкоголь':'Wine, beer, cocktails','Безалкогольні напої':'Lemonades, smoothies, coffee','Кальян':'Premium tobacco & mixes'}}
 };
 
 let authToken=null,currentLang='uk',allItems=[],currentCat='',currentSub='',adminCat='all',_adminSearch='',_debounce=null;
@@ -465,6 +466,7 @@ function updateSubcategoryOptions(catId,subId){
 const CATS=[
   {key:'Суші та роли',icon:'🍣',bg:'#fff8ed'},
   {key:'Піца',icon:'🍕',bg:'#fff0f0'},
+  {key:'Бургери',icon:'🍔',bg:'#fff3e0'},
   {key:'Їжа',icon:'🍽️',bg:'#f0fff4'},
   {key:'Алкоголь',icon:'🍷',bg:'#f5f0ff'},
   {key:'Безалкогольні напої',icon:'🧃',bg:'#f0f9ff'},
