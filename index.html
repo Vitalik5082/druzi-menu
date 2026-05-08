@@ -58,9 +58,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .cat-tabs::-webkit-scrollbar{display:none;}
 .cat-tab{flex-shrink:0;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--text);white-space:nowrap;}
 .cat-tab.active{background:var(--gold);color:#fff;border-color:var(--gold);}
-.sub-tabs{display:flex;overflow-x:auto;gap:8px;padding:0 12px 10px;scrollbar-width:none;}
+.sub-tabs{display:flex;overflow-x:auto;gap:8px;padding:6px 12px 10px;scrollbar-width:none;-webkit-overflow-scrolling:touch;flex-wrap:nowrap;}
 .sub-tabs::-webkit-scrollbar{display:none;}
-.sub-tab{flex-shrink:0;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--gold);color:var(--gold);background:transparent;white-space:nowrap;}
+.sub-tab{flex-shrink:0;padding:6px 16px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--gold);color:var(--gold);background:transparent;white-space:nowrap;touch-action:pan-x;}
 .sub-tab.active{background:var(--gold);color:#fff;}
 /* ITEMS */
 .items-list{padding:10px 12px;display:flex;flex-direction:column;gap:8px;}
@@ -378,7 +378,7 @@ textarea{resize:vertical;min-height:60px;}
 const SUPABASE_URL='https://kfjkujrnimqounsnltpr.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtmamt1anJuaW1xb3Vuc25sdHByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3ODA5NjMsImV4cCI6MjA5MjM1Njk2M30.PxW__VEh0JrNAz6w7o3Dd5c0sgDQOXtXdGx3cUjjtpQ';
 const BUCKET='menu-images';
-const CACHE_KEY='druzi_menu_v3';
+const CACHE_KEY='druzi_menu_v5';
 const CACHE_TTL=5*60*1000;
 
 // Subcategory map
@@ -388,16 +388,17 @@ const SUBCATS={
   'Їжа':['Салати','Круасан','Паста','Стейк','Пательня','Снеки','Млинці','Десерти'],
   'Алкоголь':['Пиво','Коктейлі','Short Drinks','Міцний алкоголь'],
   'Безалкогольні напої':['Гарячі напої','Холодні напої'],
-  'Кальян':['Кальян']
+  'Кальян':['Кальян'],
+  'Бургери':['Бургери']
 };
 
 const T={
   uk:{fav:'Улюблене',back:'Назад',menu:'МЕНЮ',contacts:'КОНТАКТИ',address:'Адреса',phone:'Телефон',hours:'Робочий час',wifi:'WiFi · натисни щоб підключитись',days:'Пн–Нд',search:'Пошук по всьому меню...',open:'Зараз відкрито',closed:'Зачинено',empty:'Поки тут порожньо 🍽️',nofound:'Нічого не знайдено 🔍',goMenu:'🍽️ Перейти до меню',noFav:'Поки немає улюблених ❤️',sub:'Кальян-бар · Могилів-Подільський',
     cats:{'Суші та роли':'Суші та роли','Піца':'Піца','Бургери':'Бургери','Їжа':'Їжа','Алкоголь':'Алкоголь','Безалкогольні напої':'Безалкогольні напої','Кальян':'Кальян'},
-    catDescs:{'Суші та роли':'Класичні та авторські роли','Піца':'Тонке тісто, авторські рецепти','Бургери':'Авторські бургери','Їжа':'Основні страви та закуски','Алкоголь':'Вино, пиво, коктейлі','Безалкогольні напої':'Лимонади, смузі, кава','Кальян':'Преміум тютюн та міксти'}},
+    catDescs:{'Суші та роли':'Класичні та авторські роли','Піца':'Тонке тісто, авторські рецепти','Бургери':'Авторські бургери','Їжа':'Основні страви та закуски','Алкоголь':'Вино, пиво, коктейлі','Безалкогольні напої':'Лимонади, смузі, кава','Кальян':'Преміум тютюн та міксти','Бургери':'Авторські бургери'}},
   en:{fav:'Favorites',back:'Back',menu:'MENU',contacts:'CONTACTS',address:'Address',phone:'Phone',hours:'Working hours',wifi:'WiFi · tap to connect',days:'Mon–Sun',search:'Search all menu...',open:'Open now',closed:'Closed',empty:'Nothing here yet 🍽️',nofound:'Nothing found 🔍',goMenu:'🍽️ Go to menu',noFav:'No favorites yet ❤️',sub:'Hookah bar · Mohyliv-Podilskyi',
     cats:{'Суші та роли':'Sushi & Rolls','Піца':'Pizza','Бургери':'Burgers','Їжа':'Food','Алкоголь':'Alcohol','Безалкогольні напої':'Non-alcoholic','Кальян':'Hookah'},
-    catDescs:{'Суші та роли':'Classic and original rolls','Піца':'Thin crust, original recipes','Бургери':'Handcrafted burgers','Їжа':'Main dishes & snacks','Алкоголь':'Wine, beer, cocktails','Безалкогольні напої':'Lemonades, smoothies, coffee','Кальян':'Premium tobacco & mixes'}}
+    catDescs:{'Суші та роли':'Classic and original rolls','Піца':'Thin crust, original recipes','Бургери':'Handcrafted burgers','Їжа':'Main dishes & snacks','Алкоголь':'Wine, beer, cocktails','Безалкогольні напої':'Lemonades, smoothies, coffee','Кальян':'Premium tobacco & mixes','Бургери':'Handcrafted burgers'}}
 };
 
 let authToken=null,currentLang='uk',allItems=[],currentCat='',currentSub='',adminCat='all',_adminSearch='',_debounce=null;
