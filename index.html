@@ -999,6 +999,8 @@ const savedEmail=sessionStorage.getItem('druzi_email');
 if(savedToken)authToken=savedToken;
 
 applyLang();updateStatus();setInterval(updateStatus,60000);
+trackVisit();
+loadBanner();
 
 // Init subcategory selects
 updateSubcategoryOptions('fCategory','fSubcategory');
