@@ -1265,6 +1265,11 @@ function updateDots(realIdx){
   });
 }
 
+function getCarouselW(){
+  const wrap=document.getElementById('carouselWrap');
+  return wrap ? (wrap.offsetWidth-64)||260 : 260;
+}
+
 function carouselNext(){
   const W=getCarouselW();const STEP=W+12;
   const carousel=document.getElementById('carousel');
