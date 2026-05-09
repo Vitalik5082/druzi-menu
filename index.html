@@ -458,7 +458,7 @@ textarea{resize:vertical;min-height:60px;}
 const SUPABASE_URL='https://kfjkujrnimqounsnltpr.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtmamt1anJuaW1xb3Vuc25sdHByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3ODA5NjMsImV4cCI6MjA5MjM1Njk2M30.PxW__VEh0JrNAz6w7o3Dd5c0sgDQOXtXdGx3cUjjtpQ';
 const BUCKET='menu-images';
-const CACHE_KEY='druzi_menu_v7';
+const CACHE_KEY='druzi_menu_v8';
 const CACHE_TTL=5*60*1000;
 
 // Subcategory map
@@ -810,9 +810,6 @@ function showAlert(msg,type){const el=document.getElementById('adminAlert');el.i
 
 // ===== BANNER =====
 async function loadBanner(){
-  const today = new Date().toDateString();
-  const dismissed = localStorage.getItem('druzi_banner_dismissed');
-  if(dismissed === today) return;
 
   try{
     const r = await fetch(`${SUPABASE_URL}/rest/v1/banner?id=eq.1&select=*`, {
@@ -838,10 +835,8 @@ async function loadBanner(){
   }
 
   // Show banner with slight delay
-  setTimeout(() => {
-    document.getElementById('bannerOverlay').style.display = 'flex';
-    setupBannerSwipe();
-  }, 1500);
+  document.getElementById('bannerOverlay').style.display = 'flex';
+  setupBannerSwipe();
   }catch(e){ console.log('Banner error:', e); }
 }
 
