@@ -1230,26 +1230,31 @@ function renderCarousel(){
   if(!carouselItems.length) return;
   const allSlides = [...carouselItems, ...carouselItems, ...carouselItems];
   carousel.style.width = (allSlides.length * STEP) + 'px';
-  carousel.innerHTML = allSlides.map(function(item){
-    const safeName = item.name.replace(/'/g,"'");
-    const imgHTML = item.image_url
-      ? '<img src="'+item.image_url+'" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none'">'
-      : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:60px;">'+(item.emoji||'🍽️')+'</div>';
-    return '<div onclick="openPopularItem(''+safeName+'',''+(item.category||'')+'')" style="width:'+W+'px;flex-shrink:0;cursor:pointer;margin-right:'+GAP+'px;">'
-      +'<div style="border-radius:14px;overflow:hidden;background:var(--card);border:1px solid var(--border);height:190px;position:relative;box-shadow:0 2px 12px rgba(0,0,0,0.08);">'
-      +imgHTML
-      +'<div style="position:absolute;bottom:0;left:0;right:0;padding:10px 12px;background:linear-gradient(to top,rgba(0,0,0,0.85),transparent);">'
-      +'<div style="color:#fff;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+item.name+'</div>'
-      +(item.price?'<div style="color:var(--gold);font-size:12px;font-weight:700;">'+item.price+' грн</div>':'')
-      +'</div></div></div>';
-  }).join('');
+  let html = '';
+  allSlides.forEach(function(item){
+    const img = item.image_url
+      ? '<img src="' + item.image_url + '" style="width:100%;height:100%;object-fit:cover;display:block;">'
+      : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:60px;">' + (item.emoji||'🍽️') + '</div>';
+    const price = item.price ? '<div style="color:var(--gold);font-size:12px;font-weight:700;">' + item.price + ' грн</div>' : '';
+    const cat = (item.category||'').replace(/'/g,'');
+    const nm = item.name.replace(/'/g,'');
+    html += '<div onclick="openPopularItem('' + nm + '','' + cat + '')" style="width:' + W + 'px;flex-shrink:0;cursor:pointer;margin-right:' + GAP + 'px;">'
+          + '<div style="border-radius:14px;overflow:hidden;background:var(--card);border:1px solid var(--border);height:190px;position:relative;box-shadow:0 2px 12px rgba(0,0,0,0.08);">'
+          + img
+          + '<div style="position:absolute;bottom:0;left:0;right:0;padding:10px 12px;background:linear-gradient(to top,rgba(0,0,0,0.85),transparent);">'
+          + '<div style="color:#fff;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + item.name + '</div>'
+          + price
+          + '</div></div></div>';
+  });
+  carousel.innerHTML = html;
   carouselIndex = carouselItems.length;
   carousel.style.transition = 'none';
-  carousel.style.transform = 'translateX(-'+(carouselIndex*STEP)+'px)';
-  const dots = document.getElementById('carouselDots');
-  dots.innerHTML = carouselItems.map(function(_,i){
-    return '<div class="cdot" style="width:6px;height:6px;border-radius:50%;background:'+(i===0?'var(--gold)':'rgba(0,0,0,0.2)')+';transition:background 0.3s;cursor:pointer;" onclick="goToSlide('+i+')"></div>';
-  }).join('');
+  carousel.style.transform = 'translateX(-' + (carouselIndex * STEP) + 'px)';
+  let dots = '';
+  carouselItems.forEach(function(_,i){
+    dots += '<div class="cdot" style="width:6px;height:6px;border-radius:50%;background:' + (i===0?'var(--gold)':'rgba(0,0,0,0.2)') + ';transition:background 0.3s;cursor:pointer;" onclick="goToSlide(' + i + ')"></div>';
+  });
+  document.getElementById('carouselDots').innerHTML = dots;
 }
 
 // Re-render carousel on resize for correct sizing
