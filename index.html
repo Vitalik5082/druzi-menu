@@ -214,7 +214,7 @@ textarea{resize:vertical;min-height:60px;}
     <div class="section-label" id="t_menu_label">Меню</div>
     <div style="padding:0 12px 8px;">
       <div style="font-size:11px;font-weight:600;color:var(--muted);letter-spacing:1.8px;text-transform:uppercase;padding:12px 0 8px;">🔥 Популярне</div>
-      <div id="carouselWrap" style="position:relative;overflow:hidden;border-radius:14px;">
+      <div id="carouselWrap" style="position:relative;overflow:hidden;padding:0 32px;">
         <div id="carousel" style="display:flex;transition:transform 0.4s ease;will-change:transform;"></div>
       </div>
       <div id="carouselDots" style="display:flex;justify-content:center;gap:6px;margin-top:8px;"></div>
@@ -313,6 +313,7 @@ textarea{resize:vertical;min-height:60px;}
     <!-- ADMIN TABS -->
     <div class="admin-tabs">
       <div class="admin-tab active" onclick="switchAdminSection('menu',this)">🍽️ Меню</div>
+      <div class="admin-tab" onclick="switchAdminSection('carousel',this)">🎠 Карусель</div>
       <div class="admin-tab" onclick="switchAdminSection('banner',this)">🎯 Банер</div>
       <div class="admin-tab" onclick="switchAdminSection('analytics',this)">📊 Аналітика</div>
     </div>
@@ -368,6 +369,19 @@ textarea{resize:vertical;min-height:60px;}
     <div class="admin-cat-tabs" id="adminCatTabs"></div>
     <div id="adminItemsList"><div class="loading-msg">Завантаження...</div></div>
     </div><!-- end adminSectionMenu -->
+
+    <!-- CAROUSEL SECTION -->
+    <div class="admin-section" id="adminSectionCarousel">
+      <div class="form-card">
+        <div class="form-title">🎠 Керування каруселлю</div>
+        <div id="carouselAdminList" style="margin-bottom:12px;"></div>
+        <div style="border-top:1px solid var(--border);padding-top:12px;margin-top:4px;">
+          <div class="form-title" style="font-size:13px;margin-bottom:8px;">➕ Додати страву</div>
+          <input type="text" id="carouselAddInput" placeholder="Назва страви (точно як в меню)" style="margin-bottom:8px;">
+          <button class="btn btn-gold" style="width:100%;" onclick="carouselAdminAdd()">Додати в карусель</button>
+        </div>
+      </div>
+    </div><!-- end adminSectionCarousel -->
 
     <!-- BANNER SECTION -->
     <div class="admin-section" id="adminSectionBanner">
@@ -898,6 +912,7 @@ function switchAdminSection(name, el){
   document.getElementById('adminSection' + name.charAt(0).toUpperCase() + name.slice(1)).classList.add('active');
   if(name === 'analytics') loadAnalytics();
   if(name === 'banner') loadBannerAdmin();
+  if(name === 'carousel') loadCarouselAdmin();
 }
 
 async function loadBannerAdmin(){
@@ -934,6 +949,84 @@ async function saveBanner(){
   });
   if(r.ok){ showAlert('✅ Банер збережено!','success'); }
   else { showAlert('❌ Помилка збереження','error'); }
+}
+
+// ===== CAROUSEL ADMIN =====
+// Load carousel list from localStorage (admin managed)
+function getCarouselList(){
+  try{ return JSON.parse(localStorage.getItem('druzi_carousel')||'null') || CAROUSEL_ITEMS.slice(); }
+  catch(e){ return CAROUSEL_ITEMS.slice(); }
+}
+function saveCarouselList(list){
+  localStorage.setItem('druzi_carousel', JSON.stringify(list));
+}
+
+function loadCarouselAdmin(){
+  const list = getCarouselList();
+  const wrap = document.getElementById('carouselAdminList');
+  if(!list.length){ wrap.innerHTML='<div class="loading-msg">Карусель порожня</div>'; return; }
+  wrap.innerHTML = list.map((name,i) => `
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);">
+      <div style="flex:1;font-size:13px;font-weight:500;">${i+1}. ${name}</div>
+      <button onclick="carouselAdminUp(${i})" style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:4px 8px;cursor:pointer;font-size:12px;">↑</button>
+      <button onclick="carouselAdminDown(${i})" style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:4px 8px;cursor:pointer;font-size:12px;">↓</button>
+      <button onclick="carouselAdminRemove(${i})" class="btn-danger">✕</button>
+    </div>`).join('');
+}
+
+function carouselAdminAdd(){
+  const name = document.getElementById('carouselAddInput').value.trim();
+  if(!name){ showAlert('Введи назву страви!','error'); return; }
+  const list = getCarouselList();
+  if(list.includes(name)){ showAlert('Ця страва вже є в каруселі','error'); return; }
+  list.push(name);
+  saveCarouselList(list);
+  document.getElementById('carouselAddInput').value='';
+  loadCarouselAdmin();
+  refreshCarousel();
+  showAlert('✅ Додано!','success');
+}
+
+function carouselAdminRemove(idx){
+  const list = getCarouselList();
+  list.splice(idx,1);
+  saveCarouselList(list);
+  loadCarouselAdmin();
+  refreshCarousel();
+}
+
+function carouselAdminUp(idx){
+  if(idx===0)return;
+  const list = getCarouselList();
+  [list[idx-1],list[idx]]=[list[idx],list[idx-1]];
+  saveCarouselList(list);
+  loadCarouselAdmin();
+  refreshCarousel();
+}
+
+function carouselAdminDown(idx){
+  const list = getCarouselList();
+  if(idx>=list.length-1)return;
+  [list[idx],list[idx+1]]=[list[idx+1],list[idx]];
+  saveCarouselList(list);
+  loadCarouselAdmin();
+  refreshCarousel();
+}
+
+async function refreshCarousel(){
+  // Reload carousel items from DB with new list
+  const list = getCarouselList();
+  let items = allItems.length ? allItems : [];
+  if(!items.length){
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/menu_items?select=name,price,image_url,emoji,category&is_active=eq.true`,
+      {headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});
+    items = await res.json();
+  }
+  carouselItems = list.map(name=>items.find(i=>i.name===name)).filter(Boolean);
+  clearInterval(carouselTimer);
+  renderCarousel();
+  startCarouselAuto();
+  setupCarouselSwipe();
 }
 
 // ===== ANALYTICS =====
@@ -1106,13 +1199,13 @@ let dragCurrentX = 0;
 
 async function initCarousel(){
   try{
-    // Load items from DB
     const res = await fetch(`${SUPABASE_URL}/rest/v1/menu_items?select=name,price,image_url,emoji,category&is_active=eq.true`,
       {headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});
     const dbItems = await res.json();
 
-    // Match carousel items with DB data
-    carouselItems = CAROUSEL_ITEMS.map(name => {
+    // Use saved list or default
+    const list = getCarouselList();
+    carouselItems = list.map(name => {
       const found = dbItems.find(i => i.name === name);
       return found || {name, price:'', image_url:'', emoji:'🍽️'};
     }).filter(i=>i);
@@ -1158,12 +1251,11 @@ function renderCarousel(){
 }
 
 function goToSlide(idx){
-  const wrap = document.getElementById('carouselWrap');
-  const W = wrap.offsetWidth || 340;
+  const W = getCarouselW(); const STEP = W+12;
   const carousel = document.getElementById('carousel');
   carouselIndex = carouselItems.length + idx;
   carousel.style.transition = 'transform 0.4s ease';
-  carousel.style.transform = `translateX(-${carouselIndex * W}px)`;
+  carousel.style.transform = `translateX(-${carouselIndex * STEP}px)`;
   updateDots(idx);
 }
 
@@ -1174,41 +1266,36 @@ function updateDots(realIdx){
 }
 
 function carouselNext(){
-  const wrap = document.getElementById('carouselWrap');
-  const W = wrap.offsetWidth || 340;
-  const carousel = document.getElementById('carousel');
+  const W=getCarouselW();const STEP=W+12;
+  const carousel=document.getElementById('carousel');
   carouselIndex++;
-  carousel.style.transition = 'transform 0.4s ease';
-  carousel.style.transform = `translateX(-${carouselIndex * W}px)`;
-  updateDots((carouselIndex - carouselItems.length) % carouselItems.length);
-
-  // Reset to middle when reaching end
-  carousel.addEventListener('transitionend', function handler(){
-    carousel.removeEventListener('transitionend', handler);
-    if(carouselIndex >= carouselItems.length * 2){
-      carouselIndex = carouselItems.length + (carouselIndex - carouselItems.length * 2);
-      carousel.style.transition = 'none';
-      carousel.style.transform = `translateX(-${carouselIndex * W}px)`;
+  carousel.style.transition='transform 0.4s ease';
+  carousel.style.transform=`translateX(-${carouselIndex*STEP}px)`;
+  updateDots((carouselIndex-carouselItems.length)%carouselItems.length);
+  carousel.addEventListener('transitionend',function handler(){
+    carousel.removeEventListener('transitionend',handler);
+    if(carouselIndex>=carouselItems.length*2){
+      carouselIndex=carouselItems.length+(carouselIndex-carouselItems.length*2);
+      carousel.style.transition='none';
+      carousel.style.transform=`translateX(-${carouselIndex*STEP}px)`;
     }
   });
 }
 
 function carouselPrev(){
-  const wrap = document.getElementById('carouselWrap');
-  const W = wrap.offsetWidth || 340;
-  const carousel = document.getElementById('carousel');
+  const W=getCarouselW();const STEP=W+12;
+  const carousel=document.getElementById('carousel');
   carouselIndex--;
-  carousel.style.transition = 'transform 0.4s ease';
-  carousel.style.transform = `translateX(-${carouselIndex * W}px)`;
-  const realIdx = ((carouselIndex - carouselItems.length) % carouselItems.length + carouselItems.length) % carouselItems.length;
+  carousel.style.transition='transform 0.4s ease';
+  carousel.style.transform=`translateX(-${carouselIndex*STEP}px)`;
+  const realIdx=((carouselIndex-carouselItems.length)%carouselItems.length+carouselItems.length)%carouselItems.length;
   updateDots(realIdx);
-
-  carousel.addEventListener('transitionend', function handler(){
-    carousel.removeEventListener('transitionend', handler);
-    if(carouselIndex < carouselItems.length){
-      carouselIndex = carouselItems.length * 2 - (carouselItems.length - carouselIndex);
-      carousel.style.transition = 'none';
-      carousel.style.transform = `translateX(-${carouselIndex * W}px)`;
+  carousel.addEventListener('transitionend',function handler(){
+    carousel.removeEventListener('transitionend',handler);
+    if(carouselIndex<carouselItems.length){
+      carouselIndex=carouselItems.length*2-(carouselItems.length-carouselIndex);
+      carousel.style.transition='none';
+      carousel.style.transform=`translateX(-${carouselIndex*STEP}px)`;
     }
   });
 }
@@ -1218,54 +1305,37 @@ function startCarouselAuto(){
 }
 
 function setupCarouselSwipe(){
-  const wrap = document.getElementById('carouselWrap');
-  wrap.addEventListener('touchstart', e=>{
-    isDragging=true; dragStartX=e.touches[0].clientX;
-    clearInterval(carouselTimer);
-  },{passive:true});
-  wrap.addEventListener('touchmove', e=>{
+  const wrap=document.getElementById('carouselWrap');
+  function getStep(){return getCarouselW()+12;}
+  wrap.addEventListener('touchstart',e=>{isDragging=true;dragStartX=e.touches[0].clientX;clearInterval(carouselTimer);},{passive:true});
+  wrap.addEventListener('touchmove',e=>{
     if(!isDragging)return;
-    dragCurrentX = e.touches[0].clientX - dragStartX;
-    const W = wrap.offsetWidth||340;
-    const carousel = document.getElementById('carousel');
-    carousel.style.transition='none';
-    carousel.style.transform=`translateX(${-(carouselIndex*W)+dragCurrentX}px)`;
-  },{passive:true});
-  wrap.addEventListener('touchend', ()=>{
-    if(!isDragging)return; isDragging=false;
-    if(dragCurrentX < -50) carouselNext();
-    else if(dragCurrentX > 50) carouselPrev();
-    else{
-      const W=wrap.offsetWidth||340;
-      const carousel=document.getElementById('carousel');
-      carousel.style.transition='transform 0.4s ease';
-      carousel.style.transform=`translateX(-${carouselIndex*W}px)`;
-    }
-    dragCurrentX=0;
-    startCarouselAuto();
-  });
-  // Mouse events for desktop
-  wrap.addEventListener('mousedown', e=>{isDragging=true;dragStartX=e.clientX;clearInterval(carouselTimer);});
-  wrap.addEventListener('mousemove', e=>{
-    if(!isDragging)return;
-    dragCurrentX=e.clientX-dragStartX;
-    const W=wrap.offsetWidth||340;
+    dragCurrentX=e.touches[0].clientX-dragStartX;
     const carousel=document.getElementById('carousel');
     carousel.style.transition='none';
-    carousel.style.transform=`translateX(${-(carouselIndex*W)+dragCurrentX}px)`;
-  });
-  wrap.addEventListener('mouseup',()=>{
-    if(!isDragging)return; isDragging=false;
+    carousel.style.transform=`translateX(${-(carouselIndex*getStep())+dragCurrentX}px)`;
+  },{passive:true});
+  wrap.addEventListener('touchend',()=>{
+    if(!isDragging)return;isDragging=false;
     if(dragCurrentX<-50)carouselNext();
     else if(dragCurrentX>50)carouselPrev();
-    else{
-      const W=wrap.offsetWidth||340;
-      const carousel=document.getElementById('carousel');
-      carousel.style.transition='transform 0.4s ease';
-      carousel.style.transform=`translateX(-${carouselIndex*W}px)`;
-    }
-    dragCurrentX=0;
-    startCarouselAuto();
+    else{const carousel=document.getElementById('carousel');carousel.style.transition='transform 0.4s ease';carousel.style.transform=`translateX(-${carouselIndex*getStep()}px)`;}
+    dragCurrentX=0;startCarouselAuto();
+  });
+  wrap.addEventListener('mousedown',e=>{isDragging=true;dragStartX=e.clientX;clearInterval(carouselTimer);});
+  wrap.addEventListener('mousemove',e=>{
+    if(!isDragging)return;
+    dragCurrentX=e.clientX-dragStartX;
+    const carousel=document.getElementById('carousel');
+    carousel.style.transition='none';
+    carousel.style.transform=`translateX(${-(carouselIndex*getStep())+dragCurrentX}px)`;
+  });
+  wrap.addEventListener('mouseup',()=>{
+    if(!isDragging)return;isDragging=false;
+    if(dragCurrentX<-50)carouselNext();
+    else if(dragCurrentX>50)carouselPrev();
+    else{const carousel=document.getElementById('carousel');carousel.style.transition='transform 0.4s ease';carousel.style.transform=`translateX(-${carouselIndex*getStep()}px)`;}
+    dragCurrentX=0;startCarouselAuto();
   });
 }
 
