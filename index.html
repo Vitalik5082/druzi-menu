@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Druzi Bar</title>
+<meta name="theme-color" content="#1a1a1a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Druzi Bar">
+<link rel="manifest" href="data:application/json;charset=utf-8,%7B%22name%22%3A%22Druzi%20Bar%22%2C%22short_name%22%3A%22Druzi%22%2C%22start_url%22%3A%22%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%231a1a1a%22%2C%22theme_color%22%3A%22%23d4a853%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%20100%20100'%3E%3Ctext%20y%3D'.9em'%20font-size%3D'90'%3E%F0%9F%8D%94%3C%2Ftext%3E%3C%2Fsvg%3E%22%2C%22sizes%22%3A%22any%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍔</text></svg>">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -206,6 +212,12 @@ textarea{resize:vertical;min-height:60px;}
       </div>
     </div>
     <div class="section-label" id="t_menu_label">Меню</div>
+    <div style="padding:0 12px 8px;">
+      <div id="popularSection" style="display:none;">
+        <div style="font-size:11px;font-weight:600;color:var(--muted);letter-spacing:1.8px;text-transform:uppercase;padding:8px 0 8px;">🔥 Популярне</div>
+        <div id="popularList" style="display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;"></div>
+      </div>
+    </div>
     <div class="categories" id="categoriesList"></div>
     <div class="section-label" id="t_contacts_label">Контакти</div>
     <div class="info-card">
@@ -234,6 +246,11 @@ textarea{resize:vertical;min-height:60px;}
     <div class="social-grid">
       <a href="https://www.tiktok.com/@druzi_bar" target="_blank" class="social-btn">📱 TikTok</a>
       <a href="https://www.instagram.com/druzi_bar" target="_blank" class="social-btn">📷 Instagram</a>
+    </div>
+    <div style="margin:8px 12px 0;">
+      <div id="pwaBtn" style="display:none;background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:12px;text-align:center;font-size:13px;font-weight:500;cursor:pointer;" onclick="installPWA()">
+        📲 Додати на екран
+      </div>
     </div>
     <div class="footer">© Druzi Bar 2022 · Кальян-бар</div>
   </div>
@@ -458,7 +475,7 @@ textarea{resize:vertical;min-height:60px;}
 const SUPABASE_URL='https://kfjkujrnimqounsnltpr.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtmamt1anJuaW1xb3Vuc25sdHByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3ODA5NjMsImV4cCI6MjA5MjM1Njk2M30.PxW__VEh0JrNAz6w7o3Dd5c0sgDQOXtXdGx3cUjjtpQ';
 const BUCKET='menu-images';
-const CACHE_KEY='druzi_menu_v8';
+const CACHE_KEY='druzi_menu_v9';
 const CACHE_TTL=5*60*1000;
 
 // Subcategory map
@@ -666,6 +683,7 @@ function renderItems(items,isSearch=false){
 
 function openItemModal(name){
   const item=allItems.find(i=>i.name===name);if(!item)return;
+  trackItemView(name);
   const isFav=favorites.includes(item.name);
   document.getElementById('itemModalName').textContent=item.name;
   document.getElementById('itemModalDesc').textContent=item.description||'';
@@ -918,14 +936,37 @@ async function saveBanner(){
 }
 
 // ===== ANALYTICS =====
+function getDeviceId(){
+  let id = localStorage.getItem('druzi_device_id');
+  if(!id){ id = 'dev_' + Math.random().toString(36).substr(2,9) + Date.now(); localStorage.setItem('druzi_device_id',id); }
+  return id;
+}
+
 async function trackVisit(){
   try {
+    // Only track once per hour per device
+    const lastVisit = localStorage.getItem('druzi_last_visit');
+    const now = Date.now();
+    if(lastVisit && now - parseInt(lastVisit) < 60*60*1000) return;
+    localStorage.setItem('druzi_last_visit', now.toString());
+    const deviceId = getDeviceId();
     await fetch(`${SUPABASE_URL}/rest/v1/analytics`, {
       method: 'POST',
       headers: {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal'},
-      body: JSON.stringify({opened_at: new Date().toISOString()})
+      body: JSON.stringify({opened_at: new Date().toISOString(), device_id: deviceId})
     });
   } catch(e) { console.log('Analytics error:', e); }
+}
+
+async function trackItemView(itemName){
+  try {
+    const deviceId = getDeviceId();
+    await fetch(`${SUPABASE_URL}/rest/v1/analytics`, {
+      method: 'POST',
+      headers: {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal'},
+      body: JSON.stringify({opened_at: new Date().toISOString(), item_name: itemName, device_id: deviceId})
+    });
+  } catch(e) {}
 }
 
 async function loadAnalytics(){
@@ -989,7 +1030,109 @@ async function loadAnalytics(){
         ${labels.map(l => `<div class="chart-label">${l}</div>`).join('')}
       </div>
     </div>
+    <div class="chart-bar-wrap" style="margin-top:10px;">
+      <div class="chart-title">🍽️ Популярні страви (30 днів)</div>
+      <div id="popularAnalytics" style="margin-top:8px;"><div style="color:var(--muted);font-size:13px;">Завантаження...</div></div>
+    </div>
   `;
+
+  // Load popular items for analytics
+  setTimeout(async function(){
+    const monthStart = new Date();
+    monthStart.setDate(monthStart.getDate()-30);
+    const r = await fetch(
+      SUPABASE_URL+'/rest/v1/analytics?select=item_name&item_name=not.is.null&opened_at=gte.'+encodeURIComponent(monthStart.toISOString()),
+      {headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}}
+    );
+    const data = await r.json();
+    if(!Array.isArray(data)||!data.length){
+      document.getElementById('popularAnalytics').innerHTML='<div style="color:var(--muted);font-size:13px;">Ще немає даних</div>';
+      return;
+    }
+    const counts={};
+    data.forEach(function(row){if(row.item_name)counts[row.item_name]=(counts[row.item_name]||0)+1;});
+    const top=Object.entries(counts).sort(function(a,b){return b[1]-a[1];}).slice(0,5);
+    const max=top[0]?top[0][1]:1;
+    document.getElementById('popularAnalytics').innerHTML=top.map(function(entry){
+      const name=entry[0],cnt=entry[1];
+      return '<div style="margin-bottom:8px;">'
+        +'<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;">'
+        +'<span style="font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:75%;">'+sanitize(name)+'</span>'
+        +'<span style="color:var(--gold);font-weight:700;">'+cnt+'</span>'
+        +'</div>'
+        +'<div style="background:var(--bg);border-radius:4px;height:6px;">'
+        +'<div style="background:var(--gold);border-radius:4px;height:6px;width:'+Math.round(cnt/max*100)+'%;"></div>'
+        +'</div></div>';
+    }).join('');
+  },100);
+}
+
+// ===== PWA =====
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('pwaBtn').style.display = 'block';
+});
+async function installPWA(){
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const result = await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  document.getElementById('pwaBtn').style.display = 'none';
+}
+
+// ===== POPULAR ITEMS =====
+async function loadPopular(){
+  try{
+    // Get most viewed items in last 30 days
+    const monthStart = new Date();
+    monthStart.setDate(monthStart.getDate()-30);
+    const r = await fetch(
+      `${SUPABASE_URL}/rest/v1/analytics?select=item_name&item_name=not.is.null&opened_at=gte.${encodeURIComponent(monthStart.toISOString())}`,
+      {headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}}
+    );
+    const data = await r.json();
+    if(!Array.isArray(data)||!data.length) return;
+
+    // Count views per item
+    const counts = {};
+    data.forEach(row=>{ if(row.item_name) counts[row.item_name]=(counts[row.item_name]||0)+1; });
+    const top = Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([name])=>name);
+    if(!top.length) return;
+
+    // Get item details from cache or DB
+    let items = allItems.length ? allItems : [];
+    if(!items.length){
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/menu_items?select=*&is_active=eq.true`,
+        {headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});
+      items = await res.json();
+    }
+
+    const popularItems = top.map(name=>items.find(i=>i.name===name)).filter(Boolean);
+    if(!popularItems.length) return;
+
+    document.getElementById('popularSection').style.display='block';
+    document.getElementById('popularList').innerHTML = popularItems.map(item=>`
+      <div onclick="openPopularItem('${item.name.replace(/'/g,"\'")}')" style="flex-shrink:0;width:120px;cursor:pointer;">
+        <div style="width:120px;height:90px;border-radius:10px;overflow:hidden;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:30px;">
+          ${item.image_url?`<img src="${item.image_url}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='${item.emoji||'🍽️'}'">`:item.emoji||'🍽️'}
+        </div>
+        <div style="font-size:12px;font-weight:600;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.name}</div>
+        <div style="font-size:12px;color:var(--gold);font-weight:700;">${item.price} грн</div>
+      </div>`).join('');
+  }catch(e){ console.log('Popular error:',e); }
+}
+
+function openPopularItem(name){
+  // Load all items if needed, then open modal
+  if(!allItems.length){
+    fetch(`${SUPABASE_URL}/rest/v1/menu_items?select=*&is_active=eq.true`,
+      {headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}})
+      .then(r=>r.json()).then(data=>{allItems=data||[];openItemModal(name);});
+  } else {
+    openItemModal(name);
+  }
 }
 
 // INIT
@@ -1001,6 +1144,7 @@ if(savedToken)authToken=savedToken;
 applyLang();updateStatus();setInterval(updateStatus,60000);
 trackVisit();
 loadBanner();
+loadPopular();
 
 // Init subcategory selects
 updateSubcategoryOptions('fCategory','fSubcategory');
