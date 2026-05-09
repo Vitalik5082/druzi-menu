@@ -960,6 +960,7 @@ function getCarouselList(){
 }
 function saveCarouselList(list){
   localStorage.setItem('druzi_carousel', JSON.stringify(list));
+  if(typeof saveCarouselListDB === 'function') saveCarouselListDB(list);
 }
 
 function loadCarouselAdmin(){
@@ -1223,36 +1224,32 @@ async function initCarousel(){
 
 function renderCarousel(){
   const carousel = document.getElementById('carousel');
-  const wrap = document.getElementById('carouselWrap');
-  const W = wrap.offsetWidth || 340;
-
-  // Triple items for infinite loop effect
+  const W = getCarouselW();
+  const GAP = 12;
+  const STEP = W + GAP;
+  if(!carouselItems.length) return;
   const allSlides = [...carouselItems, ...carouselItems, ...carouselItems];
-  carousel.style.width = (allSlides.length * W) + 'px';
-
-  carousel.innerHTML = allSlides.map((item,idx) => `
-    <div onclick="openPopularItem('${item.name.replace(/'/g,"\'")}','${item.category||''}')"
-      style="width:${W}px;flex-shrink:0;cursor:pointer;padding:0 8px;box-sizing:border-box;">
-      <div style="border-radius:14px;overflow:hidden;background:var(--card);border:1px solid var(--border);height:200px;position:relative;">
-        ${item.image_url
-          ? `<img src="${item.image_url}" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none'">`
-          : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:60px;">${item.emoji||'🍽️'}</div>`
-        }
-        <div style="position:absolute;bottom:0;left:0;right:0;padding:10px 12px;background:linear-gradient(to top,rgba(0,0,0,0.8),transparent);">
-          <div style="color:#fff;font-size:14px;font-weight:600;">${item.name}</div>
-          ${item.price ? `<div style="color:var(--gold);font-size:13px;font-weight:700;">${item.price} грн</div>` : ''}
-        </div>
-      </div>
-    </div>`).join('');
-
-  // Start from middle set
+  carousel.style.width = (allSlides.length * STEP) + 'px';
+  carousel.innerHTML = allSlides.map(function(item){
+    const safeName = item.name.replace(/'/g,"'");
+    const imgHTML = item.image_url
+      ? '<img src="'+item.image_url+'" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none'">'
+      : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:60px;">'+(item.emoji||'🍽️')+'</div>';
+    return '<div onclick="openPopularItem(''+safeName+'',''+(item.category||'')+'')" style="width:'+W+'px;flex-shrink:0;cursor:pointer;margin-right:'+GAP+'px;">'
+      +'<div style="border-radius:14px;overflow:hidden;background:var(--card);border:1px solid var(--border);height:190px;position:relative;box-shadow:0 2px 12px rgba(0,0,0,0.08);">'
+      +imgHTML
+      +'<div style="position:absolute;bottom:0;left:0;right:0;padding:10px 12px;background:linear-gradient(to top,rgba(0,0,0,0.85),transparent);">'
+      +'<div style="color:#fff;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+item.name+'</div>'
+      +(item.price?'<div style="color:var(--gold);font-size:12px;font-weight:700;">'+item.price+' грн</div>':'')
+      +'</div></div></div>';
+  }).join('');
   carouselIndex = carouselItems.length;
   carousel.style.transition = 'none';
-  carousel.style.transform = `translateX(-${carouselIndex * W}px)`;
-
-  // Dots
+  carousel.style.transform = 'translateX(-'+(carouselIndex*STEP)+'px)';
   const dots = document.getElementById('carouselDots');
-  dots.innerHTML = carouselItems.map((_,i)=>`<div class="cdot" style="width:6px;height:6px;border-radius:50%;background:${i===0?'var(--gold)':'rgba(0,0,0,0.2)'};transition:background 0.3s;cursor:pointer;" onclick="goToSlide(${i})"></div>`).join('');
+  dots.innerHTML = carouselItems.map(function(_,i){
+    return '<div class="cdot" style="width:6px;height:6px;border-radius:50%;background:'+(i===0?'var(--gold)':'rgba(0,0,0,0.2)')+';transition:background 0.3s;cursor:pointer;" onclick="goToSlide('+i+')"></div>';
+  }).join('');
 }
 
 // Re-render carousel on resize for correct sizing
