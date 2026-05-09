@@ -96,6 +96,41 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .item-modal-footer{display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding-top:16px;border-top:1px solid var(--border);}
 .item-modal-price{font-size:22px;font-weight:700;color:var(--gold);}
 .item-modal-close{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,0.45);color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;z-index:10;}
+
+/* BANNER */
+.banner-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:300;display:flex;align-items:flex-end;justify-content:center;}
+.banner{background:var(--card);border-radius:20px 20px 0 0;width:100%;max-width:480px;overflow:hidden;transform:translateY(0);transition:transform 0.3s ease;touch-action:pan-y;}
+.banner-img{width:100%;height:200px;object-fit:cover;display:block;}
+.banner-img-ph{width:100%;height:120px;background:linear-gradient(135deg,#1a0f05,#2d1b0e);display:flex;align-items:center;justify-content:center;font-size:60px;}
+.banner-body{padding:16px 16px 32px;}
+.banner-badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;margin-bottom:8px;}
+.banner-badge.new{background:#e8f5e9;color:#2e7d32;}
+.banner-badge.hit{background:#fff3e0;color:#e65100;}
+.banner-badge.sale{background:#fce4ec;color:#c62828;}
+.banner-badge.day{background:#e3f2fd;color:#1565c0;}
+.banner-title{font-size:20px;font-weight:700;color:var(--text);}
+.banner-desc{font-size:14px;color:var(--muted);margin-top:6px;line-height:1.5;}
+.banner-close{position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,0.4);color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;z-index:10;}
+.banner-swipe-hint{text-align:center;font-size:11px;color:var(--muted);margin-bottom:8px;}
+/* ADMIN TABS */
+.admin-tabs{display:flex;overflow-x:auto;gap:0;border-bottom:1px solid var(--border);margin-bottom:16px;scrollbar-width:none;}
+.admin-tabs::-webkit-scrollbar{display:none;}
+.admin-tab{flex-shrink:0;padding:12px 16px;font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap;}
+.admin-tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.admin-section{display:none;}
+.admin-section.active{display:block;}
+/* ANALYTICS */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.stat-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:16px;text-align:center;}
+.stat-num{font-size:28px;font-weight:700;color:var(--gold);}
+.stat-label{font-size:12px;color:var(--muted);margin-top:4px;}
+.chart-bar-wrap{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:14px;}
+.chart-title{font-size:13px;font-weight:600;margin-bottom:12px;}
+.chart-bars{display:flex;align-items:flex-end;gap:4px;height:80px;}
+.chart-bar{flex:1;background:var(--gold);border-radius:4px 4px 0 0;opacity:0.8;min-height:2px;transition:height 0.3s;}
+.chart-labels{display:flex;gap:4px;margin-top:4px;}
+.chart-label{flex:1;font-size:9px;color:var(--muted);text-align:center;}
+
 /* ADMIN */
 .admin-header{background:var(--dark);color:#fff;padding:16px;display:flex;align-items:center;justify-content:space-between;}
 .admin-title{font-size:17px;font-weight:600;}
@@ -257,6 +292,15 @@ textarea{resize:vertical;min-height:60px;}
   </div>
   <div class="admin-wrap">
     <div id="adminAlert"></div>
+    <!-- ADMIN TABS -->
+    <div class="admin-tabs">
+      <div class="admin-tab active" onclick="switchAdminSection('menu',this)">🍽️ Меню</div>
+      <div class="admin-tab" onclick="switchAdminSection('banner',this)">🎯 Банер</div>
+      <div class="admin-tab" onclick="switchAdminSection('analytics',this)">📊 Аналітика</div>
+    </div>
+
+    <!-- MENU SECTION -->
+    <div class="admin-section active" id="adminSectionMenu">
     <div class="form-card">
       <div class="form-title">➕ Додати страву</div>
       <label>Назва</label><input type="text" id="fName" placeholder="Наприклад: Філадельфія">
@@ -305,8 +349,44 @@ textarea{resize:vertical;min-height:60px;}
     <div style="margin-bottom:8px;"><input style="background:var(--card);" type="text" placeholder="🔍 Пошук..." oninput="filterAdmin(this.value)"></div>
     <div class="admin-cat-tabs" id="adminCatTabs"></div>
     <div id="adminItemsList"><div class="loading-msg">Завантаження...</div></div>
-  </div>
-</div>
+    </div><!-- end adminSectionMenu -->
+
+    <!-- BANNER SECTION -->
+    <div class="admin-section" id="adminSectionBanner">
+      <div class="form-card">
+        <div class="form-title">🎯 Банер для відвідувачів</div>
+        <label>Статус</label>
+        <select id="bannerActive">
+          <option value="true">✅ Активний — показувати</option>
+          <option value="false">❌ Вимкнено</option>
+        </select>
+        <label>Тип банера</label>
+        <select id="bannerBadgeAdmin">
+          <option value="new">✨ Новинка</option>
+          <option value="hit">🔥 Хіт</option>
+          <option value="sale">🎁 Акція</option>
+          <option value="day">☀️ Блюдо дня</option>
+        </select>
+        <label>Заголовок</label>
+        <input type="text" id="bannerTitleAdmin" placeholder="Наприклад: Профітролі">
+        <label>Опис</label>
+        <textarea id="bannerDescAdmin" placeholder="Короткий опис або умови акції"></textarea>
+        <label>Фото URL</label>
+        <input type="text" id="bannerImageAdmin" placeholder="https://...">
+        <div class="upload-btn" id="bannerUploadBtn">📷 Завантажити фото</div>
+        <input type="file" id="bannerFile" accept="image/*" style="display:none" onchange="uploadFile(this,'bannerImageAdmin','bannerPreview')">
+        <img id="bannerPreview" class="img-preview" style="display:none">
+        <button class="btn btn-gold" style="width:100%;margin-top:14px;" onclick="saveBanner()">Зберегти банер</button>
+      </div>
+    </div><!-- end adminSectionBanner -->
+
+    <!-- ANALYTICS SECTION -->
+    <div class="admin-section" id="adminSectionAnalytics">
+      <div id="analyticsContent"><div class="loading-msg">Завантаження...</div></div>
+    </div><!-- end adminSectionAnalytics -->
+
+  </div><!-- end admin-wrap -->
+</div><!-- end viewAdmin -->
 
 <!-- EDIT MODAL -->
 <div id="editModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:100;align-items:flex-end;justify-content:center;">
@@ -378,7 +458,7 @@ textarea{resize:vertical;min-height:60px;}
 const SUPABASE_URL='https://kfjkujrnimqounsnltpr.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtmamt1anJuaW1xb3Vuc25sdHByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3ODA5NjMsImV4cCI6MjA5MjM1Njk2M30.PxW__VEh0JrNAz6w7o3Dd5c0sgDQOXtXdGx3cUjjtpQ';
 const BUCKET='menu-images';
-const CACHE_KEY='druzi_menu_v5';
+const CACHE_KEY='druzi_menu_v6';
 const CACHE_TTL=5*60*1000;
 
 // Subcategory map
@@ -727,6 +807,182 @@ async function saveEdit(){
 
 function showAlert(msg,type){const el=document.getElementById('adminAlert');el.innerHTML=`<div class="alert alert-${type}">${msg}</div>`;setTimeout(()=>el.innerHTML='',3000);}
 
+
+// ===== BANNER =====
+async function loadBanner(){
+  const today = new Date().toDateString();
+  const dismissed = localStorage.getItem('druzi_banner_dismissed');
+  if(dismissed === today) return; // already dismissed today
+
+  const {data} = await dbGet('banner', null, null);
+  if(!data || !data[0] || !data[0].active) return;
+
+  const b = data[0];
+  document.getElementById('bannerTitle').textContent = b.title || '';
+  document.getElementById('bannerDesc').textContent = b.description || '';
+
+  const badge = document.getElementById('bannerBadge');
+  const badges = {new:'✨ Новинка', hit:'🔥 Хіт', sale:'🎁 Акція', day:'☀️ Блюдо дня'};
+  badge.textContent = badges[b.badge] || '✨ Новинка';
+  badge.className = 'banner-badge ' + (b.badge || 'new');
+
+  const imgWrap = document.getElementById('bannerImgWrap');
+  if(b.image_url){
+    imgWrap.innerHTML = `<img class="banner-img" src="${b.image_url}" alt="${b.title}">`;
+  } else {
+    imgWrap.innerHTML = `<div class="banner-img-ph">🍽️</div>`;
+  }
+
+  // Show banner with slight delay
+  setTimeout(() => {
+    document.getElementById('bannerOverlay').style.display = 'flex';
+    setupBannerSwipe();
+  }, 1500);
+}
+
+function closeBanner(){
+  const overlay = document.getElementById('bannerOverlay');
+  const sheet = document.getElementById('bannerSheet');
+  sheet.style.transform = 'translateY(100%)';
+  setTimeout(() => {
+    overlay.style.display = 'none';
+    sheet.style.transform = 'translateY(0)';
+  }, 300);
+  // Remember dismissed for today
+  localStorage.setItem('druzi_banner_dismissed', new Date().toDateString());
+}
+
+function closeBannerOutside(e){
+  if(e.target === document.getElementById('bannerOverlay')) closeBanner();
+}
+
+function setupBannerSwipe(){
+  const sheet = document.getElementById('bannerSheet');
+  let startY = 0, currentY = 0;
+  sheet.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, {passive:true});
+  sheet.addEventListener('touchmove', e => {
+    currentY = e.touches[0].clientY - startY;
+    if(currentY > 0) sheet.style.transform = `translateY(${currentY}px)`;
+  }, {passive:true});
+  sheet.addEventListener('touchend', () => {
+    if(currentY > 80) closeBanner();
+    else { sheet.style.transform = 'translateY(0)'; }
+    currentY = 0;
+  });
+}
+
+// ===== ADMIN BANNER =====
+function switchAdminSection(name, el){
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('adminSection' + name.charAt(0).toUpperCase() + name.slice(1)).classList.add('active');
+  if(name === 'analytics') loadAnalytics();
+  if(name === 'banner') loadBannerAdmin();
+}
+
+async function loadBannerAdmin(){
+  const {data} = await dbGet('banner', null, null);
+  if(!data || !data[0]) return;
+  const b = data[0];
+  document.getElementById('bannerActive').value = b.active ? 'true' : 'false';
+  document.getElementById('bannerBadgeAdmin').value = b.badge || 'new';
+  document.getElementById('bannerTitleAdmin').value = b.title || '';
+  document.getElementById('bannerDescAdmin').value = b.description || '';
+  document.getElementById('bannerImageAdmin').value = b.image_url || '';
+  if(b.image_url){
+    const p = document.getElementById('bannerPreview');
+    p.src = b.image_url; p.style.display = 'block';
+  }
+}
+
+async function saveBanner(){
+  if(!authToken){showAlert('Не авторизовано','error');return;}
+  const vals = {
+    active: document.getElementById('bannerActive').value === 'true',
+    badge: document.getElementById('bannerBadgeAdmin').value,
+    title: document.getElementById('bannerTitleAdmin').value.trim(),
+    description: document.getElementById('bannerDescAdmin').value.trim(),
+    image_url: document.getElementById('bannerImageAdmin').value.trim()
+  };
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/banner?id=eq.1`, {
+    method: 'PATCH',
+    headers: getH(true),
+    body: JSON.stringify(vals)
+  });
+  if(r.ok){ showAlert('✅ Банер збережено!','success'); }
+  else { showAlert('❌ Помилка збереження','error'); }
+}
+
+// ===== ANALYTICS =====
+async function trackVisit(){
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/analytics`, {
+      method: 'POST',
+      headers: {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal'},
+      body: JSON.stringify({opened_at: new Date().toISOString()})
+    });
+  } catch(e) { console.log('Analytics error:', e); }
+}
+
+async function loadAnalytics(){
+  const wrap = document.getElementById('analyticsContent');
+  wrap.innerHTML = '<div class="loading-msg">⏳ Завантаження...</div>';
+
+  const now = new Date();
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+  const yesterdayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()-1).toISOString();
+  const weekStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()-6).toISOString();
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+
+  async function count(from, to){
+    let url = `${SUPABASE_URL}/rest/v1/analytics?select=id&opened_at=gte.${from}`;
+    if(to) url += `&opened_at=lt.${to}`;
+    const r = await fetch(url, {headers: {'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Prefer': 'count=exact', 'Range-Unit': 'items', 'Range': '0-0'}});
+    const countHeader = r.headers.get('Content-Range');
+    if(countHeader) return parseInt(countHeader.split('/')[1]) || 0;
+    const d = await r.json();
+    return Array.isArray(d) ? d.length : 0;
+  }
+
+  const [today, yesterday, week, month] = await Promise.all([
+    count(todayStart, null),
+    count(yesterdayStart, todayStart),
+    count(weekStart, null),
+    count(monthStart, null)
+  ]);
+
+  // Get last 7 days for chart
+  const days = [];
+  const labels = [];
+  for(let i=6; i>=0; i--){
+    const d = new Date(now.getFullYear(), now.getMonth(), now.getDate()-i);
+    const next = new Date(now.getFullYear(), now.getMonth(), now.getDate()-i+1);
+    days.push(count(d.toISOString(), next.toISOString()));
+    labels.push(['Нд','Пн','Вт','Ср','Чт','Пт','Сб'][d.getDay()]);
+  }
+  const dayCounts = await Promise.all(days);
+  const maxCount = Math.max(...dayCounts, 1);
+
+  wrap.innerHTML = `
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-num">${today}</div><div class="stat-label">Сьогодні</div></div>
+      <div class="stat-card"><div class="stat-num">${yesterday}</div><div class="stat-label">Вчора</div></div>
+      <div class="stat-card"><div class="stat-num">${week}</div><div class="stat-label">Цей тиждень</div></div>
+      <div class="stat-card"><div class="stat-num">${month}</div><div class="stat-label">Цей місяць</div></div>
+    </div>
+    <div class="chart-bar-wrap">
+      <div class="chart-title">📈 Останні 7 днів</div>
+      <div class="chart-bars">
+        ${dayCounts.map(c => `<div class="chart-bar" style="height:${Math.max(4, Math.round(c/maxCount*80))}px" title="${c}"></div>`).join('')}
+      </div>
+      <div class="chart-labels">
+        ${labels.map(l => `<div class="chart-label">${l}</div>`).join('')}
+      </div>
+    </div>
+  `;
+}
+
 // INIT
 currentLang=localStorage.getItem('druzi_lang')||'uk';
 const savedToken=sessionStorage.getItem('druzi_token');
@@ -739,6 +995,7 @@ applyLang();updateStatus();setInterval(updateStatus,60000);
 updateSubcategoryOptions('fCategory','fSubcategory');
 
 document.getElementById('fUploadBtn').addEventListener('click',()=>document.getElementById('fFile').click());
+document.getElementById('bannerUploadBtn').addEventListener('click',()=>document.getElementById('bannerFile').click());
 document.getElementById('eUploadBtn').addEventListener('click',()=>document.getElementById('eFile').click());
 
 if(window.location.hash==='#admin'){
@@ -753,5 +1010,20 @@ document.getElementById('logoBtn').addEventListener('click',()=>{
   setTimeout(()=>tapCount=0,3000);
 });
 </script>
+
+<!-- BANNER -->
+<div id="bannerOverlay" style="display:none;" class="banner-overlay" onclick="closeBannerOutside(event)">
+  <div class="banner" id="bannerSheet">
+    <button class="banner-close" onclick="closeBanner()">×</button>
+    <div id="bannerImgWrap"></div>
+    <div class="banner-swipe-hint">↓ Свайп вниз щоб закрити</div>
+    <div class="banner-body">
+      <div id="bannerBadge" class="banner-badge"></div>
+      <div class="banner-title" id="bannerTitle"></div>
+      <div class="banner-desc" id="bannerDesc"></div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
