@@ -204,6 +204,7 @@ textarea{resize:vertical;min-height:60px;}
       </div>
       <div class="header-info">
         <div class="header-sub" id="headerSub">Кальян-бар · Могилів-Подільський</div>
+        <div style="color:rgba(255,255,255,0.45);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;margin-top:3px;">🛵 Доставка</div>
       </div>
     </div>
     <div style="padding:12px 12px 0;">
@@ -1199,12 +1200,16 @@ let dragCurrentX = 0;
 
 async function initCarousel(){
   try{
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/menu_items?select=name,price,image_url,emoji,category&is_active=eq.true`,
-      {headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});
-    const dbItems = await res.json();
-
-    // Use saved list or default
-    const list = getCarouselList();
+    // Load carousel list from DB and menu items in parallel
+    const [listData, menuRes] = await Promise.all([
+      getCarouselListDB(),
+      fetch(`${SUPABASE_URL}/rest/v1/menu_items?select=name,price,image_url,emoji,category&is_active=eq.true`,
+        {headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}})
+    ]);
+    const dbItems = await menuRes.json();
+    // Sync to localStorage for offline use
+    localStorage.setItem('druzi_carousel', JSON.stringify(listData));
+    const list = listData;
     carouselItems = list.map(name => {
       const found = dbItems.find(i => i.name === name);
       return found || {name, price:'', image_url:'', emoji:'🍽️'};
@@ -1250,6 +1255,15 @@ function renderCarousel(){
   dots.innerHTML = carouselItems.map((_,i)=>`<div class="cdot" style="width:6px;height:6px;border-radius:50%;background:${i===0?'var(--gold)':'rgba(0,0,0,0.2)'};transition:background 0.3s;cursor:pointer;" onclick="goToSlide(${i})"></div>`).join('');
 }
 
+// Re-render carousel on resize for correct sizing
+window.addEventListener('resize', ()=>{
+  if(carouselItems.length>0){
+    clearInterval(carouselTimer);
+    renderCarousel();
+    startCarouselAuto();
+  }
+});
+
 function goToSlide(idx){
   const W = getCarouselW(); const STEP = W+12;
   const carousel = document.getElementById('carousel');
@@ -1266,8 +1280,10 @@ function updateDots(realIdx){
 }
 
 function getCarouselW(){
-  const wrap=document.getElementById('carouselWrap');
-  return wrap ? (wrap.offsetWidth-64)||260 : 260;
+  // Use window width for mobile accuracy
+  const maxW = 480;
+  const vw = Math.min(window.innerWidth, maxW);
+  return vw - 80; // 40px peek on each side
 }
 
 function carouselNext(){
