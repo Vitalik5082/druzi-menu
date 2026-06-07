@@ -711,7 +711,7 @@ function itemHTML(item,showDel=false){
       </div>
     </div>
     <div class="item-footer">
-      <div><div class="item-price" style="font-size:12px;line-height:1.8;">${getItemPriceHTML(item)}</div>${item.weight?`<div class="item-weight">${sanitize(item.weight)}</div>`:''}</div>
+      <div><div class="item-price" style="font-size:13px;line-height:1.9;font-weight:600;">${getItemPriceHTML(item)}</div>${item.weight?`<div class="item-weight">${sanitize(item.weight)}</div>`:''}</div>
       <div class="item-actions" onclick="event.stopPropagation()">
         ${showDel?`<button class="fav-btn" onclick="removeFav('${sn}')">🗑️</button>`:`<button class="fav-btn" onclick="toggleFav('${sn}',this)">${isFav?'❤️':'🤍'}</button>`}
         <button class="share-btn" onclick="shareItem('${sn}',${item.price})">↗</button>
@@ -906,11 +906,24 @@ async function saveEdit(){
 function showAlert(msg,type){const el=document.getElementById('adminAlert');el.innerHTML=`<div class="alert alert-${type}">${msg}</div>`;setTimeout(()=>el.innerHTML='',3000);}
 
 
+// ===== HELPERS =====
+async function fetchWithRetry(url, opts, retries=3){
+  for(let i=0;i<retries;i++){
+    try{
+      const r = await fetch(url, opts);
+      return r;
+    }catch(e){
+      if(i===retries-1) throw e;
+      await new Promise(res=>setTimeout(res, 1000*(i+1)));
+    }
+  }
+}
+
 // ===== BANNER =====
 async function loadBanner(){
 
   try{
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/banner?id=eq.1&select=*`, {
+    const r = await fetchWithRetry(`${SUPABASE_URL}/rest/v1/banner?id=eq.1&select=*`, {
       headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}
     });
     const data = await r.json();
@@ -1265,7 +1278,7 @@ let dragCurrentX = 0;
 
 async function getCarouselListDB(){
   try{
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/banner?id=eq.1&select=carousel_items`,
+    const r = await fetchWithRetry(`${SUPABASE_URL}/rest/v1/banner?id=eq.1&select=carousel_items`,
       {headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});
     const d = await r.json();
     if(d&&d[0]&&d[0].carousel_items) return JSON.parse(d[0].carousel_items);
