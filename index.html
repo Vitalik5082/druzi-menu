@@ -97,6 +97,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .item-modal-img{width:100%;height:240px;object-fit:cover;display:block;}
 .item-modal-img-ph{width:100%;height:180px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:70px;}
 .item-modal-body{padding:16px 16px 40px;}
+.variants-wrap{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+.variant-btn{flex:1;min-width:80px;padding:8px 10px;border-radius:10px;border:2px solid var(--border);background:var(--bg);cursor:pointer;text-align:center;transition:all 0.15s;}
+.variant-btn:active{transform:scale(0.97);}
+.variant-btn.selected{border-color:var(--gold);background:#fffbf0;}
+.variant-label{font-size:11px;font-weight:700;color:var(--muted);}
+.variant-price{font-size:14px;font-weight:700;color:var(--gold);margin-top:2px;}
 .item-modal-name{font-size:20px;font-weight:700;}
 .item-modal-desc{font-size:14px;color:var(--muted);margin-top:8px;line-height:1.5;}
 .item-modal-footer{display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding-top:16px;border-top:1px solid var(--border);}
@@ -343,6 +349,13 @@ textarea{resize:vertical;min-height:60px;}
         </div>
         <div><label>Підкатегорія</label><select id="fSubcategory"></select></div>
       </div>
+      <label>Варіанти цін (для піц)</label>
+      <div id="fVariantsList" style="margin-bottom:4px;"></div>
+      <div style="display:flex;gap:6px;margin-bottom:6px;">
+        <input type="text" id="fVarLabel" placeholder="30 см / 35 см / 40 см" style="flex:1;">
+        <input type="number" id="fVarPrice" placeholder="Ціна" style="flex:1;">
+        <button onclick="addVariant('f')" style="background:var(--gold);color:#fff;border:none;border-radius:8px;padding:8px 12px;cursor:pointer;font-weight:600;">+</button>
+      </div>
       <div class="form-row">
         <div><label>Мітка</label>
           <select id="fBadge">
@@ -446,6 +459,13 @@ textarea{resize:vertical;min-height:60px;}
       </div>
       <div><label>Підкатегорія</label><select id="eSubcategory"></select></div>
     </div>
+    <label>Варіанти цін (для піц)</label>
+    <div id="eVariantsList" style="margin-bottom:4px;"></div>
+    <div style="display:flex;gap:6px;margin-bottom:6px;">
+      <input type="text" id="eVarLabel" placeholder="30 см / 35 см / 40 см" style="flex:1;">
+      <input type="number" id="eVarPrice" placeholder="Ціна" style="flex:1;">
+      <button onclick="addVariant('e')" style="background:var(--gold);color:#fff;border:none;border-radius:8px;padding:8px 12px;cursor:pointer;font-weight:600;">+</button>
+    </div>
     <div class="form-row">
       <div><label>Мітка</label>
         <select id="eBadge">
@@ -477,8 +497,10 @@ textarea{resize:vertical;min-height:60px;}
       <div id="itemModalMeta" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px;"></div>
       <div class="item-modal-name" id="itemModalName"></div>
       <div class="item-modal-desc" id="itemModalDesc"></div>
+      <div id="itemModalVariants" class="variants-wrap" style="display:none;"></div>
       <div class="item-modal-footer">
-        <div><div class="item-modal-price" id="itemModalPrice"></div><div style="font-size:12px;color:var(--muted);" id="itemModalWeight"></div></div>
+        <div id="itemModalPriceWrap"><div class="item-modal-price" id="itemModalPrice"></div></div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px;" id="itemModalWeight"></div>
         <div style="display:flex;gap:10px;align-items:center;">
           <button class="fav-btn" id="itemModalFav" style="font-size:26px;"></button>
           <button class="share-btn" id="itemModalShare" style="font-size:13px;padding:8px 14px;">↗</button>
@@ -492,13 +514,13 @@ textarea{resize:vertical;min-height:60px;}
 const SUPABASE_URL='https://kfjkujrnimqounsnltpr.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtmamt1anJuaW1xb3Vuc25sdHByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3ODA5NjMsImV4cCI6MjA5MjM1Njk2M30.PxW__VEh0JrNAz6w7o3Dd5c0sgDQOXtXdGx3cUjjtpQ';
 const BUCKET='menu-images';
-const CACHE_KEY='druzi_menu_v9';
+const CACHE_KEY='druzi_menu_v10';
 const CACHE_TTL=5*60*1000;
 
 // Subcategory map
 const SUBCATS={
   'Суші та роли':['Роли','Темпура','Запечені'],
-  'Піца':['30 см','35 см','40 см'],
+  'Піца':['Піца'],
   'Їжа':['Салати','Круасан','Паста','Стейк','Пательня','Снеки','Млинці','Десерти'],
   'Алкоголь':['Пиво','Коктейлі','Short Drinks','Міцний алкоголь'],
   'Безалкогольні напої':['Гарячі напої','Холодні напої'],
@@ -679,7 +701,7 @@ function itemHTML(item,showDel=false){
       </div>
     </div>
     <div class="item-footer">
-      <div><div class="item-price">${item.price} грн</div>${item.weight?`<div class="item-weight">${sanitize(item.weight)}</div>`:''}</div>
+      <div><div class="item-price" style="font-size:12px;line-height:1.8;">${(()=>{try{if(item.variants){const v=JSON.parse(item.variants);if(v.length>0)return v.map(x=>'<span>'+x.label+': '+x.price+'₴</span>').join('<br>');}return item.price+' грн';}catch(e){return item.price+' грн';}})()}</div>${item.weight?`<div class="item-weight">${sanitize(item.weight)}</div>`:''}</div>
       <div class="item-actions" onclick="event.stopPropagation()">
         ${showDel?`<button class="fav-btn" onclick="removeFav('${sn}')">🗑️</button>`:`<button class="fav-btn" onclick="toggleFav('${sn}',this)">${isFav?'❤️':'🤍'}</button>`}
         <button class="share-btn" onclick="shareItem('${sn}',${item.price})">↗</button>
@@ -704,8 +726,30 @@ function openItemModal(name){
   const isFav=favorites.includes(item.name);
   document.getElementById('itemModalName').textContent=item.name;
   document.getElementById('itemModalDesc').textContent=item.description||'';
-  document.getElementById('itemModalPrice').textContent=item.price+' грн';
   document.getElementById('itemModalWeight').textContent=item.weight||'';
+
+  // Variants
+  let variants=[];
+  try{if(item.variants)variants=JSON.parse(item.variants);}catch(e){}
+  const priceEl=document.getElementById('itemModalPrice');
+  const varEl=document.getElementById('itemModalVariants');
+  const priceWrap=document.getElementById('itemModalPriceWrap');
+  if(variants.length){
+    priceEl.textContent=variants[0].price+' грн';
+    varEl.style.display='flex';
+    varEl.innerHTML=variants.map((v,i)=>
+      '<div class="variant-btn'+(i===0?' selected':'')+'" onclick="selectVariant(this,'+v.price+')">'
+      +'<div class="variant-label">'+v.label+'</div>'
+      +'<div class="variant-price">'+v.price+' грн</div>'
+      +'</div>'
+    ).join('');
+    if(priceWrap)priceWrap.style.display='none';
+  }else{
+    priceEl.textContent=item.price+' грн';
+    varEl.style.display='none';
+    varEl.innerHTML='';
+    if(priceWrap)priceWrap.style.display='flex';
+  }
   document.getElementById('itemModalMeta').innerHTML=badgesHTML(item);
   const favBtn=document.getElementById('itemModalFav');
   favBtn.textContent=isFav?'❤️':'🤍';
@@ -715,6 +759,12 @@ function openItemModal(name){
     ?`<img class="item-modal-img" src="${item.image_url}" alt="${sanitize(item.name)}" onerror="this.outerHTML='<div class=item-modal-img-ph>${item.emoji||'🍽️'}</div>'">`
     :`<div class="item-modal-img-ph">${item.emoji||'🍽️'}</div>`;
   document.getElementById('itemModal').style.display='flex';
+}
+function selectVariant(el,price){
+  document.querySelectorAll('.variant-btn').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('itemModalPrice').textContent=price+' грн';
+  document.getElementById('itemModalPriceWrap').style.display='flex';
 }
 function closeItemModal(){document.getElementById('itemModal').style.display='none';}
 document.getElementById('itemModal').addEventListener('click',function(e){if(e.target===this)closeItemModal();});
@@ -767,11 +817,11 @@ async function addItem(){
   const name=document.getElementById('fName').value.trim();
   const price=parseFloat(document.getElementById('fPrice').value);
   if(!name||!price){showAlert('Заповни назву та ціну!','error');return;}
-  const row={name,description:document.getElementById('fDesc').value.trim(),price,weight:document.getElementById('fWeight').value.trim(),category:document.getElementById('fCategory').value,subcategory:document.getElementById('fSubcategory').value,emoji:document.getElementById('fEmoji').value.trim(),badge:document.getElementById('fBadge').value,prep_time:document.getElementById('fTime').value.trim(),image_url:document.getElementById('fImage').value.trim(),is_active:true};
+  const fVarJSON=getVariantsJSON('f');const hasV=fVariants.length>0;const row={name,description:document.getElementById('fDesc').value.trim(),price:hasV?(fVariants[0].price):price,weight:document.getElementById('fWeight').value.trim(),category:document.getElementById('fCategory').value,subcategory:document.getElementById('fSubcategory').value,emoji:document.getElementById('fEmoji').value.trim(),badge:document.getElementById('fBadge').value,prep_time:document.getElementById('fTime').value.trim(),image_url:document.getElementById('fImage').value.trim(),variants:fVarJSON||null,is_active:true};
   const{error}=await dbPost('menu_items',row);
   if(error){showAlert('Помилка: '+(error.message||JSON.stringify(error)),'error');return;}
   showAlert('✅ Страву додано!','success');
-  ['fName','fDesc','fPrice','fWeight','fEmoji','fTime','fImage'].forEach(id=>document.getElementById(id).value='');
+  ['fName','fDesc','fPrice','fWeight','fEmoji','fTime','fImage'].forEach(id=>document.getElementById(id).value='');fVariants=[];renderVariantsList('f');
   document.getElementById('fPreview').style.display='none';clearCache();loadAdminItems();
 }
 
@@ -828,13 +878,16 @@ function openEdit(item){
   document.getElementById('eImage').value=item.image_url||'';
   const p=document.getElementById('ePreview');
   if(item.image_url){p.src=item.image_url;p.style.display='block';}else p.style.display='none';
+  eVariants=[];
+  try{if(item.variants)eVariants=JSON.parse(item.variants);}catch(e){}
+  renderVariantsList('e');
   document.getElementById('editModal').style.display='flex';
 }
 function closeEdit(){document.getElementById('editModal').style.display='none';}
 async function saveEdit(){
   if(!authToken){showAlert('Не авторизовано','error');return;}
   const orig=document.getElementById('eOrigName').value;
-  const vals={name:document.getElementById('eName').value.trim(),description:document.getElementById('eDesc').value.trim(),price:parseFloat(document.getElementById('ePrice').value),weight:document.getElementById('eWeight').value.trim(),category:document.getElementById('eCategory').value,subcategory:document.getElementById('eSubcategory').value,badge:document.getElementById('eBadge').value,emoji:document.getElementById('eEmoji').value.trim(),prep_time:document.getElementById('eTime').value.trim(),image_url:document.getElementById('eImage').value.trim()};
+  const eVarJSON=getVariantsJSON('e');const vals={name:document.getElementById('eName').value.trim(),description:document.getElementById('eDesc').value.trim(),price:eVariants.length?eVariants[0].price:parseFloat(document.getElementById('ePrice').value),weight:document.getElementById('eWeight').value.trim(),category:document.getElementById('eCategory').value,subcategory:document.getElementById('eSubcategory').value,badge:document.getElementById('eBadge').value,emoji:document.getElementById('eEmoji').value.trim(),prep_time:document.getElementById('eTime').value.trim(),image_url:document.getElementById('eImage').value.trim(),variants:eVarJSON||null};
   const{error}=await dbPatch('menu_items',vals,'name',orig);
   if(error){showAlert('Помилка: '+JSON.stringify(error),'error');return;}
   closeEdit();showAlert('✅ Збережено!','success');clearCache();loadAdminItems();
@@ -1390,6 +1443,46 @@ function openPopularItem(name, category){
   } else {
     openItemModal(name);
   }
+}
+
+// ===== VARIANTS =====
+let fVariants=[];
+let eVariants=[];
+
+function addVariant(prefix){
+  const lEl=document.getElementById(prefix+'VarLabel');
+  const pEl=document.getElementById(prefix+'VarPrice');
+  const label=lEl.value.trim();
+  const price=parseFloat(pEl.value);
+  if(!label||!price)return;
+  const arr=prefix==='f'?fVariants:eVariants;
+  arr.push({label,price});
+  lEl.value='';pEl.value='';
+  renderVariantsList(prefix);
+}
+
+function removeVariant(prefix,idx){
+  const arr=prefix==='f'?fVariants:eVariants;
+  arr.splice(idx,1);
+  renderVariantsList(prefix);
+}
+
+function renderVariantsList(prefix){
+  const arr=prefix==='f'?fVariants:eVariants;
+  const wrap=document.getElementById(prefix+'VariantsList');
+  if(!wrap)return;
+  wrap.innerHTML=arr.map((v,i)=>
+    '<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border);">'
+    +'<span style="flex:1;font-size:13px;font-weight:600;">'+v.label+'</span>'
+    +'<span style="color:var(--gold);font-weight:700;font-size:13px;">'+v.price+' грн</span>'
+    +'<button onclick="removeVariant(''+prefix+'','+i+')" style="background:#f44336;color:#fff;border:none;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:11px;">✕</button>'
+    +'</div>'
+  ).join('');
+}
+
+function getVariantsJSON(prefix){
+  const arr=prefix==='f'?fVariants:eVariants;
+  return arr.length?JSON.stringify(arr):'';
 }
 
 // INIT
