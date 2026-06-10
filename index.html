@@ -220,7 +220,7 @@ textarea{resize:vertical;min-height:60px;}
     </div>
     <div class="section-label" id="t_menu_label">Меню</div>
     <div style="padding:0 12px 8px;">
-      <div style="font-size:11px;font-weight:600;color:var(--muted);letter-spacing:1.8px;text-transform:uppercase;padding:12px 0 8px;">🔥 Популярне</div>
+      <div id="popularLabel" style="font-size:11px;font-weight:600;color:var(--muted);letter-spacing:1.8px;text-transform:uppercase;padding:12px 0 8px;">🔥 Популярне</div>
       <div id="carouselWrap" style="position:relative;overflow:hidden;padding:0 32px;">
         <div id="carousel" style="display:flex;transition:transform 0.4s ease;will-change:transform;"></div>
       </div>
@@ -514,6 +514,7 @@ textarea{resize:vertical;min-height:60px;}
 const SUPABASE_URL='https://kfjkujrnimqounsnltpr.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtmamt1anJuaW1xb3Vuc25sdHByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3ODA5NjMsImV4cCI6MjA5MjM1Njk2M30.PxW__VEh0JrNAz6w7o3Dd5c0sgDQOXtXdGx3cUjjtpQ';
 const BUCKET='menu-images';
+const MDL_RATE = 2.2; // 1 MDL = 2.2 UAH (тобто 1 UAH = 0.4545 MDL)
 const CACHE_KEY='druzi_menu_v10';
 const CACHE_TTL=5*60*1000;
 
@@ -529,10 +530,14 @@ const SUBCATS={
 };
 
 const T={
-  uk:{fav:'Улюблене',back:'Назад',menu:'МЕНЮ',contacts:'КОНТАКТИ',address:'Адреса',phone:'Телефон',hours:'Робочий час',wifi:'WiFi · натисни щоб підключитись',days:'Пн–Нд',search:'Пошук по всьому меню...',open:'Зараз відкрито',closed:'Зачинено',empty:'Поки тут порожньо 🍽️',nofound:'Нічого не знайдено 🔍',goMenu:'🍽️ Перейти до меню',noFav:'Поки немає улюблених ❤️',sub:'Кальян-бар · Могилів-Подільський',
+  md:{fav:'Favorite',back:'Înapoi',menu:'MENIU',contacts:'CONTACTE',address:'Adresa',phone:'Telefon',hours:'Program',wifi:'WiFi · apasă pentru conectare',days:'Lu–Du',search:'Caută în tot meniu...',open:'Deschis acum',closed:'Închis',empty:'Nimic aici 🍽️',nofound:'Nu s-a găsit nimic 🔍',goMenu:'🍽️ Mergi la meniu',noFav:'Nu ai favorite încă ❤️',popular:'🔥 Popular',sub:'Bar Narghilea · Mohyliv-Podilskyi',
+    cats:{'Суші та роли':'Sushi & Rulouri','Піца':'Pizza','Бургери':'Burgeri','Їжа':'Mâncare','Алкоголь':'Alcool','Безалкогольні напої':'Băuturi','Кальян':'Narghilea'},
+    catDescs:{'Суші та роли':'Rulouri clasice și originale','Піца':'Aluat subțire, rețete originale','Бургери':'Burgeri de autor','Їжа':'Feluri principale și gustări','Алкоголь':'Vin, bere, cocktailuri','Безалкогольні напої':'Limonade, smoothie, cafea','Кальян':'Tutun premium și mixuri'}},
+  
+  uk:{fav:'Улюблене',back:'Назад',menu:'МЕНЮ',contacts:'КОНТАКТИ',address:'Адреса',phone:'Телефон',hours:'Робочий час',wifi:'WiFi · натисни щоб підключитись',days:'Пн–Нд',search:'Пошук по всьому меню...',open:'Зараз відкрито',closed:'Зачинено',empty:'Поки тут порожньо 🍽️',nofound:'Нічого не знайдено 🔍',goMenu:'🍽️ Перейти до меню',noFav:'Поки немає улюблених ❤️',popular:'🔥 Популярне',sub:'Кальян-бар · Могилів-Подільський',
     cats:{'Суші та роли':'Суші та роли','Піца':'Піца','Бургери':'Бургери','Їжа':'Їжа','Алкоголь':'Алкоголь','Безалкогольні напої':'Безалкогольні напої','Кальян':'Кальян'},
     catDescs:{'Суші та роли':'Класичні та авторські роли','Піца':'Тонке тісто, авторські рецепти','Бургери':'Авторські бургери','Їжа':'Основні страви та закуски','Алкоголь':'Вино, пиво, коктейлі','Безалкогольні напої':'Лимонади, смузі, кава','Кальян':'Преміум тютюн та міксти','Бургери':'Авторські бургери'}},
-  en:{fav:'Favorites',back:'Back',menu:'MENU',contacts:'CONTACTS',address:'Address',phone:'Phone',hours:'Working hours',wifi:'WiFi · tap to connect',days:'Mon–Sun',search:'Search all menu...',open:'Open now',closed:'Closed',empty:'Nothing here yet 🍽️',nofound:'Nothing found 🔍',goMenu:'🍽️ Go to menu',noFav:'No favorites yet ❤️',sub:'Hookah bar · Mohyliv-Podilskyi',
+  en:{fav:'Favorites',back:'Back',menu:'MENU',contacts:'CONTACTS',address:'Address',phone:'Phone',hours:'Working hours',wifi:'WiFi · tap to connect',days:'Mon–Sun',search:'Search all menu...',open:'Open now',closed:'Closed',empty:'Nothing here yet 🍽️',nofound:'Nothing found 🔍',goMenu:'🍽️ Go to menu',noFav:'No favorites yet ❤️',popular:'🔥 Popular',sub:'Hookah bar · Mohyliv-Podilskyi',
     cats:{'Суші та роли':'Sushi & Rolls','Піца':'Pizza','Бургери':'Burgers','Їжа':'Food','Алкоголь':'Alcohol','Безалкогольні напої':'Non-alcoholic','Кальян':'Hookah'},
     catDescs:{'Суші та роли':'Classic and original rolls','Піца':'Thin crust, original recipes','Бургери':'Handcrafted burgers','Їжа':'Main dishes & snacks','Алкоголь':'Wine, beer, cocktails','Безалкогольні напої':'Lemonades, smoothies, coffee','Кальян':'Premium tobacco & mixes','Бургери':'Handcrafted burgers'}}
 };
@@ -558,11 +563,11 @@ function applyLang(){
   document.getElementById('t_days').textContent=t('days');
   document.getElementById('headerSub').textContent=t('sub');
   document.getElementById('searchInput').placeholder=t('search');
-  document.getElementById('langBtn').textContent=currentLang==='uk'?'EN':'УК';
+  document.getElementById('langBtn').textContent=currentLang==='uk'?'EN':currentLang==='en'?'MD':'УК';
   buildMenu();
   updateFavCount();
 }
-function toggleLang(){currentLang=currentLang==='uk'?'en':'uk';localStorage.setItem('druzi_lang',currentLang);applyLang();updateStatus();}
+function toggleLang(){currentLang=currentLang==='uk'?'en':currentLang==='en'?'md':'uk';localStorage.setItem('druzi_lang',currentLang);applyLang();updateStatus();}
 
 function updateStatus(){
   const now=new Date(),mins=now.getHours()*60+now.getMinutes(),open=mins>=660&&mins<1380;
@@ -687,14 +692,25 @@ function badgesHTML(item){
     +(item.prep_time?`<span class="item-time">⏱ ${sanitize(item.prep_time)}</span>`:'');
 }
 
+function mdlPrice(uah){
+  return Math.round(uah / MDL_RATE) + ' lei';
+}
+
 function getItemPriceHTML(item){
+  var isMD = currentLang==='md';
   try{
     if(item.variants){
       var v=JSON.parse(item.variants);
-      if(v.length>0) return v.map(function(x){return x.label+': '+x.price+'₴';}).join('<br>');
+      if(v.length>0) return v.map(function(x){
+        var s=x.label+': '+x.price+'₴';
+        if(isMD) s+=' <span style="color:var(--muted);font-size:11px;">(~'+mdlPrice(x.price)+')</span>';
+        return s;
+      }).join('<br>');
     }
   }catch(e){}
-  return item.price+' грн';
+  var s=item.price+' грн';
+  if(isMD) s+=' <span style="color:var(--muted);font-size:11px;">(~'+mdlPrice(item.price)+')</span>';
+  return s;
 }
 
 function itemHTML(item,showDel=false){
@@ -745,7 +761,7 @@ function openItemModal(name){
   const varEl=document.getElementById('itemModalVariants');
   const priceWrap=document.getElementById('itemModalPriceWrap');
   if(variants.length){
-    priceEl.textContent=variants[0].price+' грн';
+    var p0=variants[0].price;var ptxt=p0+' грн';if(currentLang==='md')ptxt+=' (~'+mdlPrice(p0)+')';priceEl.textContent=ptxt;
     varEl.style.display='flex';
     varEl.innerHTML=variants.map((v,i)=>
       '<div class="variant-btn'+(i===0?' selected':'')+'" onclick="selectVariant(this,'+v.price+')">'
@@ -755,7 +771,7 @@ function openItemModal(name){
     ).join('');
     if(priceWrap)priceWrap.style.display='none';
   }else{
-    priceEl.textContent=item.price+' грн';
+    var ptxt2=item.price+' грн';if(currentLang==='md')ptxt2+=' (~'+mdlPrice(item.price)+')';priceEl.textContent=ptxt2;
     varEl.style.display='none';
     varEl.innerHTML='';
     if(priceWrap)priceWrap.style.display='flex';
@@ -773,7 +789,9 @@ function openItemModal(name){
 function selectVariant(el,price){
   document.querySelectorAll('.variant-btn').forEach(b=>b.classList.remove('selected'));
   el.classList.add('selected');
-  document.getElementById('itemModalPrice').textContent=price+' грн';
+  var txt=price+' грн';
+  if(currentLang==='md') txt+=' (~'+mdlPrice(price)+')';
+  document.getElementById('itemModalPrice').textContent=txt;
   document.getElementById('itemModalPriceWrap').style.display='flex';
 }
 function closeItemModal(){document.getElementById('itemModal').style.display='none';}
