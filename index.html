@@ -260,6 +260,11 @@ textarea{resize:vertical;min-height:60px;}
         📲 Додати на екран
       </div>
     </div>
+    <div style="margin:8px 12px 16px;">
+      <div onclick="openReview()" style="background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:14px;text-align:center;font-size:14px;font-weight:600;cursor:pointer;color:var(--gold);">
+        ✍️ Залишити відгук
+      </div>
+    </div>
     <div class="footer">© Druzi Bar 2022 · Кальян-бар</div>
   </div>
 </div>
@@ -323,6 +328,7 @@ textarea{resize:vertical;min-height:60px;}
       <div class="admin-tab" onclick="switchAdminSection('carousel',this)">🎠 Карусель</div>
       <div class="admin-tab" onclick="switchAdminSection('banner',this)">🎯 Банер</div>
       <div class="admin-tab" onclick="switchAdminSection('analytics',this)">📊 Аналітика</div>
+      <div class="admin-tab" onclick="switchAdminSection('reviews',this)">⭐ Відгуки</div>
     </div>
 
     <!-- MENU SECTION -->
@@ -430,6 +436,11 @@ textarea{resize:vertical;min-height:60px;}
     <div class="admin-section" id="adminSectionAnalytics">
       <div id="analyticsContent"><div class="loading-msg">Завантаження...</div></div>
     </div><!-- end adminSectionAnalytics -->
+
+    <!-- REVIEWS SECTION -->
+    <div class="admin-section" id="adminSectionReviews">
+      <div id="reviewsContent"><div class="loading-msg">Завантаження...</div></div>
+    </div>
 
   </div><!-- end admin-wrap -->
 </div><!-- end viewAdmin -->
@@ -1009,6 +1020,7 @@ function switchAdminSection(name, el){
   if(name === 'analytics') loadAnalytics();
   if(name === 'banner') loadBannerAdmin();
   if(name === 'carousel') loadCarouselAdmin();
+  if(name === 'reviews') loadReviews();
 }
 
 async function loadBannerAdmin(){
@@ -1534,6 +1546,97 @@ function getVariantsJSON(prefix){
   return arr.length?JSON.stringify(arr):'';
 }
 
+// ===== LOAD REVIEWS (ADMIN) =====
+async function loadReviews(){
+  const wrap = document.getElementById('reviewsContent');
+  wrap.innerHTML='<div class="loading-msg">⏳ Завантаження...</div>';
+  try{
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/reviews?select=*&order=created_at.desc`,{
+      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+(authToken||SUPABASE_KEY)}
+    });
+    const data = await r.json();
+    if(!Array.isArray(data)||!data.length){
+      wrap.innerHTML='<div class="loading-msg">Відгуків ще немає 💬</div>';
+      return;
+    }
+    wrap.innerHTML=data.map(function(rev){
+      const date=new Date(rev.created_at).toLocaleDateString('uk-UA',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+      return '<div style="background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:14px;margin-bottom:8px;">'
+        +'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">'
+        +'<div>'
+        +(rev.name?'<div style="font-size:14px;font-weight:600;">👤 '+rev.name+'</div>':'<div style="font-size:13px;color:var(--muted);">Анонім</div>')
+        +(rev.phone?'<div style="font-size:12px;color:var(--muted);">📞 '+rev.phone+'</div>':'')
+        +'</div>'
+        +'<div style="font-size:11px;color:var(--muted);">'+date+'</div>'
+        +'</div>'
+        +'<div style="font-size:13px;line-height:1.5;color:var(--text);">'+rev.message+'</div>'
+        +'</div>';
+    }).join('');
+  }catch(e){
+    wrap.innerHTML='<div class="loading-msg">Помилка завантаження</div>';
+  }
+}
+
+// ===== REVIEWS =====
+function openReview(){
+  document.getElementById('reviewName').value='';
+  document.getElementById('reviewPhone').value='';
+  document.getElementById('reviewMessage').value='';
+  document.getElementById('reviewError').style.display='none';
+  document.getElementById('reviewModal').style.display='flex';
+}
+
+function closeReview(){
+  document.getElementById('reviewModal').style.display='none';
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+  const rm = document.getElementById('reviewModal');
+  if(rm) rm.addEventListener('click',function(e){if(e.target===this)closeReview();});
+});
+
+async function submitReview(){
+  const message = document.getElementById('reviewMessage').value.trim();
+  if(!message){
+    document.getElementById('reviewError').style.display='block';
+    return;
+  }
+  document.getElementById('reviewError').style.display='none';
+  const btn = document.getElementById('reviewSubmitBtn');
+  btn.textContent='⏳ Надсилаємо...';
+  btn.disabled=true;
+
+  const data = {
+    name: document.getElementById('reviewName').value.trim()||null,
+    phone: document.getElementById('reviewPhone').value.trim()||null,
+    message: message
+  };
+
+  try{
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/reviews`,{
+      method:'POST',
+      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
+      body:JSON.stringify(data)
+    });
+    if(r.ok){
+      closeReview();
+      // Show success message
+      const s=document.createElement('div');
+      s.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#2e7d32;color:#fff;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:600;z-index:999;';
+      s.textContent='✅ Дякуємо за відгук!';
+      document.body.appendChild(s);
+      setTimeout(()=>s.remove(),3000);
+    }else{
+      btn.textContent='❌ Помилка — спробуй ще';
+      btn.disabled=false;
+    }
+  }catch(e){
+    btn.textContent='❌ Помилка мережі';
+    btn.disabled=false;
+    setTimeout(()=>{btn.textContent='Надіслати відгук';btn.disabled=false;},2000);
+  }
+}
+
 // INIT
 currentLang=localStorage.getItem('druzi_lang')||'uk';
 const savedToken=sessionStorage.getItem('druzi_token');
@@ -1579,5 +1682,23 @@ document.getElementById('logoBtn').addEventListener('click',()=>{
   </div>
 </div>
 
+
+<!-- REVIEW MODAL -->
+<div id="reviewModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:200;align-items:flex-end;justify-content:center;">
+  <div style="background:var(--card);border-radius:20px 20px 0 0;padding:20px 16px 40px;width:100%;max-width:480px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <div style="font-size:17px;font-weight:700;">✍️ Залишити відгук</div>
+      <button onclick="closeReview()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--muted);">×</button>
+    </div>
+    <label style="font-size:11px;color:var(--muted);margin-bottom:3px;display:block;">Ім'я <span style="color:var(--muted);font-size:10px;">(необов'язково)</span></label>
+    <input type="text" id="reviewName" placeholder="Ваше ім'я" style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid var(--border);font-size:13px;background:var(--bg);color:var(--text);margin-bottom:10px;outline:none;">
+    <label style="font-size:11px;color:var(--muted);margin-bottom:3px;display:block;">Телефон <span style="color:var(--muted);font-size:10px;">(необов'язково)</span></label>
+    <input type="tel" id="reviewPhone" placeholder="+380..." style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid var(--border);font-size:13px;background:var(--bg);color:var(--text);margin-bottom:10px;outline:none;">
+    <label style="font-size:11px;color:var(--muted);margin-bottom:3px;display:block;">Повідомлення <span style="color:#f44336;font-size:10px;">*</span></label>
+    <textarea id="reviewMessage" placeholder="Ваш відгук..." style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid var(--border);font-size:13px;background:var(--bg);color:var(--text);min-height:100px;resize:vertical;font-family:inherit;outline:none;margin-bottom:4px;"></textarea>
+    <div id="reviewError" style="color:#f44336;font-size:12px;margin-bottom:8px;display:none;">Будь ласка, напишіть повідомлення</div>
+    <button onclick="submitReview()" id="reviewSubmitBtn" style="width:100%;padding:13px;background:var(--gold);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;">Надіслати відгук</button>
+  </div>
+</div>
 </body>
 </html>
