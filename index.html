@@ -380,6 +380,12 @@ textarea{resize:vertical;min-height:60px;}
       <div class="upload-btn" id="fUploadBtn">📷 Завантажити фото з девайса</div>
       <input type="file" id="fFile" accept="image/*" style="display:none" onchange="uploadFile(this,'fImage','fPreview')">
       <img id="fPreview" class="img-preview" style="display:none">
+      <label>Позиція фото (яку частину показувати)</label>
+      <select id="fImagePos">
+        <option value="center top">⬆️ Верх</option>
+        <option value="center" selected>⏺️ Центр</option>
+        <option value="center bottom">⬇️ Низ</option>
+      </select>
       <button class="btn btn-gold" style="width:100%;margin-top:14px;" onclick="addItem()">Зберегти страву</button>
     </div>
     <div style="margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;">
@@ -495,6 +501,12 @@ textarea{resize:vertical;min-height:60px;}
     <div class="upload-btn" id="eUploadBtn">📷 Завантажити нове фото</div>
     <input type="file" id="eFile" accept="image/*" style="display:none" onchange="uploadFile(this,'eImage','ePreview')">
     <img id="ePreview" class="img-preview" style="display:none">
+    <label>Позиція фото (яку частину показувати)</label>
+    <select id="eImagePos">
+      <option value="center top">⬆️ Верх</option>
+      <option value="center">⏺️ Центр</option>
+      <option value="center bottom">⬇️ Низ</option>
+    </select>
     <button class="btn btn-gold" style="width:100%;margin-top:14px;" onclick="saveEdit()">Зберегти зміни</button>
   </div>
 </div>
@@ -727,7 +739,7 @@ function getItemPriceHTML(item){
 function itemHTML(item,showDel=false){
   const isFav=favorites.includes(item.name);
   const sn=item.name.replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;');
-  const imgPart=item.image_url?`<img src="${item.image_url}" width="80" height="80" style="object-fit:cover;border-radius:10px;display:block;" onerror="this.parentElement.innerHTML='${item.emoji||'🍽️'}'">`:(item.emoji||'🍽️');
+  const imgPart=item.image_url?`<img src="${item.image_url}" width="80" height="80" style="object-fit:cover;object-position:${item.image_pos||'center'};border-radius:10px;display:block;" onerror="this.parentElement.innerHTML='${item.emoji||'🍽️'}'">`:(item.emoji||'🍽️');
   return `<div class="item-card" onclick="openItemModal('${sn}')">
     <div class="item-inner">
       <div class="item-img">${imgPart}</div>
@@ -793,7 +805,7 @@ function openItemModal(name){
   favBtn.onclick=()=>{toggleFav(item.name,favBtn);favBtn.textContent=favorites.includes(item.name)?'❤️':'🤍';};
   document.getElementById('itemModalShare').onclick=()=>shareItem(item.name,item.price);
   document.getElementById('itemModalImg').innerHTML=item.image_url
-    ?`<img class="item-modal-img" src="${item.image_url}" alt="${sanitize(item.name)}" onerror="this.outerHTML='<div class=item-modal-img-ph>${item.emoji||'🍽️'}</div>'">`
+    ?`<img class="item-modal-img" src="${item.image_url}" alt="${sanitize(item.name)}" style="object-position:${item.image_pos||'center'};" onerror="this.outerHTML='<div class=item-modal-img-ph>${item.emoji||'🍽️'}</div>'">`
     :`<div class="item-modal-img-ph">${item.emoji||'🍽️'}</div>`;
   document.getElementById('itemModal').style.display='flex';
 }
@@ -856,7 +868,7 @@ async function addItem(){
   const name=document.getElementById('fName').value.trim();
   const price=parseFloat(document.getElementById('fPrice').value);
   if(!name||!price){showAlert('Заповни назву та ціну!','error');return;}
-  const fVarJSON=getVariantsJSON('f');const hasV=fVariants.length>0;const row={name,description:document.getElementById('fDesc').value.trim(),price:hasV?(fVariants[0].price):price,weight:document.getElementById('fWeight').value.trim(),category:document.getElementById('fCategory').value,subcategory:document.getElementById('fSubcategory').value,emoji:document.getElementById('fEmoji').value.trim(),badge:document.getElementById('fBadge').value,prep_time:document.getElementById('fTime').value.trim(),image_url:document.getElementById('fImage').value.trim(),variants:fVarJSON||null,is_active:true};
+  const fVarJSON=getVariantsJSON('f');const hasV=fVariants.length>0;const row={name,description:document.getElementById('fDesc').value.trim(),price:hasV?(fVariants[0].price):price,weight:document.getElementById('fWeight').value.trim(),category:document.getElementById('fCategory').value,subcategory:document.getElementById('fSubcategory').value,emoji:document.getElementById('fEmoji').value.trim(),badge:document.getElementById('fBadge').value,prep_time:document.getElementById('fTime').value.trim(),image_url:document.getElementById('fImage').value.trim(),image_pos:document.getElementById('fImagePos').value,variants:fVarJSON||null,is_active:true};
   const{error}=await dbPost('menu_items',row);
   if(error){showAlert('Помилка: '+(error.message||JSON.stringify(error)),'error');return;}
   showAlert('✅ Страву додано!','success');
@@ -915,6 +927,7 @@ function openEdit(item){
   document.getElementById('eEmoji').value=item.emoji||'';
   document.getElementById('eTime').value=item.prep_time||'';
   document.getElementById('eImage').value=item.image_url||'';
+  document.getElementById('eImagePos').value=item.image_pos||'center';
   const p=document.getElementById('ePreview');
   if(item.image_url){p.src=item.image_url;p.style.display='block';}else p.style.display='none';
   eVariants=[];
@@ -926,7 +939,7 @@ function closeEdit(){document.getElementById('editModal').style.display='none';}
 async function saveEdit(){
   if(!authToken){showAlert('Не авторизовано','error');return;}
   const orig=document.getElementById('eOrigName').value;
-  const eVarJSON=getVariantsJSON('e');const vals={name:document.getElementById('eName').value.trim(),description:document.getElementById('eDesc').value.trim(),price:eVariants.length?eVariants[0].price:parseFloat(document.getElementById('ePrice').value),weight:document.getElementById('eWeight').value.trim(),category:document.getElementById('eCategory').value,subcategory:document.getElementById('eSubcategory').value,badge:document.getElementById('eBadge').value,emoji:document.getElementById('eEmoji').value.trim(),prep_time:document.getElementById('eTime').value.trim(),image_url:document.getElementById('eImage').value.trim(),variants:eVarJSON||null};
+  const eVarJSON=getVariantsJSON('e');const vals={name:document.getElementById('eName').value.trim(),description:document.getElementById('eDesc').value.trim(),price:eVariants.length?eVariants[0].price:parseFloat(document.getElementById('ePrice').value),weight:document.getElementById('eWeight').value.trim(),category:document.getElementById('eCategory').value,subcategory:document.getElementById('eSubcategory').value,badge:document.getElementById('eBadge').value,emoji:document.getElementById('eEmoji').value.trim(),prep_time:document.getElementById('eTime').value.trim(),image_url:document.getElementById('eImage').value.trim(),image_pos:document.getElementById('eImagePos').value,variants:eVarJSON||null};
   const{error}=await dbPatch('menu_items',vals,'name',orig);
   if(error){showAlert('Помилка: '+JSON.stringify(error),'error');return;}
   closeEdit();showAlert('✅ Збережено!','success');clearCache();loadAdminItems();
@@ -1127,7 +1140,7 @@ async function refreshCarousel(){
   const list = getCarouselList();
   let items = allItems.length ? allItems : [];
   if(!items.length){
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/menu_items?select=name,price,image_url,emoji,category&is_active=eq.true`,
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/menu_items?select=name,price,image_url,image_pos,emoji,category&is_active=eq.true`,
       {headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});
     items = await res.json();
   }
@@ -1329,7 +1342,7 @@ async function initCarousel(){
     // Load carousel list from DB and menu items in parallel
     const [listData, menuRes] = await Promise.all([
       getCarouselListDB(),
-      fetch(`${SUPABASE_URL}/rest/v1/menu_items?select=name,price,image_url,emoji,category&is_active=eq.true`,
+      fetch(`${SUPABASE_URL}/rest/v1/menu_items?select=name,price,image_url,image_pos,emoji,category&is_active=eq.true`,
         {headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}})
     ]);
     const dbItems = await menuRes.json();
@@ -1361,7 +1374,7 @@ function renderCarousel(){
     var nm = (item.name||'').replace(/["']/g,'');
     var cat = (item.category||'').replace(/["']/g,'');
     var imgPart = item.image_url
-      ? '<img src="' + item.image_url + '" style="width:100%;height:100%;object-fit:cover;display:block;">'
+      ? '<img src="' + item.image_url + '" style="width:100%;height:100%;object-fit:cover;object-position:' + (item.image_pos||'center') + ';display:block;">'
       : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:60px;">' + (item.emoji||'🍽️') + '</div>';
     var pricePart = item.price ? '<div style="color:var(--gold);font-size:12px;font-weight:700;">' + item.price + ' грн</div>' : '';
     h += '<div onclick="openPopularItem(\'' + nm + '\',\'' + cat + '\')" style="width:' + W + 'px;flex-shrink:0;cursor:pointer;margin-right:' + GAP + 'px;">'
