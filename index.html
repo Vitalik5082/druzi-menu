@@ -329,7 +329,7 @@ textarea{resize:vertical;min-height:60px;}
       <div class="admin-tab active" onclick="switchAdminSection('menu',this)">🍽️ Меню</div>
       <div class="admin-tab" onclick="switchAdminSection('carousel',this)">🎠 Карусель</div>
       <div class="admin-tab" onclick="switchAdminSection('banner',this)">🎯 Банер</div>
-      <div class="admin-tab" onclick="switchAdminSection('analytics',this)">📊 Аналітика</div>
+      <div class="admin-tab" id="analyticsTab" onclick="switchAdminSection('analytics',this)">📊 Аналітика</div>
       <div class="admin-tab" onclick="switchAdminSection('reviews',this)">⭐ Відгуки</div>
     </div>
 
@@ -536,11 +536,15 @@ textarea{resize:vertical;min-height:60px;}
 </div>
 
 <script>
-const SUPABASE_URL='https://kfjkujrnimqounsnltpr.supabase.co';
-const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtmamt1anJuaW1xb3Vuc25sdHByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3ODA5NjMsImV4cCI6MjA5MjM1Njk2M30.PxW__VEh0JrNAz6w7o3Dd5c0sgDQOXtXdGx3cUjjtpQ';
+const SUPABASE_URL='https://vnzqgixjepdyjkmowjae.supabase.co';
+const SUPABASE_KEY='sb_publishable_X__wnxBYauPbfeYIB51rMg_bbnw2Ijs';
 const BUCKET='menu-images';
 const MDL_RATE = 2.2; // 1 MDL = 2.2 UAH (тобто 1 UAH = 0.4545 MDL)
-const CACHE_KEY='druzi_menu_v10';
+const CACHE_KEY='druzi_menu_v11';
+// ===== АНАЛІТИКА =====
+// false = вимкнено (не збирає дані, вкладка прихована)
+// true  = увімкнено (щоб повернути — просто заміни false на true)
+const ANALYTICS_ENABLED = false;
 const CACHE_TTL=5*60*1000;
 
 // Subcategory map
@@ -1161,6 +1165,7 @@ function getDeviceId(){
 }
 
 async function trackVisit(){
+  if(!ANALYTICS_ENABLED) return;
   try {
     // Only track once per hour per device
     const lastVisit = localStorage.getItem('druzi_last_visit');
@@ -1177,6 +1182,7 @@ async function trackVisit(){
 }
 
 async function trackItemView(itemName){
+  if(!ANALYTICS_ENABLED) return;
   try {
     const deviceId = getDeviceId();
     await fetch(`${SUPABASE_URL}/rest/v1/analytics`, {
@@ -1670,6 +1676,8 @@ const savedEmail=sessionStorage.getItem('druzi_email');
 if(savedToken)authToken=savedToken;
 
 applyLang();updateStatus();setInterval(updateStatus,60000);
+// приховати вкладку аналітики, якщо вимкнена
+if(!ANALYTICS_ENABLED){var _aTab=document.getElementById('analyticsTab');if(_aTab)_aTab.style.display='none';}
 trackVisit();
 loadBanner();
 initCarousel();
