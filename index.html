@@ -1773,7 +1773,7 @@ document.getElementById('logoBtn').addEventListener('click',()=>{
 .hw-confetti{position:fixed;top:-30px;font-size:20px;z-index:10002;pointer-events:none;animation:hwFall 2s cubic-bezier(.25,.46,.45,.94) forwards;}
 @keyframes hwFall{0%{transform:translateY(0) rotate(0deg);opacity:1;}100%{transform:translateY(100vh) rotate(560deg);opacity:0;}}
 @media (prefers-reduced-motion:reduce){.hw-bat,.hw-particle,.hw-fab,.hw-spider{animation:none!important;}}
-.hw-logohat{position:absolute;top:26px;left:calc(50% + 24px);width:50px;height:50px;z-index:3;pointer-events:none;filter:drop-shadow(0 3px 5px rgba(0,0,0,.5));transform:translateX(-50%) rotate(-16deg);transform-origin:50% 90%;animation:hwHatWobble 3s ease-in-out infinite;}
+.hw-logohat{position:absolute;top:10px;left:calc(50% + 28px);width:70px;height:70px;z-index:3;pointer-events:none;filter:drop-shadow(0 3px 5px rgba(0,0,0,.5));transform:translateX(-50%) rotate(-16deg);transform-origin:50% 90%;animation:hwHatWobble 3s ease-in-out infinite;}
 @keyframes hwHatWobble{0%,100%{transform:translateX(-50%) rotate(-16deg);}50%{transform:translateX(-50%) rotate(-9deg);}}
 .hw-burst{position:fixed;z-index:10003;pointer-events:none;font-size:18px;transition:transform .7s cubic-bezier(.2,.8,.2,1),opacity .7s ease;opacity:1;transform:translate(0,0) scale(1);}
 @keyframes hwHeartPop{0%{transform:scale(1);}30%{transform:scale(1.35);}100%{transform:scale(1);}}
@@ -1789,7 +1789,7 @@ document.getElementById('logoBtn').addEventListener('click',()=>{
 @keyframes hwCandyFloat{0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-10px) scale(1.05);}}
 .banner.hw-banner-spooky{animation:hwBannerGlow 2.4s ease-in-out infinite;}
 @keyframes hwBannerGlow{0%,100%{box-shadow:0 0 0 0 rgba(255,106,0,0);}50%{box-shadow:0 0 30px 6px rgba(255,106,0,.45),0 0 50px 10px rgba(106,13,173,.25);}}
-.hw-banner-badge{position:absolute;top:-14px;left:16px;background:linear-gradient(135deg,#ff6a00,#6a0dad);color:#fff;font-size:12px;font-weight:700;padding:5px 12px;border-radius:14px;box-shadow:0 3px 10px rgba(0,0,0,.35);z-index:5;}
+.hw-banner-badge{position:absolute;top:8px;left:16px;background:linear-gradient(135deg,#ff6a00,#6a0dad);color:#fff;font-size:12px;font-weight:700;padding:5px 12px;border-radius:14px;box-shadow:0 3px 10px rgba(0,0,0,.35);z-index:5;}
 @keyframes hwViewIn{0%{opacity:0;transform:translateY(14px) scale(.985);filter:brightness(.8);}60%{opacity:1;transform:translateY(0) scale(1.005);filter:brightness(1.05);}100%{opacity:1;transform:translateY(0) scale(1);filter:brightness(1);}}
 .view.hw-view-in{animation:hwViewIn .42s cubic-bezier(.22,.9,.3,1);}
 .hw-viewtransition{position:fixed;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,140,0,.32) 48%,rgba(106,13,173,.32) 52%,transparent 70%);transform:translateX(-120%);z-index:10004;pointer-events:none;animation:hwSweep .5s ease;}
