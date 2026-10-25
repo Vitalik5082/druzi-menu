@@ -1735,5 +1735,172 @@ document.getElementById('logoBtn').addEventListener('click',()=>{
     <button onclick="submitReview()" id="reviewSubmitBtn" style="width:100%;padding:13px;background:var(--gold);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;">Надіслати відгук</button>
   </div>
 </div>
+
+<!-- ======= HALLOWEEN FX (dev-layer, additive only, не чіпає існуючу розмітку) ======= -->
+<style id="hwStyle">
+#hwFx{position:fixed;inset:0;z-index:9995;pointer-events:none;overflow:hidden;}
+#hwFx .hw-tint{position:absolute;top:0;left:0;right:0;height:260px;background:radial-gradient(ellipse at 50% 0%,rgba(255,106,0,.20) 0%,rgba(106,13,173,.10) 45%,transparent 75%);mix-blend-mode:screen;}
+.hw-bat{position:absolute;top:-10vh;left:-10vw;font-size:26px;line-height:1;filter:drop-shadow(0 2px 5px rgba(0,0,0,.6));animation-name:hwFly;animation-timing-function:linear;animation-iteration-count:infinite;will-change:transform;}
+.hw-bat span{display:inline-block;animation:hwFlap .35s ease-in-out infinite;}
+@keyframes hwFlap{0%,100%{transform:scaleY(1);}50%{transform:scaleY(.6);}}
+@keyframes hwFly{
+  0%{transform:translate(0,0) rotate(0deg);}
+  25%{transform:translate(45vw,8vh) rotate(-8deg);}
+  50%{transform:translate(85vw,-4vh) rotate(5deg);}
+  75%{transform:translate(55vw,14vh) rotate(-4deg);}
+  100%{transform:translate(0,0) rotate(0deg);}
+}
+.hw-cobweb{position:absolute;width:86px;height:86px;opacity:.5;}
+.hw-cobweb.tl{top:0;left:0;}
+.hw-cobweb.tr{top:0;right:0;transform:scaleX(-1);}
+.hw-spider{position:absolute;top:30px;left:14px;font-size:18px;transform-origin:top center;animation:hwDangle 4.2s ease-in-out infinite;pointer-events:auto;cursor:pointer;}
+.hw-spider::before{content:"";position:absolute;top:-30px;left:50%;width:1px;height:30px;background:rgba(255,255,255,.4);}
+@keyframes hwDangle{0%,100%{transform:translateY(0);}50%{transform:translateY(14px);}}
+.hw-spider.scurry{animation:none!important;transition:transform .5s ease-in;transform:translateY(-70px) scale(.6);opacity:0;}
+.hw-particle{position:absolute;bottom:-24px;font-size:15px;opacity:0;animation-name:hwRise;animation-timing-function:linear;animation-iteration-count:infinite;}
+@keyframes hwRise{
+  0%{transform:translate(0,0) rotate(0deg);opacity:0;}
+  8%{opacity:.85;}
+  92%{opacity:.7;}
+  100%{transform:translate(var(--dx,24px),-108vh) rotate(360deg);opacity:0;}
+}
+.hw-fab{position:fixed;right:16px;bottom:96px;width:54px;height:54px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffa733,#ff6a00);display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 16px rgba(255,106,0,.55),0 0 0 3px rgba(255,255,255,.1);cursor:pointer;z-index:10000;pointer-events:auto;animation:hwFabPulse 2.6s ease-in-out infinite;}
+@keyframes hwFabPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
+.hw-fab:active{transform:scale(.88);}
+.hw-ghostcur{position:fixed;font-size:16px;z-index:10001;pointer-events:none;opacity:0;transition:opacity .4s;transform:translate(-50%,-50%);}
+.hw-toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(16px);background:rgba(22,10,30,.94);color:#fff;padding:10px 18px;border-radius:14px;font-size:13px;font-weight:600;display:flex;gap:8px;align-items:center;opacity:0;transition:all .4s ease;z-index:10001;border:1px solid rgba(255,140,0,.45);max-width:80vw;text-align:center;}
+.hw-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.hw-confetti{position:fixed;top:-30px;font-size:20px;z-index:10002;pointer-events:none;animation:hwFall 2s cubic-bezier(.25,.46,.45,.94) forwards;}
+@keyframes hwFall{0%{transform:translateY(0) rotate(0deg);opacity:1;}100%{transform:translateY(100vh) rotate(560deg);opacity:0;}}
+@media (prefers-reduced-motion:reduce){.hw-bat,.hw-particle,.hw-fab,.hw-spider{animation:none!important;}}
+</style>
+<script>
+(function(){
+  var fx=document.createElement('div');
+  fx.id='hwFx';
+  fx.innerHTML='<div class="hw-tint"></div>';
+  document.body.appendChild(fx);
+
+  // --- bats ---
+  var BATS=4;
+  for(var i=0;i<BATS;i++){
+    var b=document.createElement('div');
+    b.className='hw-bat';
+    b.innerHTML='<span>🦇</span>';
+    b.style.top=(6+Math.random()*30)+'vh';
+    b.style.animationDuration=(14+Math.random()*10)+'s';
+    b.style.animationDelay=(-Math.random()*20)+'s';
+    fx.appendChild(b);
+  }
+
+  // --- cobwebs + spiders (top corners, above header) ---
+  var webSvg='<svg viewBox="0 0 100 100" width="100%" height="100%"><g stroke="rgba(255,255,255,.4)" stroke-width="1" fill="none">'+
+    '<path d="M0,0 L22,100"/><path d="M0,0 L50,100"/><path d="M0,0 L78,100"/><path d="M0,0 L100,78"/><path d="M0,0 L100,50"/><path d="M0,0 L100,22"/>'+
+    '<path d="M4,4 Q18,22 12,38"/><path d="M10,10 Q32,32 22,58"/><path d="M18,18 Q48,42 38,78"/><path d="M28,28 Q58,52 54,92"/>'+
+    '</g></svg>';
+  ['tl','tr'].forEach(function(pos){
+    var w=document.createElement('div');
+    w.className='hw-cobweb '+pos;
+    w.innerHTML=webSvg;
+    var s=document.createElement('div');
+    s.className='hw-spider';
+    s.textContent='🕷️';
+    s.style.animationDelay=(Math.random()*2)+'s';
+    s.addEventListener('click',function(){
+      if(this.classList.contains('scurry'))return;
+      this.classList.add('scurry');
+      var self=this;
+      setTimeout(function(){self.classList.remove('scurry');},3500);
+    });
+    w.appendChild(s);
+    fx.appendChild(w);
+  });
+
+  // --- rising particles (embers / candy) ---
+  var EMOJI=['🍬','🍭','✨','🕯️'];
+  var PARTICLES=9;
+  for(var j=0;j<PARTICLES;j++){
+    var p=document.createElement('div');
+    p.className='hw-particle';
+    p.textContent=EMOJI[j%EMOJI.length];
+    p.style.left=(Math.random()*100)+'vw';
+    p.style.setProperty('--dx',(Math.random()*60-30)+'px');
+    p.style.animationDuration=(9+Math.random()*8)+'s';
+    p.style.animationDelay=(-Math.random()*16)+'s';
+    fx.appendChild(p);
+  }
+
+  // --- ghost cursor trail (desktop only) ---
+  if(window.matchMedia && window.matchMedia('(pointer:fine)').matches){
+    var ghost=document.createElement('div');
+    ghost.className='hw-ghostcur';
+    ghost.textContent='👻';
+    document.body.appendChild(ghost);
+    var gx=0,gy=0,tx=0,ty=0,hideT;
+    window.addEventListener('mousemove',function(e){
+      tx=e.clientX;ty=e.clientY;
+      ghost.style.opacity='.75';
+      clearTimeout(hideT);
+      hideT=setTimeout(function(){ghost.style.opacity='0';},700);
+    });
+    (function loop(){
+      gx+=(tx-gx)*0.12;gy+=(ty-gy)*0.12;
+      ghost.style.left=gx+'px';ghost.style.top=gy+'px';
+      requestAnimationFrame(loop);
+    })();
+  }
+
+  // --- toast helper ---
+  function hwToast(msg,ms){
+    var t=document.createElement('div');
+    t.className='hw-toast';
+    t.innerHTML=msg;
+    document.body.appendChild(t);
+    requestAnimationFrame(function(){t.classList.add('show');});
+    setTimeout(function(){
+      t.classList.remove('show');
+      setTimeout(function(){t.remove();},400);
+    },ms||2600);
+  }
+
+  // --- confetti burst ---
+  var CONFETTI_EMOJI=['🎃','👻','🦇','🍬','💀','🕸️'];
+  function hwConfetti(){
+    for(var k=0;k<18;k++){
+      (function(){
+        var c=document.createElement('div');
+        c.className='hw-confetti';
+        c.textContent=CONFETTI_EMOJI[Math.floor(Math.random()*CONFETTI_EMOJI.length)];
+        c.style.left=(Math.random()*100)+'vw';
+        c.style.animationDuration=(1.4+Math.random()*1.2)+'s';
+        c.style.animationDelay=(Math.random()*0.5)+'s';
+        document.body.appendChild(c);
+        setTimeout(function(){c.remove();},3200);
+      })();
+    }
+  }
+
+  // --- pumpkin FAB ---
+  var PUMPKIN_LINES=[
+    '🎃 Трюк чи смаколик?',
+    '👻 Хто тут замовляє піцу так пізно...',
+    '🕸️ Обережно, меню зачароване!',
+    '🦇 Хелоуінський апетит активовано',
+    '💀 Смачного... якщо наважишся'
+  ];
+  var fab=document.createElement('div');
+  fab.className='hw-fab';
+  fab.textContent='🎃';
+  fab.addEventListener('click',function(){
+    hwConfetti();
+    hwToast(PUMPKIN_LINES[Math.floor(Math.random()*PUMPKIN_LINES.length)]);
+  });
+  document.body.appendChild(fab);
+
+  // --- one-time welcome toast ---
+  setTimeout(function(){hwToast('🎃 Хелоуінський режим активний',3200);},1400);
+})();
+</script>
+
 </body>
 </html>
