@@ -1327,6 +1327,22 @@ let carouselTimer = null;
 let isDragging = false;
 let dragStartX = 0;
 let dragCurrentX = 0;
+let carouselSnapTimer = null;
+function normalizeCarouselIndex(){
+  if(!carouselItems.length) return;
+  const carousel = document.getElementById('carousel');
+  if(!carousel) return;
+  const STEP = getCarouselW()+12;
+  if(carouselIndex>=carouselItems.length*2){
+    carouselIndex -= carouselItems.length;
+    carousel.style.transition='none';
+    carousel.style.transform=`translateX(-${carouselIndex*STEP}px)`;
+  }else if(carouselIndex<carouselItems.length){
+    carouselIndex += carouselItems.length;
+    carousel.style.transition='none';
+    carousel.style.transform=`translateX(-${carouselIndex*STEP}px)`;
+  }
+}
 
 async function getCarouselListDB(){
   try{
@@ -1443,14 +1459,8 @@ function carouselNext(){
   carousel.style.transition='transform 0.4s ease';
   carousel.style.transform=`translateX(-${carouselIndex*STEP}px)`;
   updateDots((carouselIndex-carouselItems.length)%carouselItems.length);
-  carousel.addEventListener('transitionend',function handler(){
-    carousel.removeEventListener('transitionend',handler);
-    if(carouselIndex>=carouselItems.length*2){
-      carouselIndex=carouselItems.length+(carouselIndex-carouselItems.length*2);
-      carousel.style.transition='none';
-      carousel.style.transform=`translateX(-${carouselIndex*STEP}px)`;
-    }
-  });
+  if(carouselSnapTimer)clearTimeout(carouselSnapTimer);
+  carouselSnapTimer=setTimeout(normalizeCarouselIndex,420);
 }
 
 function carouselPrev(){
@@ -1461,14 +1471,8 @@ function carouselPrev(){
   carousel.style.transform=`translateX(-${carouselIndex*STEP}px)`;
   const realIdx=((carouselIndex-carouselItems.length)%carouselItems.length+carouselItems.length)%carouselItems.length;
   updateDots(realIdx);
-  carousel.addEventListener('transitionend',function handler(){
-    carousel.removeEventListener('transitionend',handler);
-    if(carouselIndex<carouselItems.length){
-      carouselIndex=carouselItems.length*2-(carouselItems.length-carouselIndex);
-      carousel.style.transition='none';
-      carousel.style.transform=`translateX(-${carouselIndex*STEP}px)`;
-    }
-  });
+  if(carouselSnapTimer)clearTimeout(carouselSnapTimer);
+  carouselSnapTimer=setTimeout(normalizeCarouselIndex,420);
 }
 
 function startCarouselAuto(){
@@ -1478,7 +1482,7 @@ function startCarouselAuto(){
 function setupCarouselSwipe(){
   const wrap=document.getElementById('carouselWrap');
   function getStep(){return getCarouselW()+12;}
-  wrap.addEventListener('touchstart',e=>{isDragging=true;dragStartX=e.touches[0].clientX;clearInterval(carouselTimer);},{passive:true});
+  wrap.addEventListener('touchstart',e=>{if(carouselSnapTimer){clearTimeout(carouselSnapTimer);normalizeCarouselIndex();}isDragging=true;dragStartX=e.touches[0].clientX;clearInterval(carouselTimer);},{passive:true});
   wrap.addEventListener('touchmove',e=>{
     if(!isDragging)return;
     dragCurrentX=e.touches[0].clientX-dragStartX;
@@ -1493,7 +1497,7 @@ function setupCarouselSwipe(){
     else{const carousel=document.getElementById('carousel');carousel.style.transition='transform 0.4s ease';carousel.style.transform=`translateX(-${carouselIndex*getStep()}px)`;}
     dragCurrentX=0;startCarouselAuto();
   });
-  wrap.addEventListener('mousedown',e=>{isDragging=true;dragStartX=e.clientX;clearInterval(carouselTimer);});
+  wrap.addEventListener('mousedown',e=>{if(carouselSnapTimer){clearTimeout(carouselSnapTimer);normalizeCarouselIndex();}isDragging=true;dragStartX=e.clientX;clearInterval(carouselTimer);});
   wrap.addEventListener('mousemove',e=>{
     if(!isDragging)return;
     dragCurrentX=e.clientX-dragStartX;
@@ -1773,8 +1777,8 @@ document.getElementById('logoBtn').addEventListener('click',()=>{
 .hw-confetti{position:fixed;top:-30px;font-size:20px;z-index:10002;pointer-events:none;animation:hwFall 2s cubic-bezier(.25,.46,.45,.94) forwards;}
 @keyframes hwFall{0%{transform:translateY(0) rotate(0deg);opacity:1;}100%{transform:translateY(100vh) rotate(560deg);opacity:0;}}
 @media (prefers-reduced-motion:reduce){.hw-bat,.hw-particle,.hw-fab,.hw-spider{animation:none!important;}}
-.hw-logohat{position:absolute;top:10px;left:calc(50% + 28px);width:70px;height:70px;z-index:3;pointer-events:none;filter:drop-shadow(0 3px 5px rgba(0,0,0,.5));transform:translateX(-50%) rotate(-16deg);transform-origin:50% 90%;animation:hwHatWobble 3s ease-in-out infinite;}
-@keyframes hwHatWobble{0%,100%{transform:translateX(-50%) rotate(-16deg);}50%{transform:translateX(-50%) rotate(-9deg);}}
+.hw-logohat{position:absolute;top:2px;left:calc(50% + 34px);width:88px;height:88px;z-index:3;pointer-events:none;filter:drop-shadow(0 3px 5px rgba(0,0,0,.5));transform:translateX(-50%) rotate(-26deg);transform-origin:50% 90%;animation:hwHatWobble 1.7s ease-in-out infinite;}
+@keyframes hwHatWobble{0%,100%{transform:translateX(-50%) rotate(-26deg);}50%{transform:translateX(-50%) rotate(-6deg);}}
 .hw-burst{position:fixed;z-index:10003;pointer-events:none;font-size:18px;transition:transform .7s cubic-bezier(.2,.8,.2,1),opacity .7s ease;opacity:1;transform:translate(0,0) scale(1);}
 @keyframes hwHeartPop{0%{transform:scale(1);}30%{transform:scale(1.35);}100%{transform:scale(1);}}
 .fav-btn.hw-pop{animation:hwHeartPop .4s ease;}
@@ -1795,6 +1799,11 @@ document.getElementById('logoBtn').addEventListener('click',()=>{
 .hw-viewtransition{position:fixed;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,140,0,.32) 48%,rgba(106,13,173,.32) 52%,transparent 70%);transform:translateX(-120%);z-index:10004;pointer-events:none;animation:hwSweep .5s ease;}
 @keyframes hwSweep{0%{transform:translateX(-120%);}100%{transform:translateX(120%);}}
 @media (prefers-reduced-motion:reduce){.view.hw-view-in,.hw-viewtransition{animation:none!important;}}
+.hw-dropspider{position:fixed;top:0;height:0;z-index:10000;pointer-events:none;will-change:height;}
+.hw-dropspider .thread{position:absolute;top:0;left:0;bottom:0;width:1px;background:rgba(255,255,255,.5);}
+.hw-dropspider .bug{position:absolute;top:100%;left:50%;transform:translate(-50%,-30%) rotate(-4deg);font-size:20px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.5));animation:hwBugWiggle 1.6s ease-in-out infinite;}
+@keyframes hwBugWiggle{0%,100%{transform:translate(-50%,-30%) rotate(-4deg);}50%{transform:translate(-50%,-30%) rotate(4deg);}}
+@media (prefers-reduced-motion:reduce){.hw-dropspider{display:none!important;}}
 </style>
 <script>
 (function(){
@@ -2048,6 +2057,29 @@ document.getElementById('logoBtn').addEventListener('click',()=>{
   }
   setInterval(hwSpawnCandy,14000);
   setTimeout(hwSpawnCandy,6000);
+
+  // --- occasional spider dropping down a thread from the top of the screen ---
+  function hwSpiderDrop(){
+    if(document.querySelector('.hw-dropspider'))return;
+    var el=document.createElement('div');
+    el.className='hw-dropspider';
+    el.style.left=(10+Math.random()*80)+'%';
+    el.innerHTML='<div class="thread"></div><div class="bug">🕷️</div>';
+    el.style.height='0px';
+    el.style.transition='height 2.6s cubic-bezier(.17,.84,.44,1)';
+    document.body.appendChild(el);
+    var targetH=window.innerHeight*(0.5+Math.random()*0.4);
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){el.style.height=targetH+'px';});
+    });
+    setTimeout(function(){
+      el.style.transition='height 1.8s ease-in';
+      el.style.height='0px';
+      setTimeout(function(){el.remove();},1850);
+    },2600+1600);
+  }
+  setInterval(function(){if(Math.random()<0.5)hwSpiderDrop();},20000);
+  setTimeout(hwSpiderDrop,9000);
 
   // --- first-visit splash banner: spooky frame + light confetti ---
   // (watched via MutationObserver, not by wrapping loadBanner() — that call already
