@@ -816,6 +816,19 @@ function renderItems(items,isSearch=false){
   }else el.innerHTML=items.map(i=>itemHTML(i)).join('');
 }
 
+function renderItemModalNutrition(obj){
+  const nutEl=document.getElementById('itemModalNutrition');
+  const hasNut=obj&&(obj.calories!=null||obj.protein!=null||obj.fat!=null||obj.carbs!=null);
+  if(hasNut){
+    const parts=[];
+    if(obj.calories!=null)parts.push(`🔥 ${obj.calories} ккал`);
+    if(obj.protein!=null)parts.push(`Б: ${obj.protein}г`);
+    if(obj.fat!=null)parts.push(`Ж: ${obj.fat}г`);
+    if(obj.carbs!=null)parts.push(`В: ${obj.carbs}г`);
+    nutEl.textContent=parts.join(' · ');
+    nutEl.style.display='block';
+  }else{nutEl.style.display='none';nutEl.textContent='';}
+}
 function openItemModal(name){
   const item=allItems.find(i=>i.name===name);if(!item)return;
   trackItemView(name);
@@ -823,21 +836,12 @@ function openItemModal(name){
   document.getElementById('itemModalName').textContent=item.name;
   document.getElementById('itemModalDesc').textContent=item.description||'';
   document.getElementById('itemModalWeight').textContent=item.weight||'';
-  const nutEl=document.getElementById('itemModalNutrition');
-  const hasNut=item.calories!=null||item.protein!=null||item.fat!=null||item.carbs!=null;
-  if(hasNut){
-    const parts=[];
-    if(item.calories!=null)parts.push(`🔥 ${item.calories} ккал`);
-    if(item.protein!=null)parts.push(`Б: ${item.protein}г`);
-    if(item.fat!=null)parts.push(`Ж: ${item.fat}г`);
-    if(item.carbs!=null)parts.push(`В: ${item.carbs}г`);
-    nutEl.textContent=parts.join(' · ');
-    nutEl.style.display='block';
-  }else{nutEl.style.display='none';nutEl.textContent='';}
 
   // Variants
   let variants=[];
   try{if(item.variants)variants=JSON.parse(item.variants);}catch(e){}
+  window._itemModalVariants=variants;
+  renderItemModalNutrition(variants.length?variants[0]:item);
   const priceEl=document.getElementById('itemModalPrice');
   const varEl=document.getElementById('itemModalVariants');
   const priceWrap=document.getElementById('itemModalPriceWrap');
@@ -845,7 +849,7 @@ function openItemModal(name){
     var p0=variants[0].price;var ptxt=p0+' грн';if(currentLang==='md')ptxt+=' (~'+mdlPrice(p0)+')';priceEl.textContent=ptxt;
     varEl.style.display='flex';
     varEl.innerHTML=variants.map((v,i)=>
-      '<div class="variant-btn'+(i===0?' selected':'')+'" onclick="selectVariant(this,'+v.price+')">'
+      '<div class="variant-btn'+(i===0?' selected':'')+'" onclick="selectVariant(this,'+i+')">'
       +'<div class="variant-label">'+v.label+'</div>'
       +'<div class="variant-price">'+v.price+' грн</div>'
       +'</div>'
@@ -867,13 +871,15 @@ function openItemModal(name){
     :`<div class="item-modal-img-ph">${item.emoji||'🍽️'}</div>`;
   document.getElementById('itemModal').style.display='flex';
 }
-function selectVariant(el,price){
+function selectVariant(el,idx){
+  const v=(window._itemModalVariants||[])[idx];if(!v)return;
   document.querySelectorAll('.variant-btn').forEach(b=>b.classList.remove('selected'));
   el.classList.add('selected');
-  var txt=price+' грн';
-  if(currentLang==='md') txt+=' (~'+mdlPrice(price)+')';
+  var txt=v.price+' грн';
+  if(currentLang==='md') txt+=' (~'+mdlPrice(v.price)+')';
   document.getElementById('itemModalPrice').textContent=txt;
   document.getElementById('itemModalPriceWrap').style.display='flex';
+  renderItemModalNutrition(v);
 }
 function closeItemModal(){document.getElementById('itemModal').style.display='none';}
 document.getElementById('itemModal').addEventListener('click',function(e){if(e.target===this)closeItemModal();});
