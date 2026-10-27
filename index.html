@@ -392,6 +392,14 @@ textarea{resize:vertical;min-height:60px;}
         <div><label>Час приготування</label><input type="text" id="fTime" placeholder="15 хв"></div>
       </div>
       <div class="form-row">
+        <div><label>Калорії (ккал)</label><input type="number" id="fCalories" placeholder="320"></div>
+        <div><label>Білки (г)</label><input type="number" id="fProtein" placeholder="12"></div>
+      </div>
+      <div class="form-row">
+        <div><label>Жири (г)</label><input type="number" id="fFat" placeholder="8"></div>
+        <div><label>Вуглеводи (г)</label><input type="number" id="fCarbs" placeholder="40"></div>
+      </div>
+      <div class="form-row">
         <div><label>Emoji</label><input type="text" id="fEmoji" placeholder="🍣" style="font-size:18px;text-align:center;" maxlength="4"></div>
         <div><label>Фото URL</label><input type="text" id="fImage" placeholder="https://..."></div>
       </div>
@@ -514,6 +522,14 @@ textarea{resize:vertical;min-height:60px;}
       <div><label>Час приготування</label><input type="text" id="eTime"></div>
     </div>
     <div class="form-row">
+      <div><label>Калорії (ккал)</label><input type="number" id="eCalories"></div>
+      <div><label>Білки (г)</label><input type="number" id="eProtein"></div>
+    </div>
+    <div class="form-row">
+      <div><label>Жири (г)</label><input type="number" id="eFat"></div>
+      <div><label>Вуглеводи (г)</label><input type="number" id="eCarbs"></div>
+    </div>
+    <div class="form-row">
       <div><label>Emoji</label><input type="text" id="eEmoji" style="font-size:18px;text-align:center;" maxlength="4"></div>
       <div><label>Фото URL</label><input type="text" id="eImage"></div>
     </div>
@@ -539,6 +555,7 @@ textarea{resize:vertical;min-height:60px;}
       <div id="itemModalMeta" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px;"></div>
       <div class="item-modal-name" id="itemModalName"></div>
       <div class="item-modal-desc" id="itemModalDesc"></div>
+      <div id="itemModalNutrition" style="display:none;font-size:12px;color:var(--muted);margin:2px 0 8px;"></div>
       <div id="itemModalVariants" class="variants-wrap" style="display:none;"></div>
       <div class="item-modal-footer">
         <div id="itemModalPriceWrap"><div class="item-modal-price" id="itemModalPrice"></div></div>
@@ -806,6 +823,17 @@ function openItemModal(name){
   document.getElementById('itemModalName').textContent=item.name;
   document.getElementById('itemModalDesc').textContent=item.description||'';
   document.getElementById('itemModalWeight').textContent=item.weight||'';
+  const nutEl=document.getElementById('itemModalNutrition');
+  const hasNut=item.calories!=null||item.protein!=null||item.fat!=null||item.carbs!=null;
+  if(hasNut){
+    const parts=[];
+    if(item.calories!=null)parts.push(`🔥 ${item.calories} ккал`);
+    if(item.protein!=null)parts.push(`Б: ${item.protein}г`);
+    if(item.fat!=null)parts.push(`Ж: ${item.fat}г`);
+    if(item.carbs!=null)parts.push(`В: ${item.carbs}г`);
+    nutEl.textContent=parts.join(' · ');
+    nutEl.style.display='block';
+  }else{nutEl.style.display='none';nutEl.textContent='';}
 
   // Variants
   let variants=[];
@@ -893,16 +921,17 @@ function buildAdminTabs(){
 function switchAdminTab(cat,el){adminCat=cat;document.querySelectorAll('.admin-cat-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');renderAdmin(window._adminAll||[],_adminSearch);}
 function filterAdmin(q){_adminSearch=q;renderAdmin(window._adminAll||[],q);}
 
+function numOrNull(id){const v=document.getElementById(id).value;return v===''||v==null?null:parseFloat(v);}
 async function addItem(){
   if(!authToken){showAlert('Не авторизовано','error');return;}
   const name=document.getElementById('fName').value.trim();
   const price=parseFloat(document.getElementById('fPrice').value);
   if(!name||!price){showAlert('Заповни назву та ціну!','error');return;}
-  const fVarJSON=getVariantsJSON('f');const hasV=fVariants.length>0;const row={name,description:document.getElementById('fDesc').value.trim(),price:hasV?(fVariants[0].price):price,weight:document.getElementById('fWeight').value.trim(),category:document.getElementById('fCategory').value,subcategory:document.getElementById('fSubcategory').value,emoji:document.getElementById('fEmoji').value.trim(),badge:document.getElementById('fBadge').value,prep_time:document.getElementById('fTime').value.trim(),image_url:document.getElementById('fImage').value.trim(),image_pos:document.getElementById('fImagePos').value,variants:fVarJSON||null,is_active:true};
+  const fVarJSON=getVariantsJSON('f');const hasV=fVariants.length>0;const row={name,description:document.getElementById('fDesc').value.trim(),price:hasV?(fVariants[0].price):price,weight:document.getElementById('fWeight').value.trim(),category:document.getElementById('fCategory').value,subcategory:document.getElementById('fSubcategory').value,emoji:document.getElementById('fEmoji').value.trim(),badge:document.getElementById('fBadge').value,prep_time:document.getElementById('fTime').value.trim(),image_url:document.getElementById('fImage').value.trim(),image_pos:document.getElementById('fImagePos').value,variants:fVarJSON||null,is_active:true,calories:numOrNull('fCalories'),protein:numOrNull('fProtein'),fat:numOrNull('fFat'),carbs:numOrNull('fCarbs')};
   const{error}=await dbPost('menu_items',row);
   if(error){showAlert('Помилка: '+(error.message||JSON.stringify(error)),'error');return;}
   showAlert('✅ Страву додано!','success');
-  ['fName','fDesc','fPrice','fWeight','fEmoji','fTime','fImage'].forEach(id=>document.getElementById(id).value='');fVariants=[];renderVariantsList('f');
+  ['fName','fDesc','fPrice','fWeight','fEmoji','fTime','fImage','fCalories','fProtein','fFat','fCarbs'].forEach(id=>document.getElementById(id).value='');fVariants=[];renderVariantsList('f');
   document.getElementById('fPreview').style.display='none';clearCache();loadAdminItems();
 }
 
@@ -956,6 +985,10 @@ function openEdit(item){
   document.getElementById('eBadge').value=item.badge||'';
   document.getElementById('eEmoji').value=item.emoji||'';
   document.getElementById('eTime').value=item.prep_time||'';
+  document.getElementById('eCalories').value=item.calories??'';
+  document.getElementById('eProtein').value=item.protein??'';
+  document.getElementById('eFat').value=item.fat??'';
+  document.getElementById('eCarbs').value=item.carbs??'';
   document.getElementById('eImage').value=item.image_url||'';
   document.getElementById('eImagePos').value=item.image_pos||'center';
   const p=document.getElementById('ePreview');
@@ -969,7 +1002,7 @@ function closeEdit(){document.getElementById('editModal').style.display='none';}
 async function saveEdit(){
   if(!authToken){showAlert('Не авторизовано','error');return;}
   const orig=document.getElementById('eOrigName').value;
-  const eVarJSON=getVariantsJSON('e');const vals={name:document.getElementById('eName').value.trim(),description:document.getElementById('eDesc').value.trim(),price:eVariants.length?eVariants[0].price:parseFloat(document.getElementById('ePrice').value),weight:document.getElementById('eWeight').value.trim(),category:document.getElementById('eCategory').value,subcategory:document.getElementById('eSubcategory').value,badge:document.getElementById('eBadge').value,emoji:document.getElementById('eEmoji').value.trim(),prep_time:document.getElementById('eTime').value.trim(),image_url:document.getElementById('eImage').value.trim(),image_pos:document.getElementById('eImagePos').value,variants:eVarJSON||null};
+  const eVarJSON=getVariantsJSON('e');const vals={name:document.getElementById('eName').value.trim(),description:document.getElementById('eDesc').value.trim(),price:eVariants.length?eVariants[0].price:parseFloat(document.getElementById('ePrice').value),weight:document.getElementById('eWeight').value.trim(),category:document.getElementById('eCategory').value,subcategory:document.getElementById('eSubcategory').value,badge:document.getElementById('eBadge').value,emoji:document.getElementById('eEmoji').value.trim(),prep_time:document.getElementById('eTime').value.trim(),image_url:document.getElementById('eImage').value.trim(),image_pos:document.getElementById('eImagePos').value,variants:eVarJSON||null,calories:numOrNull('eCalories'),protein:numOrNull('eProtein'),fat:numOrNull('eFat'),carbs:numOrNull('eCarbs')};
   const{error}=await dbPatch('menu_items',vals,'name',orig);
   if(error){showAlert('Помилка: '+JSON.stringify(error),'error');return;}
   closeEdit();showAlert('✅ Збережено!','success');clearCache();loadAdminItems();
